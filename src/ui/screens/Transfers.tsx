@@ -3,7 +3,7 @@ import { Fx } from '../components/Fx'
 import { useGame, useWorld, haptic } from '../../store/game'
 import type { ContractOffer, Player, Position, SquadRole, TransferOffer, World } from '../../domain/types'
 import { Icon } from '../icons/Icon'
-import { Badge, Empty, Face, Flag, Ovr, PosChip, Stars } from '../components/atoms'
+import { Badge, CountUp, Empty, Face, Flag, Ovr, PosChip, Stars } from '../components/atoms'
 import { Chips, HubActions, Screen, Seg, Sheet, Stepper, Tabs } from '../components/layout'
 import { fmtMoney, roundValue } from '../../domain/finance'
 import { addDays, diffDays, fmtDate } from '../../domain/dates'
@@ -37,7 +37,7 @@ export function TransferHub() {
           <div style={{ position: 'relative', zIndex: 1, padding: 16 }}>
             {deadline && <div className="deadline-banner"><Icon name="deadline" size={16} /> DEADLINE DAY · window closes tonight</div>}
             <div className="row between" style={{ alignItems: 'flex-end' }}>
-              <div><div className="label" style={{ color: 'rgba(255,255,255,.75)' }}>Transfer budget</div><div className="display" style={{ fontSize: 34, marginTop: 4 }}>{fmtMoney(club.finance.transferBudget)}</div></div>
+              <div><div className="label" style={{ color: 'rgba(255,255,255,.75)' }}>Transfer budget</div><div className="display" style={{ fontSize: 34, marginTop: 4 }}><CountUp value={club.finance.transferBudget} format={(v) => fmtMoney(v)} /></div></div>
               <div style={{ textAlign: 'right' }}><div className="label" style={{ color: 'rgba(255,255,255,.75)' }}>Wage room</div><div className="display" style={{ fontSize: 22, marginTop: 4 }}>{fmtMoney(Math.max(0, wageRoom(w)))}<span className="tiny">/wk</span></div></div>
             </div>
             <div className="row tight tiny" style={{ marginTop: 10, opacity: 0.85 }}><Icon name={win ? 'transfers' : 'lock'} size={14} />{win ? `${win.name} window · ${diffDays(win.close, w.date)} days left` : 'Window closed — deals agreed now complete when it reopens'}</div>

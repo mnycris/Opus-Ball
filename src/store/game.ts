@@ -49,6 +49,7 @@ interface GameState {
   deleteCareer: (id: string) => Promise<void>
   exitToMenu: () => void
   save: (auto?: boolean) => Promise<void>
+  saveAs: (name: string) => Promise<void>
   mutate: (fn: (w: World) => void, opts?: { save?: boolean; roster?: boolean }) => void
   bump: () => void
   setTab: (t: Tab) => void
@@ -154,6 +155,17 @@ export const useGame = create<GameState>((set, get) => ({
     } catch (e) {
       get().notify('Save failed — storage unavailable', 'err')
     }
+  },
+
+  async saveAs(name) {
+    const w = get().world
+    if (!w) return
+    const id = `career-${Date.now().toString(36)}`
+    w.meta.id = id
+    w.meta.saveName = name
+    set({ saveId: id })
+    await get().save(false)
+    await get().refreshSaves()
   },
 
   mutate(fn, opts = {}) {

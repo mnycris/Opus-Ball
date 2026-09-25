@@ -363,7 +363,10 @@ export function CareerSettingsScreen() {
           <div className="li"><div className="meta"><div className="t small">Autosave</div><div className="s">After every match, when advancing stops and a few seconds after changes</div></div><Icon name="check" size={18} color="var(--acc)" /></div>
           <div className="row" style={{ padding: '0 14px 14px', gap: 8 }}>
             <button className="btn club grow" onClick={() => save(false)}><Icon name="save" size={16} /> Save now</button>
-            <button className="btn grow" onClick={() => setQuit(true)}><Icon name="back" size={16} /> Main menu</button>
+            <button className="btn grow" onClick={() => useGame.getState().saveAs(`${name.trim() || w.meta.saveName} (${w.date.slice(0, 4)}/${String(Number(w.date.slice(2, 4)) + 1).padStart(2, '0')})`)}><Icon name="plus" size={16} /> New slot</button>
+          </div>
+          <div className="row" style={{ padding: '0 14px 14px' }}>
+            <button className="btn block" onClick={() => setQuit(true)}><Icon name="back" size={16} /> Main menu</button>
           </div>
         </div>
         <div className="card">

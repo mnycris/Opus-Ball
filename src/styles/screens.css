@@ -326,3 +326,18 @@ select.input option { background: #151b27; }
 .deadline-card { border-color: rgba(255, 77, 94, 0.45) !important; background: linear-gradient(160deg, rgba(179, 18, 42, 0.25), var(--s1) 55%) !important; }
 .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--neg); box-shadow: 0 0 0 0 rgba(255, 77, 94, 0.7); animation: livePulse 1.4s ease-out infinite; }
 @keyframes livePulse { to { box-shadow: 0 0 0 10px rgba(255, 77, 94, 0); } }
+
+/* ---------- FC details: section slashes, transitions, broadcast clock ---------- */
+.layer-in { animation: layerIn 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@keyframes layerIn { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: none; } }
+.section-title .h3 { display: flex; align-items: center; gap: 8px; }
+.section-title .h3::before { content: ''; width: 5px; height: 16px; border-radius: 1px; background: linear-gradient(180deg, var(--acc), rgba(var(--club-rgb), 1)); transform: skewX(-16deg); box-shadow: 0 0 10px rgba(var(--acc-rgb), 0.5); }
+.card-h .label, .kicker { position: relative; }
+.card-h > .label:first-child::before, .card-h > .row > .label::before { content: ''; display: inline-block; width: 3px; height: 10px; margin-right: 7px; vertical-align: -1px; background: var(--acc); transform: skewX(-16deg); }
+.sb-clock.live { box-shadow: 0 0 16px rgba(var(--acc-rgb), 0.6); }
+.scoreboard { position: relative; }
+.scoreboard::before { content: ''; position: absolute; left: 50%; top: 50%; width: 170px; height: 90px; transform: translate(-50%, -55%); background: radial-gradient(closest-side, rgba(var(--club-rgb), 0.35), transparent); pointer-events: none; }
+.h1, .h2 { text-shadow: 0 2px 18px rgba(0, 0, 0, 0.35); }
+.tab.on::after { background: linear-gradient(90deg, var(--acc), rgba(var(--club-rgb), 1)); }
+.pos-chip { clip-path: polygon(6% 0, 100% 0, 94% 100%, 0 100%); padding: 3px 7px 2px; }
+.ovr { background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.02)); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18); }

@@ -118,7 +118,7 @@ export function Ovr({ v, size = 'md', style }: { v: number | string; size?: 'sm'
   const fs = size === 'sm' ? 16 : size === 'lg' ? 30 : size === 'xl' ? 44 : 22
   const n = typeof v === 'number' ? v : Number(String(v).split('-')[0])
   const col = typeof v === 'number' ? ovrColor(n) : '#C9D1DB'
-  return <div className="ovr num" style={{ fontSize: fs, color: col, borderColor: `${col}55`, ...style }}>{v}</div>
+  return <div className="ovr num" style={{ fontSize: fs, color: col, borderColor: `${col}55`, ...style }}>{typeof v === 'number' && size === 'xl' ? <CountUp value={v} ms={600} /> : v}</div>
 }
 
 export function PosChip({ pos, style }: { pos: Position | string; style?: CSSProperties }) {
@@ -183,7 +183,7 @@ export function Ring({ v, size = 44, stroke = 5, color, label }: { v: number; si
         <circle cx={size / 2} cy={size / 2} r={r} stroke="rgba(255,255,255,.1)" strokeWidth={stroke} fill="none" />
         <circle cx={size / 2} cy={size / 2} r={r} stroke={col} strokeWidth={stroke} fill="none" strokeDasharray={c} strokeDashoffset={c * (1 - pct)} strokeLinecap="round" style={{ transition: 'stroke-dashoffset .8s cubic-bezier(.2,.8,.2,1)' }} />
       </svg>
-      <div className="center" style={{ position: 'absolute', inset: 0, fontFamily: 'var(--display)', fontWeight: 800, fontSize: size * 0.3 }}>{label ?? Math.round(v)}</div>
+      <div className="center" style={{ position: 'absolute', inset: 0, fontFamily: 'var(--display)', fontWeight: 800, fontSize: size * 0.3 }}>{label ?? <CountUp value={v} />}</div>
     </div>
   )
 }
@@ -233,4 +233,24 @@ export function Radar({ values, labels, size = 200, color = 'rgba(var(--club-rgb
       })}
     </svg>
   )
+}
+
+/** Animated number (ease-out count-up), used for budgets, ratings and scores. */
+export function CountUp({ value, format = (v: number) => String(Math.round(v)), ms = 700 }: { value: number; format?: (v: number) => string; ms?: number }) {
+  const [shown, setShown] = useState(value)
+  useEffect(() => {
+    const from = shown
+    if (from === value) return
+    const t0 = performance.now()
+    let raf = 0
+    const tick = (t: number) => {
+      const k = Math.min(1, (t - t0) / ms)
+      const e = 1 - Math.pow(1 - k, 3)
+      setShown(from + (value - from) * e)
+      if (k < 1) raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [value])
+  return <>{format(shown)}</>
 }

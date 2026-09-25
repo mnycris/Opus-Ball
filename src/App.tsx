@@ -58,7 +58,7 @@ function Career() {
   const Ov = ov ? ROUTES[ov.name] : undefined
   return (
     <>
-      <div className="layer" key={`${tab}:${stack.length}:${top?.name ?? 'root'}`}>
+      <div className="layer layer-in" key={`${tab}:${stack.length}:${top?.name ?? 'root'}`}>
         {View ? <View params={top!.params} /> : <Root />}
       </div>
       <BottomNav />
