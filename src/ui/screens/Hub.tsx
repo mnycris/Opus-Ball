@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useGame, useWorld, haptic } from '../../store/game'
 import { Icon } from '../icons/Icon'
-import { Badge, CompLogo, Face, FormPips, Ring } from '../components/atoms'
+import { Badge, CompLogo, Face, FormPips, Ring, UserAvatar } from '../components/atoms'
 import { HubActions, Screen, SectionTitle } from '../components/layout'
 import { addDays, diffDays, fmtDate, seasonLabel, weekday } from '../../domain/dates'
 import { fmtMoney } from '../../domain/finance'
@@ -14,7 +14,6 @@ import { boardMood } from '../../engine/world/board'
 import { userFixtureOn } from '../../engine/world/advance'
 import { ordinal } from './Menu'
 import type { Fixture, World } from '../../domain/types'
-import { Portrait } from '../components/Portrait'
 import { Fx } from '../components/Fx'
 
 const WD = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
@@ -54,6 +53,7 @@ export function Hub() {
         </div>
       }
       right={<HubActions />}
+      footer={<ContinueBar />}
     >
       <div className="pad stack stagger">
         {w.flags.celebrate && w.flags.celebrate.date >= addDays(w.date, -60) && <Celebration w={w} />}
@@ -134,7 +134,6 @@ export function Hub() {
           <MiniBtn icon="save" label="Save" onClick={() => useGame.getState().save(false)} />
         </div>
       </div>
-      <ContinueBar />
     </Screen>
   )
 }
@@ -337,11 +336,11 @@ function Unemployed() {
   const go = useGame((s) => s.go)
   const offers = w.user.jobOffers.filter((o) => o.expires >= w.date)
   return (
-    <Screen title="Unemployed" sub={fmtDate(w.date, 'full')} right={<HubActions />}>
+    <Screen title="Unemployed" sub={fmtDate(w.date, 'full')} right={<HubActions />} footer={<ContinueBar />}>
       <div className="pad stack">
         <div className="hero" style={{ padding: 18 }}>
           <div className="row" style={{ gap: 14, position: 'relative', zIndex: 1 }}>
-            <Portrait cfg={w.user.avatar} size={72} radius={14} />
+            <UserAvatar w={w} size={72} radius={14} />
             <div>
               <div className="h2">{w.user.firstName} {w.user.lastName}</div>
               <div className="small" style={{ opacity: 0.8, marginTop: 4 }}>Reputation {Math.round(w.user.reputation)} · Out of work since {fmtDate(w.user.sacked || w.date, 'dm')}</div>
@@ -353,7 +352,6 @@ function Unemployed() {
       </div>
       <SectionTitle title="Latest news" />
       <div className="pad"><div className="card list">{w.news.slice(0, 6).map((n) => <div key={n.id} className="li"><div className="meta"><div className="t small">{n.headline}</div><div className="s">{fmtDate(n.date, 'dm')}</div></div></div>)}</div></div>
-      <ContinueBar />
     </Screen>
   )
 }

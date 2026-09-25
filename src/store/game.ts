@@ -188,6 +188,8 @@ export const useGame = create<GameState>((set, get) => ({
     haptic()
   },
   go(r) {
+    // navigating from inside an overlay (match day, negotiation…) stacks on the overlay so it stays visible
+    if (get().overlay.length) { set({ overlay: [...get().overlay, r] }); haptic(); return }
     const t = get().tab
     set({ stacks: { ...get().stacks, [t]: [...get().stacks[t], r] } })
     haptic()

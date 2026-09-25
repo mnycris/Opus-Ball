@@ -573,6 +573,9 @@ export interface UserManager {
   jobOffers: { clubId: number; date: ISODate; expires: ISODate }[]
   sacked?: ISODate
   rating: number // manager rating 1..100 dynamic
+  realManager?: string // playing as a real-world manager (photo looked up by name)
+  avatarColor?: string // monogram colour for a custom manager
+  style?: string // coaching identity chosen at creation (vision preset)
 }
 
 export interface AvatarConfig {

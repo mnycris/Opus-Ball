@@ -3,7 +3,7 @@ import { Fx } from '../components/Fx'
 import { useGame, useWorld, haptic } from '../../store/game'
 import type { ContractOffer, Player, Position, SquadRole, TransferOffer, World } from '../../domain/types'
 import { Icon } from '../icons/Icon'
-import { Badge, CountUp, Empty, Face, Flag, Ovr, PosChip, Stars } from '../components/atoms'
+import { Avatar, Badge, CountUp, Empty, Face, Flag, Ovr, PosChip, Stars } from '../components/atoms'
 import { Chips, HubActions, Screen, Seg, Sheet, Stepper, Tabs } from '../components/layout'
 import { fmtMoney, roundValue } from '../../domain/finance'
 import { addDays, diffDays, fmtDate } from '../../domain/dates'
@@ -14,7 +14,6 @@ import { askingPrice, contractDemand, playerInterest, roleForBuyer, sellerStance
 import { acceptCounter, delegateTransfer, proposeContract, renewalDemand, renewContract, submitBid, wageRoom, windowLabel } from '../../engine/world/userActions'
 import { currentWindow } from '../../engine/competitions/calendar'
 import { ageOf, userClub } from '../selectors'
-import { Portrait, seededAvatar } from '../components/Portrait'
 
 // ============================================================================ hub
 export function TransferHub() {
@@ -282,7 +281,7 @@ export function Scouting() {
           return (
             <div key={s.id} className="card">
               <div className="row" style={{ padding: 12, gap: 12 }}>
-                <Portrait cfg={{ ...seededAvatar(s.faceSeed, s.nationality), outfit: 'Coat' }} size={48} radius={12} />
+                <Avatar name={s.name} size={48} radius={12} />
                 <div className="grow">
                   <div className="b">{s.name}</div>
                   <div className="tiny dim row tight"><Flag w={w} nation={s.nationality} size={10} />{s.nationality} · {fmtMoney(s.wage)}/wk</div>
@@ -326,7 +325,7 @@ export function HireSheet({ open, onClose, youth }: { open: boolean; onClose: ()
       <div className="card list">
         {pool.slice(0, 12).map((s) => (
           <div key={s.id} className="li">
-            <Portrait cfg={{ ...seededAvatar(s.faceSeed, s.nationality), outfit: 'Coat' }} size={40} radius={10} />
+            <Avatar name={s.name} size={40} radius={10} />
             <div className="meta"><div className="t small">{s.name}</div><div className="s row tight"><Flag w={w} nation={s.nationality} size={10} />{s.nationality} · {fmtMoney(s.wage)}/wk</div><div className="row tight tiny" style={{ marginTop: 3 }}><span className="dim">EXP</span><Stars n={s.experience} size={10} /><span className="dim">JDG</span><Stars n={s.judgement} size={10} /></div></div>
             <button className="btn xs club" onClick={() => { mutate((w) => { const pl = youth ? w.youthScoutPool : w.scoutPool; const list = youth ? w.youthScouts : w.scouts; const i = pl.findIndex((x) => x.id === s.id); if (i >= 0 && list.length < 3) (list as any[]).push(pl.splice(i, 1)[0]) }); onClose() }}>Hire</button>
           </div>

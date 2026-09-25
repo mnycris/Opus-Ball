@@ -3,7 +3,7 @@ import { Fx } from '../components/Fx'
 import { useGame, useWorld, haptic } from '../../store/game'
 import type { InboxMessage, NewsItem, World } from '../../domain/types'
 import { Icon } from '../icons/Icon'
-import { Badge, CompLogo, Empty, Face, Ovr, PosChip } from '../components/atoms'
+import { Avatar, Badge, CompLogo, Empty, Face, Ovr, PosChip, UserAvatar } from '../components/atoms'
 import { Chips, Screen, Stepper } from '../components/layout'
 import { fmtDate } from '../../domain/dates'
 import { fmtMoney, roundValue } from '../../domain/finance'
@@ -11,10 +11,8 @@ import { runAction } from '../actions'
 import { respondConversation } from '../../engine/world/morale'
 import { applyPress, pressQuestions } from '../../engine/world/press'
 import { counterIncomingBid } from '../../engine/world/userActions'
-import { Portrait } from '../components/Portrait'
 import { staffNames } from '../../engine/world/messages'
 import { hashString } from '../../domain/rng'
-import { seededAvatar } from '../components/Portrait'
 import { askingPrice } from '../../engine/world/transfers'
 
 const CAT_ICON: Record<string, string> = {
@@ -28,7 +26,7 @@ function MsgAvatar({ w, m, size = 42 }: { w: World; m: InboxMessage; size?: numb
   if (img?.kind === 'club' && w.clubs[img.id as number]) return <div className="msg-av"><Badge club={w.clubs[img.id as number]} size={size - 10} /></div>
   if (img?.kind === 'comp') return <div className="msg-av"><CompLogo k={String(img.id)} size={size - 14} /></div>
   const staff = /Chairman|Director|Assistant|Medical|Youth|Scout/.test(m.fromRole)
-  if (staff) return <Portrait cfg={{ ...seededAvatar(hashString(m.from)), outfit: m.fromRole === 'Head of Medical' ? 'Tracksuit' : 'Suit', tie: m.fromRole === 'Chairman' }} size={size} radius={12} bg={['#27324a', '#0b0f17']} />
+  if (staff) return <Avatar name={m.from.replace(/^Dr\. /, '')} size={size} radius={12} />
   return <div className="msg-av"><Icon name={CAT_ICON[m.category] || 'inbox'} size={20} /></div>
 }
 
@@ -208,7 +206,7 @@ export function PressConference({ params }: { params: { kind: 'pre' | 'post'; fi
       <div className="pad stack fade-up">
         <div className="press-stage">
           <Fx kind="spotlight" />
-          <Portrait cfg={w.user.avatar} size={86} radius={18} />
+          <UserAvatar w={w} size={86} radius={43} />
           <div className="press-mics"><Icon name="chat" size={20} /></div>
         </div>
         {!summary && q && (

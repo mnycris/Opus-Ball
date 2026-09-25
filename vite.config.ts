@@ -32,14 +32,19 @@ export default defineConfig({
         navigateFallback: 'index.html',
         runtimeCaching: [
           {
-            // real player headshots and crests from the SoFIFA CDN, cached once seen
-            urlPattern: /^https:\/\/cdn\.sofifa\.net\/.*/i,
+            // official EA headshots, PlayStyle icons and crests; SoFIFA mirror; football-logos.cc crests; Wikipedia photos
+            urlPattern: /^https:\/\/(ratings-images-prod\.pulse\.ea\.com|drop-assets\.ea\.com|cdn\.sofifa\.net|assets\.football-logos\.cc|upload\.wikimedia\.org)\/.*/i,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'sofifa-images',
-              expiration: { maxEntries: 6000, maxAgeSeconds: 60 * 60 * 24 * 120 },
+              cacheName: 'football-images',
+              expiration: { maxEntries: 9000, maxAgeSeconds: 60 * 60 * 24 * 180 },
               cacheableResponse: { statuses: [0, 200] },
             },
+          },
+          {
+            urlPattern: /^https:\/\/en\.wikipedia\.org\/api\/rest_v1\/page\/summary\/.*/i,
+            handler: 'StaleWhileRevalidate',
+            options: { cacheName: 'wiki-summaries', expiration: { maxEntries: 3000, maxAgeSeconds: 60 * 60 * 24 * 60 }, cacheableResponse: { statuses: [0, 200] } },
           },
         ],
       },

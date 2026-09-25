@@ -3,13 +3,14 @@ import { useGame, useWorld, haptic } from '../../store/game'
 import type { Player, Position, SquadRole, World } from '../../domain/types'
 import { A } from '../../domain/types'
 import { Icon } from '../icons/Icon'
-import { Badge, CompLogo, Face, Flag, Ovr, PosChip, Radar, Ring, Sparkline, StatRow, Stars } from '../components/atoms'
+import { Badge, CompLogo, Face, Flag, ImgChain, Ovr, PosChip, Radar, Ring, Sparkline, StatRow, Stars } from '../components/atoms'
 import { Confirm, Screen, Sheet, Tabs } from '../components/layout'
 import { ATTR_GROUPS, ATTR_LABEL, DEV_PLANS, GK_GROUPS, PLAYSTYLE_INFO, POS_GROUP, POS_NAME, POSITIONS, ROLE_GROUP, ROLES, SQUAD_ROLES, TRAINING_PLANS } from '../../domain/constants'
 import { faceStats, formLabel, formValue, moraleLevel, posRating, roleFit } from '../../domain/ratings'
 import { fmtMoney } from '../../domain/finance'
 import { fmtDate, seasonLabel } from '../../domain/dates'
 import { ageOf, avgRating, compLogoKey, playerStatus, totals } from '../selectors'
+import { playStyleIcon } from '../../services/assets'
 import { attrsVisible, knowledge, potRange, scoutPlayer } from '../../engine/world/scouting'
 import { askingPrice, playerInterest, sellerStance, yearsLeft } from '../../engine/world/transfers'
 import { recallLoan, releaseCost, releaseUserPlayer, setJersey, setLoanListed, setSquadRole, setTransferListed, setUntouchable } from '../../engine/world/userActions'
@@ -292,15 +293,16 @@ function PlayStylesTab({ p, vis }: { p: Player; vis: string }) {
 }
 
 function PlayStyleGlyph({ name, plus }: { name: string; plus: boolean }) {
+  const url = playStyleIcon(name, plus)
   const cat = (PLAYSTYLE_INFO[name]?.cat || 'Other')
   const icon = cat === 'Shooting' ? 'goal' : cat === 'Passing' ? 'assist' : cat === 'Ball Control' ? 'ball' : cat === 'Defending' ? 'shield' : cat === 'Physical' ? 'fitness' : cat === 'Goalkeeping' ? 'glove' : 'star'
-  return (
+  const fallback = (
     <svg width="44" height="44" viewBox="0 0 44 44">
-      <path d="M22 2 40 12v20L22 42 4 32V12Z" fill={plus ? 'url(#psg)' : 'rgba(255,255,255,.06)'} stroke={plus ? '#F4C542' : 'rgba(255,255,255,.3)'} strokeWidth="1.5" />
-      <defs><linearGradient id="psg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#5a4412" /><stop offset="1" stopColor="#1d1606" /></linearGradient></defs>
+      <path d="M22 2 40 12v20L22 42 4 32V12Z" fill={plus ? '#3a2d0c' : 'rgba(255,255,255,.06)'} stroke={plus ? '#F4C542' : 'rgba(255,255,255,.3)'} strokeWidth="1.5" />
       <foreignObject x="11" y="11" width="22" height="22"><Icon name={icon} size={22} color={plus ? '#F4C542' : '#cfd6e0'} /></foreignObject>
     </svg>
   )
+  return url ? <ImgChain srcs={[url]} alt={name} style={{ width: 44, height: 44, objectFit: 'contain' }} fallback={fallback} /> : fallback
 }
 
 function StatsTab({ w, p }: { w: World; p: Player }) {

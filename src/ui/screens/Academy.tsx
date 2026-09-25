@@ -3,9 +3,8 @@ import { Fx } from '../components/Fx'
 import { useGame, useWorld, haptic } from '../../store/game'
 import type { Prospect, World } from '../../domain/types'
 import { Icon } from '../icons/Icon'
-import { Empty, Face, Flag, Ovr, PosChip, Stars, StatRow } from '../components/atoms'
+import { Avatar, Empty, Face, Flag, Ovr, PosChip, Stars, StatRow } from '../components/atoms'
 import { Confirm, HubActions, Screen, Seg, Sheet, Tabs } from '../components/layout'
-import { Portrait, seededAvatar } from '../components/Portrait'
 import { Silhouette } from '../components/Silhouette'
 import { fmtMoney } from '../../domain/finance'
 import { fmtDate } from '../../domain/dates'
@@ -133,7 +132,7 @@ function YouthScouts({ w }: { w: World }) {
       {w.youthScouts.map((s) => (
         <div key={s.id} className="card">
           <div className="row" style={{ padding: 12, gap: 12 }}>
-            <Portrait cfg={{ ...seededAvatar(s.faceSeed, s.nationality), outfit: 'Tracksuit' }} size={48} radius={12} />
+            <Avatar name={s.name} size={48} radius={12} />
             <div className="grow">
               <div className="b">{s.name}</div>
               <div className="tiny dim row tight"><Flag w={w} nation={s.nationality} size={10} />{s.nationality} · {fmtMoney(s.wage)}/wk</div>

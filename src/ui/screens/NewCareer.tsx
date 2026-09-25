@@ -3,8 +3,7 @@ import { useGame, haptic } from '../../store/game'
 import type { RawClub, RawDb, RawLeague } from '../../data/rawTypes'
 import type { AvatarConfig, CareerSettings } from '../../domain/types'
 import { Icon } from '../icons/Icon'
-import { Badge, CompLogo, Face, Flag, Ovr, PosChip, Stars } from '../components/atoms'
-import { Portrait, SKINS, HAIR_COLORS, HAIR_STYLES, BEARDS, BROWS, GLASSES } from '../components/Portrait'
+import { Avatar, Badge, CompLogo, Face, Flag, ManagerAvatar, Ovr, PosChip, Stars } from '../components/atoms'
 import { Screen, Seg, Sheet, Toggle } from '../components/layout'
 import { clubRatings, leagueClubs, rawBudget, rawExpectation, rawSquads, starRating } from '../rawHelpers'
 import { fmtMoney } from '../../domain/finance'
@@ -13,8 +12,10 @@ import { clubAccent } from '../theme'
 type Step = 'manager' | 'league' | 'club' | 'inspect' | 'settings' | 'confirm'
 const STEPS: Step[] = ['manager', 'league', 'club', 'inspect', 'settings', 'confirm']
 
-const OUTFIT_COLORS = ['#1A2233', '#0E0F12', '#2B3A55', '#4A4F57', '#5B1E2A', '#1F3B2E', '#6B5A45', '#B8BDC6']
+const AVATAR_COLORS = ['#10b981', '#3b82f6', '#8b5cf6', '#ef4444', '#f59e0b', '#06b6d4', '#ec4899', '#64748b']
 const DEFAULT_AVATAR: AvatarConfig = { skin: 1, hair: 2, hairColor: 2, beard: 1, eyes: 0, brows: 0, glasses: 0, outfit: 'Suit', outfitColor: '#1A2233', tie: true }
+const STYLES = ['Balanced', 'Possession', 'Gegenpress', 'Counter-Attack', 'Direct', 'Wing Play', 'Park the Bus']
+export interface ManagerIdentity { real?: string; color: string; style: string }
 
 export function NewCareer({ onExit }: { onExit: () => void }) {
   const raw = useGame((s) => s.raw)
@@ -26,7 +27,7 @@ export function NewCareer({ onExit }: { onExit: () => void }) {
   const [last, setLast] = useState('')
   const [nation, setNation] = useState('England')
   const [age, setAge] = useState(42)
-  const [avatar, setAvatar] = useState<AvatarConfig>(DEFAULT_AVATAR)
+  const [identity, setIdentity] = useState<ManagerIdentity>({ color: AVATAR_COLORS[0], style: 'Balanced' })
   const [leagueId, setLeagueId] = useState<number>()
   const [clubId, setClubId] = useState<number>()
   const [saveName, setSaveName] = useState('')
@@ -69,7 +70,7 @@ export function NewCareer({ onExit }: { onExit: () => void }) {
     <Screen title={titles[step]} sub={`Step ${idx + 1} of ${STEPS.length}`} back onBack={goBack} noNav scrollKey={step}>
       <div className="stepbar pad"><i style={{ width: `${((idx + 1) / STEPS.length) * 100}%` }} /></div>
       {step === 'manager' && (
-        <ManagerStep raw={raw} first={first} last={last} setFirst={setFirst} setLast={setLast} nation={nation} setNation={setNation} age={age} setAge={setAge} avatar={avatar} setAvatar={setAvatar} onNext={next} />
+        <ManagerStep raw={raw} first={first} last={last} setFirst={setFirst} setLast={setLast} nation={nation} setNation={setNation} age={age} setAge={setAge} identity={identity} setIdentity={setIdentity} onNext={next} />
       )}
       {step === 'league' && <LeagueStep raw={raw} onPick={(id) => { setLeagueId(id); setClubId(undefined); next() }} />}
       {step === 'club' && league && <ClubStep raw={raw} league={league} onPick={(id) => { setClubId(id); next() }} />}
@@ -79,11 +80,11 @@ export function NewCareer({ onExit }: { onExit: () => void }) {
         <div className="pad stack fade-up">
           <div className="hero" style={{ padding: 18, background: `linear-gradient(135deg, ${clubAccent(club)}, #06080d 80%)` }}>
             <div className="row" style={{ gap: 14, position: 'relative', zIndex: 1 }}>
-              <Portrait cfg={avatar} size={86} radius={16} />
+              {identity.real ? <ManagerAvatar name={identity.real} size={86} radius={16} /> : <Avatar name={`${first} ${last}`} size={86} radius={16} color={identity.color} />}
               <div className="grow">
                 <div className="kicker" style={{ color: '#fff', opacity: 0.8 }}>Manager</div>
                 <div className="h2">{first} {last}</div>
-                <div className="row tight small" style={{ marginTop: 6 }}><Flag code={raw.nations.find((n) => n.name === nation)?.flag} size={13} /> {nation} · {age}</div>
+                <div className="row tight small" style={{ marginTop: 6 }}><Flag code={raw.nations.find((n) => n.name === nation)?.flag} size={13} /> {nation} · {age} · {identity.style}</div>
               </div>
               <Badge club={club as any} size={62} />
             </div>
@@ -105,7 +106,7 @@ export function NewCareer({ onExit }: { onExit: () => void }) {
             setStarting(true)
             window.setTimeout(async () => {
               const born = `${2026 - age}-0${1 + (first.length % 9)}-1${last.length % 9}`
-              await startCareer({ clubId: club.id, manager: { firstName: first.trim(), lastName: last.trim(), nationality: nation, dob: born, avatar }, settings, saveName: saveName.trim() || `${club.short} Career` })
+              await startCareer({ clubId: club.id, manager: { firstName: first.trim(), lastName: last.trim(), nationality: nation, dob: born, avatar: DEFAULT_AVATAR, realManager: identity.real, avatarColor: identity.color, style: identity.style }, settings, saveName: saveName.trim() || `${club.short} Career` })
             }, 60)
           }}>
             <Icon name="whistle" size={22} /> Start Career
@@ -121,62 +122,89 @@ function Line({ k, v }: { k: string; v: any }) {
 }
 
 // ----------------------------------------------------------------- manager
-function ManagerStep(props: { raw: RawDb; first: string; last: string; setFirst: (s: string) => void; setLast: (s: string) => void; nation: string; setNation: (s: string) => void; age: number; setAge: (n: number) => void; avatar: AvatarConfig; setAvatar: (a: AvatarConfig) => void; onNext: () => void }) {
-  const { raw, avatar, setAvatar } = props
+interface RealMgr { name: string; nationality: string; age: number; vision: string; formation: string; club?: RawClub }
+
+function ManagerStep(props: { raw: RawDb; first: string; last: string; setFirst: (s: string) => void; setLast: (s: string) => void; nation: string; setNation: (s: string) => void; age: number; setAge: (n: number) => void; identity: ManagerIdentity; setIdentity: (i: ManagerIdentity) => void; onNext: () => void }) {
+  const { raw, identity, setIdentity } = props
+  const [mode, setMode] = useState<'custom' | 'real'>(identity.real ? 'real' : 'custom')
   const [natOpen, setNatOpen] = useState(false)
   const [q, setQ] = useState('')
-  const [part, setPart] = useState<'face' | 'hair' | 'outfit'>('face')
-  const set = (p: Partial<AvatarConfig>) => { haptic(); setAvatar({ ...avatar, ...p }) }
+  const [mq, setMq] = useState('')
   const nat = raw.nations.find((n) => n.name === props.nation)
   const valid = props.first.trim().length >= 1 && props.last.trim().length >= 2
   const nations = useMemo(() => [...raw.nations].sort((a, b) => a.name.localeCompare(b.name)), [raw])
+  const reals = useMemo<RealMgr[]>(() => {
+    const out: RealMgr[] = []
+    const lg = new Map(raw.leagues.map((l) => [l.id, l]))
+    for (const c of raw.clubs) if (c.manager) out.push({ ...c.manager, club: c })
+    return out.sort((a, b) => ((lg.get(b.club!.leagueId)?.prestige || 0) * 10 + b.club!.squadAvg) - ((lg.get(a.club!.leagueId)?.prestige || 0) * 10 + a.club!.squadAvg))
+  }, [raw])
+  const shown = reals.filter((m) => !mq || m.name.toLowerCase().includes(mq.toLowerCase()) || m.club?.name.toLowerCase().includes(mq.toLowerCase())).slice(0, 60)
+  const pickReal = (m: RealMgr) => {
+    haptic('medium')
+    const parts = m.name.split(' ')
+    props.setFirst(parts.length > 1 ? parts.slice(0, -1).join(' ') : m.name)
+    props.setLast(parts.length > 1 ? parts[parts.length - 1] : m.name)
+    props.setNation(m.nationality)
+    props.setAge(Math.max(30, Math.min(75, m.age)))
+    const style = STYLES.includes(m.vision) ? m.vision : 'Balanced'
+    setIdentity({ ...identity, real: m.name, style })
+  }
   return (
     <div className="pad stack fade-up">
-      <div className="avatar-stage">
-        <Portrait cfg={avatar} size={168} radius={24} bg={['#1d2a40', '#070a10']} />
-      </div>
-      <Seg items={[{ id: 'face', label: 'Face' }, { id: 'hair', label: 'Hair' }, { id: 'outfit', label: 'Outfit' }]} value={part} onChange={setPart} />
-      <div className="card pad-card stack" style={{ gap: 12 }}>
-        {part === 'face' && (
-          <>
-            <Picker label="Skin tone">{SKINS.map((c, i) => <Swatch key={c} color={c} on={avatar.skin === i} onClick={() => set({ skin: i })} />)}</Picker>
-            <Picker label="Facial hair">{BEARDS.map((b, i) => <button key={b} className={`chip ${avatar.beard === i ? 'on' : ''}`} onClick={() => set({ beard: i })}>{b}</button>)}</Picker>
-            <Picker label="Eyebrows">{BROWS.map((b, i) => <button key={b} className={`chip ${avatar.brows === i ? 'on' : ''}`} onClick={() => set({ brows: i })}>{b}</button>)}</Picker>
-            <Picker label="Eyes">{['Brown', 'Blue', 'Narrow'].map((b, i) => <button key={b} className={`chip ${avatar.eyes === i ? 'on' : ''}`} onClick={() => set({ eyes: i })}>{b}</button>)}</Picker>
-            <Picker label="Glasses">{GLASSES.map((b, i) => <button key={b} className={`chip ${avatar.glasses === i ? 'on' : ''}`} onClick={() => set({ glasses: i })}>{b}</button>)}</Picker>
-          </>
-        )}
-        {part === 'hair' && (
-          <>
-            <Picker label="Style">{HAIR_STYLES.map((b, i) => <button key={b} className={`chip ${avatar.hair === i ? 'on' : ''}`} onClick={() => set({ hair: i })}>{b}</button>)}</Picker>
-            <Picker label="Colour">{HAIR_COLORS.map((c, i) => <Swatch key={c} color={c} on={avatar.hairColor === i} onClick={() => set({ hairColor: i })} />)}</Picker>
-          </>
-        )}
-        {part === 'outfit' && (
-          <>
-            <Picker label="Outfit">{(['Suit', 'Coat', 'Smart Casual', 'Tracksuit'] as const).map((b) => <button key={b} className={`chip ${avatar.outfit === b ? 'on' : ''}`} onClick={() => set({ outfit: b })}>{b}</button>)}</Picker>
-            <Picker label="Colour">{OUTFIT_COLORS.map((c) => <Swatch key={c} color={c} on={avatar.outfitColor === c} onClick={() => set({ outfitColor: c })} />)}</Picker>
-            {(avatar.outfit === 'Suit' || avatar.outfit === 'Coat') && <Toggle label="Tie" on={avatar.tie} onChange={(v) => set({ tie: v })} />}
-          </>
-        )}
-      </div>
-      <div className="row">
-        <div className="field grow"><label className="label">First name</label><input className="input" value={props.first} maxLength={18} onChange={(e) => props.setFirst(e.target.value)} placeholder="First name" autoComplete="off" /></div>
-        <div className="field grow"><label className="label">Last name</label><input className="input" value={props.last} maxLength={20} onChange={(e) => props.setLast(e.target.value)} placeholder="Last name" autoComplete="off" /></div>
-      </div>
-      <div className="row">
-        <div className="field grow">
-          <label className="label">Nationality</label>
-          <button className="input row" style={{ textAlign: 'left' }} onClick={() => setNatOpen(true)}><Flag code={nat?.flag} size={15} /> <span className="grow ellipsis">{props.nation}</span><Icon name="down" size={16} /></button>
+      <Seg items={[{ id: 'custom', label: 'Create manager' }, { id: 'real', label: 'Real manager' }]} value={mode} onChange={(v) => { setMode(v); if (v === 'custom') setIdentity({ ...identity, real: undefined }) }} />
+      <div className="manager-preview">
+        {identity.real ? <ManagerAvatar name={identity.real} size={96} radius={48} /> : <Avatar name={`${props.first || '?'} ${props.last}`} size={96} color={identity.color} />}
+        <div className="grow" style={{ minWidth: 0 }}>
+          <div className="h2 ellipsis">{props.first || 'First'} {props.last || 'Last'}</div>
+          <div className="row tight small muted" style={{ marginTop: 6 }}><Flag code={nat?.flag} size={12} /> {props.nation} · {props.age} yrs</div>
+          <div className="small" style={{ marginTop: 4, color: 'var(--acc)' }}>{identity.style} coach{identity.real ? ' · real manager' : ''}</div>
         </div>
-        <div className="field" style={{ width: 128 }}>
-          <label className="label">Age</label>
-          <div className="stepper" style={{ height: 48 }}>
-            <button onClick={() => props.setAge(Math.max(30, props.age - 1))} aria-label="Younger"><Icon name="minus" size={18} /></button>
-            <div className="num">{props.age}</div>
-            <button onClick={() => props.setAge(Math.min(72, props.age + 1))} aria-label="Older"><Icon name="plus" size={18} /></button>
+      </div>
+      {mode === 'real' ? (
+        <>
+          <div className="search-box"><Icon name="search" size={18} color="var(--t3)" /><input placeholder="Search managers or clubs" value={mq} onChange={(e) => setMq(e.target.value)} /></div>
+          <div className="card list" style={{ maxHeight: '52vh', overflowY: 'auto' }}>
+            {shown.map((m) => (
+              <button key={m.name + m.club?.id} className={`li tap ${identity.real === m.name ? 'sel-row' : ''}`} style={{ width: '100%', textAlign: 'left' }} onClick={() => pickReal(m)}>
+                <ManagerAvatar name={m.name} size={42} />
+                <div className="meta"><div className="t ellipsis">{m.name}</div><div className="s row tight">{m.club && <Badge club={m.club as any} size={14} />}{m.club?.short} · {m.nationality} · {m.age}</div></div>
+                <span className="tiny dim">{m.vision}</span>
+              </button>
+            ))}
           </div>
-        </div>
+          <div className="tiny dim">Real managers start with their real reputation. If they currently manage another club, that club appoints a replacement.</div>
+        </>
+      ) : (
+        <>
+          <div className="row">
+            <div className="field grow"><label className="label">First name</label><input className="input" value={props.first} maxLength={18} onChange={(e) => props.setFirst(e.target.value)} placeholder="First name" autoComplete="off" /></div>
+            <div className="field grow"><label className="label">Last name</label><input className="input" value={props.last} maxLength={20} onChange={(e) => props.setLast(e.target.value)} placeholder="Last name" autoComplete="off" /></div>
+          </div>
+          <div className="row">
+            <div className="field grow">
+              <label className="label">Nationality</label>
+              <button className="input row" style={{ textAlign: 'left' }} onClick={() => setNatOpen(true)}><Flag code={nat?.flag} size={15} /> <span className="grow ellipsis">{props.nation}</span><Icon name="down" size={16} /></button>
+            </div>
+            <div className="field" style={{ width: 128 }}>
+              <label className="label">Age</label>
+              <div className="stepper" style={{ height: 48 }}>
+                <button onClick={() => props.setAge(Math.max(30, props.age - 1))} aria-label="Younger"><Icon name="minus" size={18} /></button>
+                <div className="num">{props.age}</div>
+                <button onClick={() => props.setAge(Math.min(72, props.age + 1))} aria-label="Older"><Icon name="plus" size={18} /></button>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div className="label" style={{ marginBottom: 8 }}>Badge colour</div>
+            <div className="row wrap" style={{ gap: 8 }}>{AVATAR_COLORS.map((c) => <button key={c} aria-label={c} className="swatch" style={{ background: c, boxShadow: identity.color === c ? '0 0 0 2px var(--bg), 0 0 0 4px #fff' : undefined }} onClick={() => { haptic(); setIdentity({ ...identity, color: c }) }} />)}</div>
+          </div>
+        </>
+      )}
+      <div>
+        <div className="label" style={{ marginBottom: 8 }}>Coaching style</div>
+        <div className="row wrap" style={{ gap: 7 }}>{STYLES.map((st) => <button key={st} className={`chip ${identity.style === st ? 'on' : ''}`} onClick={() => { haptic(); setIdentity({ ...identity, style: st }) }}>{st}</button>)}</div>
+        <div className="tiny dim" style={{ marginTop: 6 }}>Sets your default team tactics. You can change everything later.</div>
       </div>
       <button className="btn primary block" disabled={!valid} onClick={props.onNext}>Continue <Icon name="forward" size={18} /></button>
       <Sheet open={natOpen} onClose={() => setNatOpen(false)} title="Nationality">
@@ -191,18 +219,6 @@ function ManagerStep(props: { raw: RawDb; first: string; last: string; setFirst:
       </Sheet>
     </div>
   )
-}
-
-function Picker({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <div className="label" style={{ marginBottom: 7 }}>{label}</div>
-      <div className="row wrap" style={{ gap: 7 }}>{children}</div>
-    </div>
-  )
-}
-function Swatch({ color, on, onClick }: { color: string; on: boolean; onClick: () => void }) {
-  return <button aria-label={color} onClick={onClick} className="swatch" style={{ background: color, boxShadow: on ? '0 0 0 2px var(--bg), 0 0 0 4px var(--acc)' : undefined }} />
 }
 
 // ----------------------------------------------------------------- league

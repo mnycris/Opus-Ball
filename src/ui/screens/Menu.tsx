@@ -8,6 +8,7 @@ import { fmtDate, seasonLabel } from '../../domain/dates'
 import type { SaveMeta } from '../../services/saves'
 import { NewCareer } from './NewCareer'
 import { Wordmark } from '../components/brand'
+import { ImageCheck } from '../components/ImageCheck'
 
 type View = 'home' | 'new' | 'load' | 'settings' | 'about'
 
@@ -46,7 +47,7 @@ function Home({ onView }: { onView: (v: View) => void }) {
     <div className="screen no-nav no-top menu-screen">
       <div className="menu-bg" aria-hidden>
         <Fx kind="floodlights" />
-        <div className="menu-lights" />
+        
         <svg className="menu-pitch" viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice">
           <g fill="none" stroke="rgba(255,255,255,.07)" strokeWidth="2">
             <rect x="30" y="40" width="340" height="520" rx="4" />
@@ -154,6 +155,7 @@ export function AppSettings({ onBack }: { onBack: () => void }) {
           <Toggle label="Haptic feedback" sub="Vibration on taps and goals (supported devices)" on={prefs.haptics} onChange={(v) => setPrefs({ haptics: v })} />
           <Toggle label="Reduce motion" sub="Skips calendar animation while advancing" on={prefs.reduceMotion} onChange={(v) => setPrefs({ reduceMotion: v })} />
         </div>
+        <ImageCheck />
       </div>
     </Screen>
   )

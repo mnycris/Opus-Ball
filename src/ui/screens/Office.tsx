@@ -3,9 +3,8 @@ import { Fx } from '../components/Fx'
 import { useGame, useWorld, haptic } from '../../store/game'
 import type { ObjectiveCategory, World } from '../../domain/types'
 import { Icon } from '../icons/Icon'
-import { Badge, CompLogo, Empty, Face, Ring, Stars } from '../components/atoms'
+import { Badge, CompLogo, Empty, Face, Ring, Stars, UserAvatar } from '../components/atoms'
 import { Confirm, Screen, Seg, Tabs, Toggle } from '../components/layout'
-import { Portrait } from '../components/Portrait'
 import { fmtMoney } from '../../domain/finance'
 import { addDays, ageOn, fmtDate, seasonLabel } from '../../domain/dates'
 import { boardMood, CATEGORY_W, generateObjectives, updateBoardConfidence } from '../../engine/world/board'
@@ -14,6 +13,7 @@ import { wageBill } from '../../engine/world/userActions'
 import { worldRng } from '../../engine/world/advance'
 import { compLogoKey, leaguePos, userClub } from '../selectors'
 import { ordinal } from './Menu'
+import { ImageCheck } from '../components/ImageCheck'
 import { sortTable } from '../../engine/competitions/tables'
 
 const CAT_ICON: Record<ObjectiveCategory, string> = { 'Domestic Success': 'trophy', 'Continental Success': 'globe', Financial: 'money', 'Brand Exposure': 'star', 'Youth Development': 'youth' }
@@ -124,7 +124,7 @@ export function ManagerCareer() {
       <div className="pad stack">
         <div className="hero" style={{ padding: 16 }}>
           <div className="row" style={{ gap: 14, position: 'relative', zIndex: 1 }}>
-            <Portrait cfg={u.avatar} size={96} radius={18} />
+            <UserAvatar w={w} size={96} radius={18} />
             <div className="grow">
               <div className="h2">{u.firstName} {u.lastName}</div>
               <div className="small" style={{ opacity: 0.85, marginTop: 4 }}>{u.nationality} · {ageOn(u.dob, w.date)} yrs</div>
@@ -387,6 +387,7 @@ export function CareerSettingsScreen() {
           <Toggle label="Haptics" on={prefs.haptics} onChange={(v) => setPrefs({ haptics: v })} />
           <Toggle label="Reduce motion" on={prefs.reduceMotion} onChange={(v) => setPrefs({ reduceMotion: v })} />
         </div>
+        <ImageCheck />
         <div className="card pad-card small stack" style={{ gap: 6 }}>
           <div className="label">Career settings</div>
           <div className="row between"><span className="muted">Difficulty</span><b>{w.settings.difficulty}</b></div>

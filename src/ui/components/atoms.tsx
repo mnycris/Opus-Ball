@@ -1,25 +1,39 @@
 import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react'
 import type { Club, Player, Position, World } from '../../domain/types'
 import { GROUP_COLOR, POS_GROUP } from '../../domain/constants'
-import { badgeUrls, compLogoUrl, faceUrls, flagUrl, isFailed, markFailed, MONO_LOGOS } from '../../services/assets'
+import { badgeUrls, compLogoUrls, faceUrls, flagUrl, isFailed, managerWikiQuery, markFailed, playerWikiQuery, wikiPhoto, type WikiQuery } from '../../services/assets'
 import { Silhouette } from './Silhouette'
 import { Icon } from '../icons/Icon'
 import { ovrColor } from '../../domain/ratings'
 import { hashString } from '../../domain/rng'
 
-/** <img> that walks a list of sources and finally renders a fallback node. */
+/** <img> that walks a list of sources and finally renders a fallback node. Remote images never send a Referer. */
 export function ImgChain({ srcs, alt, style, className, fallback }: { srcs: string[]; alt: string; style?: CSSProperties; className?: string; fallback: ReactNode }) {
   const list = useMemo(() => srcs.filter((s) => !isFailed(s)), [srcs.join('|')])
   const [i, setI] = useState(0)
   useEffect(() => setI(0), [list.join('|')])
   if (i >= list.length) return <>{fallback}</>
   return (
-    <img src={list[i]} alt={alt} style={style} className={className} loading="lazy" decoding="async" draggable={false}
+    <img src={list[i]} alt={alt} style={style} className={className} loading="lazy" decoding="async" draggable={false} referrerPolicy="no-referrer"
       onError={() => { markFailed(list[i]); setI(i + 1) }} />
   )
 }
 
-export function Face({ p, size = 48, radius = 12, club, ring }: { p: Player | { id: number; regen?: boolean; faceSeed?: number; nation?: string; name?: string; jersey?: number }; size?: number; radius?: number; club?: Club; ring?: string }) {
+/** Resolve a verified Wikipedia photo once the synchronous sources are exhausted. */
+function useWiki(q: WikiQuery | undefined, enabled: boolean): string | null {
+  const [url, setUrl] = useState<string | null>(null)
+  useEffect(() => {
+    if (!q || !enabled) return
+    let alive = true
+    wikiPhoto(q).then((u) => { if (alive) setUrl(u) })
+    return () => { alive = false }
+  }, [q?.key, enabled])
+  return url
+}
+
+type FaceLike = Player | { id: number; regen?: boolean; faceSeed?: number; nation?: string; name?: string; jersey?: number; fullName?: string; dob?: string; ovr?: number; intlRep?: number }
+
+export function Face({ p, size = 48, radius = 12, club, ring }: { p: FaceLike; size?: number; radius?: number; club?: Club; ring?: string }) {
   const seed = (p as Player).faceSeed ?? hashString(String(p.id))
   const kit = club?.kit?.[0] || '#2a3346'
   const trim = club?.kit?.[1] || '#ffffff'
@@ -27,17 +41,45 @@ export function Face({ p, size = 48, radius = 12, club, ring }: { p: Player | { 
   const [i, setI] = useState(0)
   const [loaded, setLoaded] = useState(false)
   useEffect(() => { setI(0); setLoaded(false) }, [p.id])
-  const src = srcs[i]
+  const pl = p as Player
+  const notable = !!pl.fullName && !!pl.dob && !pl.regen && ((pl.intlRep || 0) >= 2 || (pl.ovr || 0) >= 74)
+  const wiki = useWiki(notable ? playerWikiQuery(pl) : undefined, notable && i >= srcs.length)
+  const src = i < srcs.length ? srcs[i] : wiki || undefined
   return (
-    <div className="face" style={{ width: size, height: size, borderRadius: radius, boxShadow: ring ? `0 0 0 2px ${ring}` : undefined, background: club ? `linear-gradient(180deg, ${club.theme}cc, #0a0e16)` : undefined }}>
-      {!loaded && <Silhouette size={size} kit={kit} trim={trim} number={(p as Player).jersey} seed={seed} />}
+    <div className="face" style={{ width: size, height: size, borderRadius: radius, boxShadow: ring ? `0 0 0 2px ${ring}` : undefined }}>
+      {!loaded && <Silhouette size={size} kit={kit} trim={trim} number={pl.jersey} seed={seed} />}
       {src && (
-        <img key={src} src={src} alt={(p as Player).name || ''} loading="lazy" decoding="async" draggable={false}
+        <img key={src} src={src} alt={pl.name || ''} loading="lazy" decoding="async" draggable={false} referrerPolicy="no-referrer"
+          className={src === wiki ? 'wiki' : undefined}
           style={{ position: loaded ? 'static' : 'absolute', inset: 0, opacity: loaded ? 1 : 0, transition: 'opacity .3s' }}
-          onLoad={() => setLoaded(true)} onError={() => { markFailed(src); setI(i + 1) }} />
+          onLoad={() => setLoaded(true)} onError={() => { markFailed(src); setLoaded(false); if (i < srcs.length) setI(i + 1) }} />
       )}
     </div>
   )
+}
+
+const MONO_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#84cc16']
+export function initials(name: string) {
+  const parts = name.replace(/^(Dr\.|Sir)\s+/, '').split(/\s+/).filter(Boolean)
+  return ((parts[0]?.[0] || '') + (parts.length > 1 ? parts[parts.length - 1][0] : '')).toUpperCase()
+}
+
+/** Person avatar: real photo when available, otherwise a clean monogram (staff, custom managers, agents). */
+export function Avatar({ name, photo, size = 40, radius, color }: { name: string; photo?: string | null; size?: number; radius?: number; color?: string }) {
+  const [ok, setOk] = useState(true)
+  const c = color || MONO_COLORS[hashString(name) % MONO_COLORS.length]
+  const r = radius ?? size / 2
+  return (
+    <div className="avatar" style={{ width: size, height: size, borderRadius: r, ['--av' as any]: c, fontSize: size * 0.38 }}>
+      {photo && ok ? <img src={photo} alt={name} referrerPolicy="no-referrer" loading="lazy" onError={() => setOk(false)} /> : <span>{initials(name)}</span>}
+    </div>
+  )
+}
+
+/** Real-world manager portrait (verified Wikipedia lead image), monogram while loading or when none exists. */
+export function ManagerAvatar({ name, size = 40, radius, real = true, color }: { name: string; size?: number; radius?: number; real?: boolean; color?: string }) {
+  const url = useWiki(real ? managerWikiQuery(name) : undefined, real)
+  return <Avatar name={name} photo={url} size={size} radius={radius} color={color} />
 }
 
 export function Crest({ club, size = 36 }: { club: { name: string; abbr: string; kit: [string, string]; theme: string }; size?: number }) {
@@ -49,7 +91,7 @@ export function Crest({ club, size = 36 }: { club: { name: string; abbr: string;
     <svg width={size} height={size} viewBox="0 0 40 44" style={{ display: 'block' }}>
       <path d="M20 1.5 37 6v14c0 11-7.5 18.5-17 22C10.5 38.5 3 31 3 20V6Z" fill={main} stroke={b} strokeWidth="2.2" />
       <path d="M20 1.5 37 6v14c0 11-7.5 18.5-17 22Z" fill="rgba(255,255,255,.1)" />
-      <text x="20" y="26" textAnchor="middle" fontFamily="Barlow Condensed" fontWeight="800" fontSize={club.abbr.length > 3 ? 10 : 12.5} fill={txt}>{club.abbr}</text>
+      <text x="20" y="26" textAnchor="middle" fontFamily="Inter Variable, Inter, sans-serif" fontWeight="800" fontSize={club.abbr.length > 3 ? 9 : 11} fill={txt}>{club.abbr}</text>
     </svg>
   )
 }
@@ -69,12 +111,11 @@ export function Flag({ w, nation, code, size = 18 }: { w?: World; nation?: strin
   return <img className="flag" src={url} alt={nation || code || ''} style={{ width: size * 1.33, height: size }} loading="lazy" />
 }
 
-/** Competition logo: real logo when licensed art exists, otherwise an Opus Ball competition emblem. */
-export function CompLogo({ k, size = 32, name, color, mono }: { k: string; size?: number; name?: string; color?: string; mono?: boolean }) {
-  const url = compLogoUrl(k)
-  if (url) {
-    const m = mono ?? MONO_LOGOS.has(k)
-    return <img src={url} alt={name || k} style={{ height: size, maxWidth: size * 1.9, objectFit: 'contain', filter: m ? 'brightness(0) invert(1)' : 'drop-shadow(0 1px 2px rgba(0,0,0,.5))', display: 'block' }} />
+/** Competition logo in its official colours; designed emblem when no licensed art exists. */
+export function CompLogo({ k, size = 32, name, color }: { k: string; size?: number; name?: string; color?: string; mono?: boolean }) {
+  const srcs = compLogoUrls(k)
+  if (srcs.length) {
+    return <ImgChain srcs={srcs} alt={name || k} className="comp-logo" style={{ height: size, maxWidth: size * 1.6, objectFit: 'contain', display: 'block' }} fallback={<CompEmblem k={k} size={size} name={name} color={color} />} />
   }
   return <CompEmblem k={k} size={size} name={name} color={color} />
 }
@@ -253,4 +294,10 @@ export function CountUp({ value, format = (v: number) => String(Math.round(v)), 
     return () => cancelAnimationFrame(raf)
   }, [value])
   return <>{format(shown)}</>
+}
+
+/** The career manager: real-world photo when playing as a real manager, monogram otherwise. */
+export function UserAvatar({ w, size = 48, radius }: { w: World; size?: number; radius?: number }) {
+  const u = w.user
+  return u.realManager ? <ManagerAvatar name={u.realManager} size={size} radius={radius} /> : <Avatar name={`${u.firstName} ${u.lastName}`} size={size} radius={radius} color={u.avatarColor} />
 }

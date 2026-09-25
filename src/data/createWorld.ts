@@ -11,7 +11,7 @@ import type { RawDb } from './rawTypes'
 
 export interface NewCareerOptions {
   clubId: number
-  manager: { firstName: string; lastName: string; nationality: string; dob: string; avatar: AvatarConfig }
+  manager: { firstName: string; lastName: string; nationality: string; dob: string; avatar: AvatarConfig; realManager?: string; avatarColor?: string; style?: string }
   settings: CareerSettings
   saveName?: string
   seed?: number
@@ -115,6 +115,7 @@ export function createWorld(raw: RawDb, opts: NewCareerOptions): World {
     user: {
       firstName: opts.manager.firstName, lastName: opts.manager.lastName, nationality: opts.manager.nationality, dob: opts.manager.dob,
       avatar: opts.manager.avatar, reputation: 45, clubId: opts.clubId, history: [], trophies: [], awards: [], jobOffers: [], rating: 50,
+      realManager: opts.manager.realManager, avatarColor: opts.manager.avatarColor, style: opts.manager.style,
     },
     userClubId: opts.clubId,
     nations: Object.fromEntries(raw.nations.map((n) => [n.name, n])),
@@ -200,6 +201,24 @@ export function createWorld(raw: RawDb, opts: NewCareerOptions): World {
   userClub.managerId = -1
   w.user.history.push({ clubId: userClub.id, from: start, p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, trophies: [] })
   w.user.reputation = clamp(Math.round(userClub.reputation * 0.55), 20, 70)
+  // playing as a real manager: they leave their current post (an AI appointment replaces them) and bring their standing
+  if (opts.manager.realManager) {
+    const real = Object.values(w.managers).find((m) => m.real && m.name === opts.manager.realManager)
+    if (real) {
+      w.user.reputation = clamp(Math.round(real.reputation * 0.9), 30, 95)
+      if (real.clubId && real.clubId !== userClub.id) {
+        const club = w.clubs[real.clubId]
+        const repl = genManager(w, rng, club.country in w.nations ? club.country : real.nationality, w.nextIds.manager++, club.id, club.reputation)
+        w.managers[repl.id] = repl
+        club.managerId = repl.id
+      }
+      real.clubId = 0
+      real.retired = true
+    }
+  }
+  if (opts.manager.style) {
+    for (const sh of userClub.sheets) sh.tactics = tacticsForManager(opts.manager.style, sh.formation)
+  }
   // user team sheets: First Team + saved alternatives
   const base = userClub.sheets[0]
   userClub.sheets = [

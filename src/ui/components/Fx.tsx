@@ -7,14 +7,8 @@ export type FxKind = 'floodlights' | 'beams' | 'tunnel' | 'pitch' | 'radar' | 'm
 export const Fx = memo(function Fx({ kind, intensity = 1 }: { kind: FxKind; intensity?: number }) {
   return (
     <div className={`fx fx-${kind}`} style={{ ['--fx-i' as any]: intensity }} aria-hidden>
-      {kind === 'floodlights' && (
-        <>
-          <span className="beam b1" /><span className="beam b2" /><span className="beam b3" /><span className="beam b4" />
-          <span className="flare f1" /><span className="flare f2" />
-          <div className="particles">{Array.from({ length: 18 }, (_, i) => <i key={i} style={{ left: `${(i * 37) % 100}%`, animationDelay: `${(i * 0.7) % 9}s`, animationDuration: `${9 + (i % 5) * 2}s` }} />)}</div>
-        </>
-      )}
-      {(kind === 'beams' || kind === 'spotlight') && (<><span className="beam b1" /><span className="beam b2" /><span className="beam b3" /></>)}
+      {(kind === 'floodlights' || kind === 'beams') && (<><span className="glow g1" /><span className="glow g2" /><span className="glow g3" /></>)}
+      {kind === 'spotlight' && <span className="spot" />}
       {kind === 'tunnel' && (
         <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice">
           <defs>
@@ -59,7 +53,6 @@ export const Fx = memo(function Fx({ kind, intensity = 1 }: { kind: FxKind; inte
           <div className="confetti">{Array.from({ length: 34 }, (_, i) => <i key={i} style={{ left: `${(i * 29) % 100}%`, animationDelay: `${(i * 0.23) % 3.2}s`, animationDuration: `${2.6 + (i % 5) * 0.5}s`, background: ['#F4C542', '#ffffff', 'var(--club)', '#FFE38A', 'var(--club2)'][i % 5], transform: `rotate(${i * 47}deg)` }} />)}</div>
         </>
       )}
-      <span className="sheen" />
     </div>
   )
 })

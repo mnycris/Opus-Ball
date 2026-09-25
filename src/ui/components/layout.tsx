@@ -5,15 +5,16 @@ import { haptic, useGame } from '../../store/game'
 import { unreadCount } from '../../engine/world/messages'
 
 /** Scrollable screen body with an optional sticky top bar. */
-export function Screen({ title, sub, children, back, right, noNav, noTop, className, onBack, scrollKey }: {
-  title?: ReactNode; sub?: ReactNode; children: ReactNode; back?: boolean; right?: ReactNode; noNav?: boolean; noTop?: boolean; className?: string; onBack?: () => void; scrollKey?: string
+export function Screen({ title, sub, children, back, right, noNav, noTop, className, onBack, scrollKey, footer }: {
+  title?: ReactNode; sub?: ReactNode; children: ReactNode; back?: boolean; right?: ReactNode; noNav?: boolean; noTop?: boolean; className?: string; onBack?: () => void; scrollKey?: string; footer?: ReactNode
 }) {
   const ref = useRef<HTMLDivElement>(null)
   useEffect(() => { if (scrollKey !== undefined) ref.current?.scrollTo({ top: 0 }) }, [scrollKey])
   return (
     <>
       {!noTop && <TopBar title={title} sub={sub} back={back} right={right} onBack={onBack} />}
-      <div ref={ref} className={`screen ${noNav ? 'no-nav' : ''} ${noTop ? 'no-top' : ''} ${className || ''}`}>{children}</div>
+      <div ref={ref} className={`screen ${noNav ? 'no-nav' : ''} ${noTop ? 'no-top' : ''} ${footer ? 'has-footer' : ''} ${className || ''}`}>{children}</div>
+      {footer}
     </>
   )
 }
