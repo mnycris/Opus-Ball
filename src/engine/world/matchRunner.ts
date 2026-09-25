@@ -156,6 +156,15 @@ export function applyMatchResult(w: World, f: Fixture, result: MatchResult, rng:
       injuries.push({ id: p.id, days: inj.totalDays, type: inj.type })
     }
   }
+  // --- rolling form / minutes (used by morale & AI)
+  const minsBy = new Map(result.players.map((x) => [x.id, x.mins]))
+  for (const [clubId, gf, ga] of [[f.home, hs, as], [f.away, as, hs]] as const) {
+    const club = w.clubs[clubId]
+    if (!club) continue
+    const r = gf > ga ? 'W' : gf < ga ? 'L' : 'D'
+    club.recent = [...(club.recent || []), r].slice(-6) as ('W' | 'D' | 'L')[]
+    for (const p of rosterOf(w, clubId)) p.recentMins = [...(p.recentMins || []), minsBy.get(p.id) || 0].slice(-6)
+  }
   // --- managers & user history
   for (const [clubId, gf, ga] of [[f.home, hs, as], [f.away, as, hs]] as const) {
     const club = w.clubs[clubId]

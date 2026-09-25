@@ -131,6 +131,7 @@ export interface Player {
   happinessFactors?: Record<string, number>
   lastMatchDate?: ISODate
   interestedClubs?: number[]
+  recentMins?: number[] // minutes in the club's last 6 matches
 }
 
 // ---------------------------------------------------------------- tactics
@@ -215,6 +216,7 @@ export interface Club {
   transferPolicy?: { lastActivity?: ISODate; needs?: string[] }
   trophies: { compKey: string; season: number }[]
   lastSeasonPos?: number
+  recent?: ('W' | 'D' | 'L')[]
 }
 
 export interface Manager {

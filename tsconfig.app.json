@@ -19,7 +19,7 @@
     /* Linting */
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "erasableSyntaxOnly": true,
+    "erasableSyntaxOnly": false,
     "strict": true,
     "resolveJsonModule": true,
     "noFallthroughCasesInSwitch": true

@@ -1,0 +1,51 @@
+// Headless career test: plays N seasons with auto-simulated user matches.
+import fs from 'node:fs'
+import { createWorld } from '../../src/data/createWorld'
+import type { RawDb } from '../../src/data/rawTypes'
+import { advance, afterMatch, careerIntro, worldRng } from '../../src/engine/world/advance'
+import { simulateFixture } from '../../src/engine/world/matchRunner'
+import { sortTable } from '../../src/engine/competitions/tables'
+
+const raw: RawDb = JSON.parse(fs.readFileSync('public/data/world.json', 'utf8'))
+const clubName = process.argv[2] || 'Arsenal FC'
+const seasons = Number(process.argv[3] || 1)
+const club = raw.clubs.find((c) => c.dbName === clubName)!.id
+const w = createWorld(raw, {
+  clubId: club,
+  manager: { firstName: 'Alex', lastName: 'Ferris', nationality: 'England', dob: '1984-03-02', avatar: { skin: 2, hair: 1, hairColor: 1, beard: 0, eyes: 0, brows: 0, glasses: 0, outfit: 'Suit', outfitColor: '#111', tie: true } },
+  settings: { difficulty: 'Professional', transferDifficulty: 'Normal', injuries: 'Normal', growth: 'Normal', sacking: true, aiTransfers: true, startingBudget: 'Default' },
+  seed: 42,
+})
+careerIntro(w)
+const t0 = Date.now()
+let stops: Record<string, number> = {}
+let matches = 0
+for (let s = 0; s < seasons; s++) {
+  const startSeason = w.season
+  let guard = 0
+  while (w.season === startSeason && guard++ < 2000) {
+    const r = advance(w, 400)
+    stops[r.stop] = (stops[r.stop] || 0) + 1
+    if (r.stop === 'match' && r.fixture) {
+      const res = simulateFixture(w, r.fixture)
+      afterMatch(w, r.fixture, res, worldRng(w))
+      matches++
+    }
+    if (r.stop === 'sacked') { console.log('SACKED on', w.date); break }
+    for (const m of w.inbox) m.read = true
+  }
+  const arch = w.archive[w.archive.length - 1]
+  console.log(`\n=== Season ${arch?.season} done at ${w.date} (${((Date.now() - t0) / 1000).toFixed(1)}s) user matches ${matches}`)
+  if (arch) {
+    const nm = (id: number) => w.clubs[id]?.name
+    for (const k of ['L13', 'L14', 'L53', 'L19', 'L31', 'L16', 'L10', 'L308']) console.log(`  ${k} champion: ${nm(arch.winners[k])}`)
+    for (const k of ['UCL', 'UEL', 'UECL', 'FACUP', 'EFLCUP', 'CDR', 'DFB', 'CI', 'CDF', 'COMMSHIELD']) console.log(`  ${k}: ${nm(arch.winners[k])}`)
+    console.log('  user finish', arch.userFinish, 'board', w.board.overall, 'awards', arch.awards.filter((a) => a.name.includes('Golden Boot')).map((a) => `${a.name}: ${w.players[a.playerId!]?.name ?? a.playerId} ${a.value}`).slice(0, 4).join(' | '))
+    const t = arch.tables['L13']
+    if (t) console.log('  PL top 6:', t.slice(0, 6).map((r) => `${nm(r.clubId)} ${r.pts}`).join(', '), '| bottom 3:', t.slice(-3).map((r) => nm(r.clubId)).join(', '))
+  }
+  console.log('  transfers this season:', w.transfers.history.filter((x) => x.season === (arch?.season ?? w.season) && x.type === 'transfer').length, 'news', w.news.length, 'inbox', w.inbox.length)
+}
+console.log('stops', stops, 'players', Object.keys(w.players).length)
+const json = JSON.stringify(w)
+console.log('save size', (json.length / 1e6).toFixed(1), 'MB')

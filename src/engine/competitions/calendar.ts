@@ -1,5 +1,5 @@
 import type { Fixture, ISODate, World } from '../../domain/types'
-import { addDays, diffDays, weekday } from '../../domain/dates'
+import { addDays, dayNum, diffDays, weekday } from '../../domain/dates'
 
 /**
  * Season date template. Anchored on the real 2026/27 calendar; later seasons are shifted by
@@ -96,11 +96,11 @@ export function inBreak(d: ISODate, breaks: { start: ISODate; end: ISODate }[]) 
 
 /** Index of dates each club already plays on, for conflict detection. */
 export class ClubDateIndex {
-  map = new Map<number, Set<ISODate>>()
+  map = new Map<number, Set<number>>()
   add(club: number, date: ISODate) {
     let s = this.map.get(club)
     if (!s) this.map.set(club, (s = new Set()))
-    s.add(date)
+    s.add(dayNum(date))
   }
   static from(fixtures: Iterable<Fixture>) {
     const idx = new ClubDateIndex()
@@ -110,7 +110,8 @@ export class ClubDateIndex {
   busy(club: number, date: ISODate, gap = 2): boolean {
     const s = this.map.get(club)
     if (!s) return false
-    for (let i = -gap; i <= gap; i++) if (s.has(addDays(date, i))) return true
+    const d = dayNum(date)
+    for (let i = -gap; i <= gap; i++) if (s.has(d + i)) return true
     return false
   }
 }

@@ -20,10 +20,14 @@ export function cmp(a: ISODate, b: ISODate) {
   return a < b ? -1 : a > b ? 1 : 0
 }
 export function ageOn(dob: ISODate, on: ISODate): number {
-  const b = toDate(dob), d = toDate(on)
-  let a = d.getUTCFullYear() - b.getUTCFullYear()
-  if (d.getUTCMonth() < b.getUTCMonth() || (d.getUTCMonth() === b.getUTCMonth() && d.getUTCDate() < b.getUTCDate())) a--
+  // string arithmetic: no Date allocation (hot path)
+  let a = +on.slice(0, 4) - +dob.slice(0, 4)
+  if (on.slice(5, 10) < dob.slice(5, 10)) a--
   return a
+}
+/** Days since epoch for an ISO date (fast, allocation-light). */
+export function dayNum(d: ISODate): number {
+  return Math.round(Date.UTC(+d.slice(0, 4), +d.slice(5, 7) - 1, +d.slice(8, 10)) / MS)
 }
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 const MONTHS_LONG = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']

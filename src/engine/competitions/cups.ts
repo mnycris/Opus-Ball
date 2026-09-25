@@ -250,8 +250,8 @@ export function drawCupRound(w: World, comp: Competition, idx: number, rng: Rng,
       round.fixtures.push(f.id)
     }
   }
-  if (games === 0) round.winners = []
   comp.status = 'active'
+  if (games === 0 && idx < comp.rounds.length - 1) drawCupRound(w, comp, idx + 1, rng, idxDates)
 }
 
 /** Winner of a tie (single or two-legged) once decided, otherwise undefined. */
