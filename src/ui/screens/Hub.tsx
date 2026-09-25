@@ -15,6 +15,7 @@ import { userFixtureOn } from '../../engine/world/advance'
 import { ordinal } from './Menu'
 import type { Fixture, World } from '../../domain/types'
 import { Portrait } from '../components/Portrait'
+import { Backdrop } from '../components/Backdrop'
 
 const WD = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
 
@@ -55,6 +56,7 @@ export function Hub() {
       right={<HubActions />}
     >
       <div className="pad stack stagger">
+        {w.flags.celebrate && <Celebration w={w} />}
         {next ? <NextMatchCard w={w} f={next} today={!!today} /> : <SeasonDoneCard w={w} />}
         <CalendarStrip w={w} />
 
@@ -134,6 +136,24 @@ export function Hub() {
       </div>
       <ContinueBar />
     </Screen>
+  )
+}
+
+function Celebration({ w }: { w: World }) {
+  const mutate = useGame((s) => s.mutate)
+  const c = w.competitions[w.flags.celebrate.compId]
+  if (!c) return null
+  return (
+    <div className="hero celebrate-card">
+      <Backdrop art="trophy" opacity={0.8} fade="full" />
+      <div style={{ position: 'relative', zIndex: 1, padding: 18 }} className="col center">
+        <CompLogo k={compLogoKey(c)} size={52} name={c.name} />
+        <div className="kicker gold" style={{ marginTop: 10 }}>Champions</div>
+        <div className="h1" style={{ textAlign: 'center', marginTop: 4 }}>{c.name}</div>
+        <div className="small" style={{ opacity: 0.85, marginTop: 6 }}>{w.clubs[w.userClubId].name} · {seasonLabel(c.season)}</div>
+        <button className="btn sm" style={{ marginTop: 12, background: 'rgba(0,0,0,.35)' }} onClick={() => mutate((w) => { w.flags.celebrate = undefined })}>Celebrate & continue</button>
+      </div>
+    </div>
   )
 }
 

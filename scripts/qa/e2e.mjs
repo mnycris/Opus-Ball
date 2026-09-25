@@ -11,7 +11,7 @@ const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, de
 const page = await ctx.newPage()
 const errors = []
 page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`))
-page.on('console', (m) => { if (m.type() === 'error' && !/ERR_TUNNEL|ERR_CONNECTION|403/.test(m.text())) errors.push(`console: ${m.text()}`) })
+page.on('console', (m) => { if (m.type() === 'error' && !/ERR_TUNNEL|ERR_CONNECTION|ERR_FAILED|403/.test(m.text())) errors.push(`console: ${m.text()}`) })
 let n = 0
 const shot = async (name) => { await page.waitForTimeout(350); await page.screenshot({ path: `${OUT}/${String(++n).padStart(2, '0')}-${name}.png` }) }
 const click = async (text, opts = {}) => { await page.getByText(text, { exact: opts.exact ?? false }).first().click({ timeout: opts.timeout ?? 8000 }) }

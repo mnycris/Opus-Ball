@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { Backdrop } from '../components/Backdrop'
 import { useGame, useWorld, haptic } from '../../store/game'
 import type { ContractOffer, Player, Position, SquadRole, TransferOffer, World } from '../../domain/types'
 import { Icon } from '../icons/Icon'
@@ -32,6 +33,7 @@ export function TransferHub() {
     <Screen title="Transfers" sub={windowLabel(w)} right={<HubActions />}>
       <div className="pad">
         <div className={`hero budget-hero ${deadline ? 'deadline' : ''}`}>
+          <Backdrop art="boardroom" opacity={0.32} fade="left" />
           <div style={{ position: 'relative', zIndex: 1, padding: 16 }}>
             {deadline && <div className="deadline-banner"><Icon name="deadline" size={16} /> DEADLINE DAY · window closes tonight</div>}
             <div className="row between" style={{ alignItems: 'flex-end' }}>
@@ -248,6 +250,10 @@ export function Scouting() {
   return (
     <Screen title="Scouting Network" sub="Global Transfer Network" back>
       <div className="pad stack">
+        <div className="art-banner">
+          <Backdrop art="scouting" opacity={0.7} fade="left" />
+          <div className="content"><div className="kicker">Global Transfer Network</div><div className="h2" style={{ marginTop: 6 }}>{w.scouts.length} scout{w.scouts.length === 1 ? '' : 's'} active</div><div className="small muted" style={{ marginTop: 4, maxWidth: 230 }}>{w.scouts.filter((s) => s.assignment).length} on assignment · {Object.keys(w.transfers.knowledge).length} players known</div></div>
+        </div>
         <div className="card pad-card small muted">Assign scouts to search a region for a type of player. Reports reveal attributes, PlayStyles and a narrowed potential range. Knowledge grows faster with experienced scouts; judgement improves how accurately they spot potential.</div>
         {w.scouts.map((s) => {
           const a = s.assignment
@@ -323,7 +329,7 @@ export function Negotiation({ params }: { params: { playerId: number; offerId?: 
   const [stage, setStage] = useState<'offer' | 'contract' | 'done'>(params.stage === 'contract' || free || offer?.status === 'Offer Accepted' ? 'contract' : 'offer')
   const ask = p && p.clubId ? askingPrice(w, p, club.id) : 0
   const [type, setType] = useState<TransferOffer['type']>(offer?.type || (p?.loanListed ? 'loan' : 'transfer'))
-  const [fee, setFee] = useState(() => offer?.counterFee || offer?.fee || roundValue(ask * 0.9))
+  const [fee, setFee] = useState(() => offer?.counterFee || offer?.fee || Math.min(club.finance.transferBudget, roundValue(ask * 0.9)))
   const [sellOn, setSellOn] = useState(0)
   const [swap, setSwap] = useState<number>()
   const [split, setSplit] = useState(60)
@@ -374,6 +380,7 @@ export function Negotiation({ params }: { params: { playerId: number; offerId?: 
     <Screen title="Negotiation Room" sub={seller ? `${seller.name}` : 'Free agent'} back onBack={close} noNav>
       <div className="pad stack fade-up">
         <div className="negotiation-top">
+          <Backdrop art="boardroom" opacity={0.5} fade="full" />
           <div className="col center" style={{ gap: 6 }}><Badge club={club} size={46} /><span className="tiny b">{club.short}</span></div>
           <div className="col center grow" style={{ gap: 6 }}>
             <Face p={p} size={80} radius={18} club={seller} />

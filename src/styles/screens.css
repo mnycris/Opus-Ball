@@ -116,7 +116,7 @@ button.card.cal-strip { display: grid; }
 .bubble.me { background: rgba(var(--club-rgb), 0.5); border: 1px solid rgba(var(--club-rgb), 0.9); border-bottom-right-radius: 4px; align-self: flex-end; margin-left: auto; }
 .btn.answer { height: auto; min-height: 50px; padding: 12px 14px; text-transform: none; font-family: var(--body); font-weight: 600; font-size: 14.5px; letter-spacing: 0; text-align: left; justify-content: flex-start; flex-direction: column; align-items: flex-start; gap: 3px; }
 .tone { font-family: var(--display); font-weight: 700; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--acc); }
-.press-stage { position: relative; display: flex; justify-content: center; padding: 14px 0 6px; background: radial-gradient(60% 80% at 50% 30%, rgba(var(--club-rgb), 0.35), transparent 70%); border-radius: 18px; }
+.press-stage { position: relative; overflow: hidden; min-height: 150px; align-items: flex-end; display: flex; justify-content: center; padding: 14px 0 6px; background: radial-gradient(60% 80% at 50% 30%, rgba(var(--club-rgb), 0.35), transparent 70%); border-radius: 18px; }
 .press-mics { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); padding: 5px 10px; border-radius: 10px; background: var(--s4); border: 1px solid var(--line2); }
 
 /* ---------- match centre ---------- */
@@ -235,7 +235,7 @@ button.card.cal-strip { display: grid; }
 .deadline-banner { display: inline-flex; align-items: center; gap: 6px; font-family: var(--display); font-weight: 800; letter-spacing: 0.1em; font-size: 13px; padding: 4px 10px; border-radius: 8px; background: rgba(0, 0, 0, 0.35); margin-bottom: 10px; animation: pulse 1.2s ease-in-out infinite; }
 .search-box { display: flex; align-items: center; gap: 8px; height: 46px; padding: 0 14px; border-radius: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--line2); }
 .search-box input { flex: 1; background: none; border: 0; outline: none; font-size: 16px; }
-.negotiation-top { display: flex; align-items: center; gap: 10px; padding: 14px; border-radius: 18px; background: radial-gradient(80% 100% at 50% 0%, rgba(var(--club-rgb), 0.4), transparent 70%), var(--s1); border: 1px solid var(--line); }
+.negotiation-top { position: relative; overflow: hidden; display: flex; align-items: center; gap: 10px; padding: 14px; border-radius: 18px; background: radial-gradient(80% 100% at 50% 0%, rgba(var(--club-rgb), 0.4), transparent 70%), var(--s1); border: 1px solid var(--line); }
 select.input { appearance: none; -webkit-appearance: none; background-image: linear-gradient(45deg, transparent 50%, #aab3c3 50%), linear-gradient(135deg, #aab3c3 50%, transparent 50%); background-position: calc(100% - 20px) 21px, calc(100% - 15px) 21px; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 36px; }
 select.input option { background: #151b27; }
 
@@ -249,3 +249,18 @@ select.input option { background: #151b27; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
+
+/* ---------- art backdrops ---------- */
+.backdrop { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+.backdrop img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.8s ease; display: block; }
+.backdrop::after { content: ''; position: absolute; inset: 0; }
+.backdrop.fade-bottom::after { background: linear-gradient(180deg, rgba(5, 7, 12, 0.15) 0%, rgba(5, 7, 12, 0.55) 55%, rgba(5, 7, 12, 0.95) 100%); }
+.backdrop.fade-left::after { background: linear-gradient(90deg, rgba(5, 7, 12, 0.9) 0%, rgba(5, 7, 12, 0.35) 70%, rgba(5, 7, 12, 0.2) 100%); }
+.backdrop.fade-full::after { background: rgba(5, 7, 12, 0.45); }
+.hero > .backdrop { border-radius: inherit; }
+.art-banner { position: relative; overflow: hidden; border-radius: var(--r-lg); border: 1px solid var(--line); min-height: 120px; background: linear-gradient(135deg, rgba(var(--club-rgb), 0.5), var(--s1)); }
+.art-banner > .content { position: relative; z-index: 1; padding: 16px; }
+
+.negotiation-top > *:not(.backdrop), .press-stage > *:not(.backdrop) { position: relative; z-index: 1; }
+.press-stage .press-mics { position: absolute; }
+.celebrate-card { background: radial-gradient(80% 90% at 50% 20%, rgba(244, 197, 66, 0.35), #0b0a05 80%); border-color: rgba(244, 197, 66, 0.5); }

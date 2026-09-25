@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Backdrop } from '../components/Backdrop'
 import { useGame, haptic } from '../../store/game'
 import { Icon } from '../icons/Icon'
 import { Badge, Empty } from '../components/atoms'
@@ -28,6 +29,7 @@ function Home({ onView }: { onView: (v: View) => void }) {
   return (
     <div className="screen no-nav no-top menu-screen">
       <div className="menu-bg" aria-hidden>
+        <Backdrop art="menu" opacity={0.62} position="center 70%" fade="full" />
         <div className="menu-lights" />
         <svg className="menu-pitch" viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice">
           <g fill="none" stroke="rgba(255,255,255,.07)" strokeWidth="2">

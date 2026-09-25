@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Backdrop } from '../components/Backdrop'
 import { useGame, useWorld, haptic } from '../../store/game'
 import type { Prospect, World } from '../../domain/types'
 import { Icon } from '../icons/Icon'
@@ -27,8 +28,9 @@ export function Academy() {
   return (
     <Screen title="Youth Academy" sub={`${club.short} Academy · ${squad.length}/15`} right={<HubActions />}>
       <div className="pad">
-        <div className="hero" style={{ padding: 16 }}>
-          <div className="row between" style={{ position: 'relative', zIndex: 1 }}>
+        <div className="hero" style={{ padding: 16, minHeight: 120 }}>
+          <Backdrop art="academy" opacity={0.6} fade="left" />
+          <div className="row between" style={{ position: 'relative', zIndex: 1, marginTop: 34 }}>
             <div><div className="label" style={{ color: 'rgba(255,255,255,.75)' }}>Academy rating</div><div style={{ marginTop: 6 }}><Stars n={club.youthRating / 2} size={16} /></div></div>
             <div style={{ textAlign: 'right' }}><div className="label" style={{ color: 'rgba(255,255,255,.75)' }}>Youth scouts</div><div className="display" style={{ fontSize: 26, marginTop: 4 }}>{w.youthScouts.length}/3</div></div>
           </div>

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Backdrop } from '../components/Backdrop'
 import { useGame, useWorld, haptic } from '../../store/game'
 import type { ObjectiveCategory, World } from '../../domain/types'
 import { Icon } from '../icons/Icon'
@@ -35,9 +36,10 @@ function Board({ w }: { w: World }) {
   const cats = Object.keys(CATEGORY_W) as ObjectiveCategory[]
   return (
     <div className="pad stack" style={{ marginTop: 12 }}>
-      <div className="card pad-card row" style={{ gap: 16 }}>
-        <Ring v={w.board.overall} size={78} stroke={7} />
-        <div className="grow">
+      <div className="art-banner row" style={{ gap: 16, padding: 16, display: 'flex' }}>
+        <Backdrop art="office" opacity={0.55} fade="left" />
+        <div style={{ position: 'relative', zIndex: 1 }}><Ring v={w.board.overall} size={78} stroke={7} /></div>
+        <div className="grow" style={{ position: 'relative', zIndex: 1 }}>
           <div className="label">Board confidence</div>
           <div className="h2" style={{ marginTop: 4 }}>{boardMood(w.board.overall)}</div>
           <div className="tiny dim" style={{ marginTop: 4 }}>{w.board.warnings ? `${w.board.warnings} warning${w.board.warnings > 1 ? 's' : ''} issued` : 'No warnings'} · reviewed weekly</div>
@@ -306,6 +308,7 @@ export function SeasonReview({ params }: { params: { season: number } }) {
     <Screen title="Season Review" sub={seasonLabel(a.season)} back onBack={close} noNav>
       <div className="pad stack fade-up">
         <div className="hero" style={{ padding: 18, textAlign: 'center' }}>
+          <Backdrop art="trophy" opacity={won.length ? 0.7 : 0.35} fade="full" />
           <div style={{ position: 'relative', zIndex: 1 }} className="col center">
             <Badge club={club} size={84} />
             <div className="h1" style={{ marginTop: 10 }}>{a.userFinish ? `${ordinal(a.userFinish)} place` : 'Season complete'}</div>

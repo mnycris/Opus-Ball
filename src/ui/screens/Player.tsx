@@ -77,6 +77,7 @@ export function PlayerProfile({ params }: { params: { id: number } }) {
       </div>
 
       <PlayerActions w={w} p={p} mine={mine} />
+      {mine && <Promises w={w} p={p} />}
 
       <div style={{ marginTop: 14 }}>
         <Tabs sticky items={[{ id: 'attributes', label: 'Attributes' }, { id: 'playstyles', label: 'PlayStyles' }, { id: 'stats', label: 'Stats' }, { id: 'career', label: 'Career' }, ...(mine ? [{ id: 'development' as Tab, label: 'Development' }] : [])]} value={tab} onChange={setTab} />
@@ -107,6 +108,24 @@ function ShortlistBtn({ w, p }: { w: World; p: Player }) {
     <button className="iconbtn" aria-label="Shortlist" onClick={() => { haptic(); mutate((w) => { w.transfers.shortlist = on ? w.transfers.shortlist.filter((x) => x !== p.id) : [...w.transfers.shortlist, p.id] }); useGame.getState().notify(on ? 'Removed from shortlist' : 'Added to shortlist', 'ok') }}>
       <Icon name="shortlist" size={20} color={on ? 'var(--gold)' : undefined} />
     </button>
+  )
+}
+
+function Promises({ w, p }: { w: World; p: Player }) {
+  const list = w.promises.filter((x) => x.playerId === p.id).slice(-4).reverse()
+  if (!list.length) return null
+  return (
+    <div className="pad" style={{ marginTop: 10 }}>
+      <div className="card list">
+        <div className="card-h"><span className="label">Promises</span></div>
+        {list.map((pr) => (
+          <div key={pr.id} className="li" style={{ minHeight: 50 }}>
+            <Icon name={pr.status === 'fulfilled' ? 'check' : pr.status === 'broken' ? 'close' : 'handshake'} size={18} color={pr.status === 'fulfilled' ? 'var(--pos)' : pr.status === 'broken' ? 'var(--neg)' : 'var(--warn)'} />
+            <div className="meta"><div className="t small">{pr.kind}</div><div className="s">{pr.status === 'active' ? `${pr.progress}/${pr.requirement} · deadline ${fmtDate(pr.deadline, 'dm')}` : `${pr.status === 'fulfilled' ? 'Kept' : 'Broken'} · made ${fmtDate(pr.made, 'dm')}`}</div></div>
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
 

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react'
+import { Backdrop } from '../components/Backdrop'
 import { useGame, useWorld, haptic } from '../../store/game'
 import type { Fixture, MatchEvent, MatchResult, Player, TeamMatchStats, TeamTactics, World } from '../../domain/types'
 import { Icon } from '../icons/Icon'
@@ -131,6 +132,7 @@ export function PreMatch() {
     <Screen title="Match Day" sub={`${comp?.name} · ${f.roundName}`} back onBack={close} noNav>
       <div className="pad">
         <div className="hero prematch-hero">
+          <Backdrop art="tunnel" opacity={0.42} fade="full" />
           <div style={{ position: 'relative', zIndex: 1, padding: 16 }}>
             <div className="row tight" style={{ justifyContent: 'center' }}>{comp && <CompLogo k={compLogoKey(comp)} size={28} name={comp.name} />}</div>
             <div className="row" style={{ marginTop: 12, alignItems: 'flex-start' }}>

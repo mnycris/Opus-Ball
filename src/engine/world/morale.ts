@@ -54,6 +54,8 @@ export function maybeConversations(w: World, rng: Rng) {
     const exp = ROLE_EXPECTED_SHARE[p.contract.role] || 0.4
     const age = ageOn(p.dob, w.date)
     const yl = yearsLeft(w, p)
+    // playing-time grievances need a meaningful sample of recent matches
+    const sample = (p.recentMins?.length || 0) >= 4
     let conv: Omit<Conversation, 'id' | 'opened'> | null = null
     if (p.morale < 22 && rng.next() < 0.3) {
       conv = {
@@ -65,7 +67,7 @@ export function maybeConversations(w: World, rng: Rng) {
           { id: 'refuse', text: 'You are under contract. You are going nowhere.', effect: 'refuse' },
         ],
       }
-    } else if (share < exp - 0.28 && p.morale < 55 && rng.next() < 0.35 && !p.injury) {
+    } else if (sample && share < exp - 0.28 && p.morale < 55 && rng.next() < 0.35 && !p.injury) {
       conv = {
         playerId: p.id, kind: 'Playing Time',
         prompt: `I came here to play football. I've barely featured recently and I expect to be playing more as a${/^[AEIOU]/.test(p.contract.role) ? 'n' : ''} ${p.contract.role.toLowerCase()} player.`,
@@ -86,7 +88,7 @@ export function maybeConversations(w: World, rng: Rng) {
           { id: 'later', text: "We'll discuss it when the time is right.", effect: 'later' },
         ],
       }
-    } else if (age <= 21 && p.pot - p.ovr >= 8 && share < 0.12 && rng.next() < 0.1) {
+    } else if (sample && age <= 21 && p.pot - p.ovr >= 8 && share < 0.12 && rng.next() < 0.1) {
       conv = {
         playerId: p.id, kind: 'Development',
         prompt: `I want to keep improving and I need minutes. Could I go out on loan to play regular first-team football?`,

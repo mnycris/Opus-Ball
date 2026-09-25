@@ -2,7 +2,8 @@ import { create } from 'zustand'
 import type { MatchResult, World } from '../domain/types'
 import type { RawDb } from '../data/rawTypes'
 import { createWorld, type NewCareerOptions } from '../data/createWorld'
-import { advance as advanceWorld, afterMatch, careerIntro, simulateDay, worldRng, type StopReason } from '../engine/world/advance'
+import { advance as advanceWorld, afterMatch, careerIntro, fixturesOn, simulateDay, userFixtureOn, worldRng, type StopReason } from '../engine/world/advance'
+import { simulateFixture } from '../engine/world/matchRunner'
 import { loadCareer as loadSave, saveCareer, listSaves, deleteSave, getKV, setKV, type SaveMeta } from '../services/saves'
 import { positionOf } from '../engine/competitions/tables'
 import type { MatchSim } from '../engine/match/engine'
@@ -201,6 +202,18 @@ export const useGame = create<GameState>((set, get) => ({
     try {
       // step day by day so the calendar animates and the UI stays responsive
       for (let i = 0; i < 400; i++) {
+        // busy match days: simulate the day's fixtures in batches so the UI keeps breathing
+        if (!userFixtureOn(w, w.date)) {
+          const todays = fixturesOn(w, w.date)
+          if (todays.length > 24) {
+            for (let k = 0; k < todays.length; k += 24) {
+              const rng = worldRng(w)
+              for (const f of todays.slice(k, k + 24)) if (!f.played) afterMatch(w, f, simulateFixture(w, f), rng)
+              w.rng = rng.state
+              await new Promise((res) => setTimeout(res, 0))
+            }
+          }
+        }
         const r = advanceWorld(w, 1)
         set({ v: get().v + 1, advanceLabel: w.date })
         stop = r.stop

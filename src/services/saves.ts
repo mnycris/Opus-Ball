@@ -1,4 +1,4 @@
-import { gunzipSync, gzipSync, strFromU8, strToU8 } from 'fflate'
+import { gunzip, gunzipSync, gzip, gzipSync, strFromU8, strToU8 } from 'fflate'
 import type { World } from '../domain/types'
 
 export interface SaveMeta {
@@ -51,8 +51,29 @@ export function deserialize(b: Uint8Array): World {
   return JSON.parse(strFromU8(gunzipSync(b)))
 }
 
+/** Compression runs off the main thread (fflate spawns a worker), so autosave doesn't stall the UI. */
+function serializeAsync(w: World): Promise<Uint8Array> {
+  const bytes = strToU8(JSON.stringify(w))
+  return new Promise((resolve, reject) => {
+    try {
+      gzip(bytes, { level: 4 }, (err, out) => (err ? reject(err) : resolve(out)))
+    } catch {
+      resolve(gzipSync(bytes, { level: 4 }))
+    }
+  })
+}
+function deserializeAsync(b: Uint8Array): Promise<World> {
+  return new Promise((resolve, reject) => {
+    try {
+      gunzip(b, (err, out) => (err ? reject(err) : resolve(JSON.parse(strFromU8(out)))))
+    } catch {
+      resolve(deserialize(b))
+    }
+  })
+}
+
 export async function saveCareer(w: World, meta: Omit<SaveMeta, 'size' | 'updated'>): Promise<SaveMeta> {
-  const bytes = serialize(w)
+  const bytes = await serializeAsync(w)
   const m: SaveMeta = { ...meta, size: bytes.byteLength, updated: Date.now() }
   await tx('data', 'readwrite', (s) => s.put(bytes, meta.id))
   await tx('meta', 'readwrite', (s) => s.put(m))
@@ -63,7 +84,7 @@ export async function saveCareer(w: World, meta: Omit<SaveMeta, 'size' | 'update
 export async function loadCareer(id: string): Promise<World | undefined> {
   const bytes = await tx<Uint8Array>('data', 'readonly', (s) => s.get(id))
   if (!bytes) return undefined
-  return deserialize(bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes as ArrayBuffer))
+  return deserializeAsync(bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes as ArrayBuffer))
 }
 
 export async function listSaves(): Promise<SaveMeta[]> {
