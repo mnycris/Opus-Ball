@@ -1,8 +1,8 @@
 import { create } from 'zustand'
-import type { World } from '../domain/types'
+import type { MatchResult, World } from '../domain/types'
 import type { RawDb } from '../data/rawTypes'
 import { createWorld, type NewCareerOptions } from '../data/createWorld'
-import { advance as advanceWorld, careerIntro, type StopReason } from '../engine/world/advance'
+import { advance as advanceWorld, afterMatch, careerIntro, simulateDay, worldRng, type StopReason } from '../engine/world/advance'
 import { loadCareer as loadSave, saveCareer, listSaves, deleteSave, getKV, setKV, type SaveMeta } from '../services/saves'
 import { positionOf } from '../engine/competitions/tables'
 import type { MatchSim } from '../engine/match/engine'
@@ -21,7 +21,8 @@ export interface LiveMatch {
   applied: boolean
 }
 
-export interface AppPrefs { haptics: boolean; matchSpeed: number; sound: boolean; reduceMotion: boolean; assistantSubs: boolean }
+export interface StopPrefs { offers: boolean; injuries: boolean; scouting: boolean; conversations: boolean; news: boolean }
+export interface AppPrefs { haptics: boolean; matchSpeed: number; sound: boolean; reduceMotion: boolean; assistantSubs: boolean; stopOn: StopPrefs }
 
 interface GameState {
   raw?: RawDb
@@ -56,7 +57,10 @@ interface GameState {
   open: (r: Route) => void
   close: () => void
   closeAll: () => void
-  advance: () => Promise<StopReason | undefined>
+  advance: (until?: string) => Promise<StopReason | undefined>
+  stopAdvance: () => void
+  stopRequested: boolean
+  finishUserMatch: (fixtureId: string, result: MatchResult) => void
   setLive: (l?: LiveMatch) => void
   notify: (text: string, kind?: 'ok' | 'err' | 'info') => void
   setPrefs: (p: Partial<AppPrefs>) => void
@@ -81,7 +85,8 @@ export const useGame = create<GameState>((set, get) => ({
   stacks: emptyStacks(),
   overlay: [],
   advancing: false,
-  prefs: { haptics: true, matchSpeed: 1, sound: false, reduceMotion: false, assistantSubs: false },
+  prefs: { haptics: true, matchSpeed: 1, sound: false, reduceMotion: false, assistantSubs: false, stopOn: { offers: true, injuries: true, scouting: false, conversations: true, news: false } },
+  stopRequested: false,
   saves: [],
 
   async loadDb() {
@@ -101,7 +106,7 @@ export const useGame = create<GameState>((set, get) => ({
   async refreshSaves() {
     try { set({ saves: await listSaves() }) } catch { set({ saves: [] }) }
     const p = await getKV<AppPrefs>('prefs').catch(() => undefined)
-    if (p) set({ prefs: { ...get().prefs, ...p } })
+    if (p) set({ prefs: { ...get().prefs, ...p, stopOn: { ...get().prefs.stopOn, ...(p.stopOn || {}) } } })
   },
 
   async startCareer(opts) {
@@ -185,30 +190,62 @@ export const useGame = create<GameState>((set, get) => ({
   close() { set({ overlay: get().overlay.slice(0, -1) }) },
   closeAll() { set({ overlay: [] }) },
 
-  async advance() {
+  async advance(until) {
     const w = get().world
     if (!w || get().advancing) return
-    set({ advancing: true })
+    set({ advancing: true, stopRequested: false })
     let stop: StopReason = 'limit'
     const started = Date.now()
+    const stopOn = get().prefs.stopOn
+    const seenInbox = new Set(w.inbox.map((m) => m.id))
     try {
       // step day by day so the calendar animates and the UI stays responsive
-      for (let i = 0; i < 120; i++) {
+      for (let i = 0; i < 400; i++) {
         const r = advanceWorld(w, 1)
         set({ v: get().v + 1, advanceLabel: w.date })
         stop = r.stop
         if (stop !== 'limit') break
-        await new Promise((res) => setTimeout(res, get().prefs.reduceMotion ? 0 : 90))
+        if (until && w.date >= until) { stop = 'none'; break }
+        if (!until && i >= 120) break
+        if (get().stopRequested) { stop = 'none'; break }
+        // user stop conditions on new inbox items
+        const fresh = w.inbox.filter((m) => !seenInbox.has(m.id))
+        fresh.forEach((m) => seenInbox.add(m.id))
+        const hit = fresh.find((m) =>
+          (stopOn.offers && m.category === 'Transfers') || (stopOn.injuries && m.category === 'Medical') ||
+          (stopOn.scouting && (m.category === 'Scouting' || m.category === 'Youth')) || (stopOn.conversations && m.category === 'Player'))
+        if (hit) { stop = 'inbox'; break }
+        await new Promise((res) => setTimeout(res, get().prefs.reduceMotion ? 0 : until ? 25 : 70))
       }
     } finally {
       w.meta.playTimeMin += Math.round((Date.now() - started) / 60000)
-      set({ advancing: false, lastStop: stop, v: get().v + 1 })
+      set({ advancing: false, lastStop: stop, v: get().v + 1, stopRequested: false })
     }
     if (stop === 'match') get().open({ name: 'prematch' })
     else if (stop === 'season-end') get().open({ name: 'seasonReview', params: { season: w.season - 1 } })
-    else if (stop === 'sacked') get().open({ name: 'jobs' })
+    else if (stop === 'sacked') get().open({ name: 'jobs', params: { sacked: true } })
+    else if (stop === 'deadline') get().notify('Transfer Deadline Day!', 'info')
+    else if (stop === 'window') get().notify('The transfer window is open', 'info')
+    else if (stop === 'inbox') get().notify('New message needs your attention', 'info')
     get().save(true)
     return stop
+  },
+
+  stopAdvance() { set({ stopRequested: true }) },
+
+  finishUserMatch(fixtureId, result) {
+    const w = get().world
+    if (!w) return
+    const f = w.fixtures[fixtureId]
+    if (!f || f.played) return
+    const rng = worldRng(w)
+    afterMatch(w, f, result, rng)
+    // play the rest of the day's fixtures so tables and other results are current
+    simulateDay(w, rng)
+    w.rng = rng.state
+    w.lastUserResult = f.id
+    set({ v: get().v + 1, live: undefined })
+    get().save(true)
   },
 
   setLive(l) { set({ live: l, v: get().v + 1 }) },
@@ -220,7 +257,7 @@ export const useGame = create<GameState>((set, get) => ({
   },
 
   setPrefs(p) {
-    set({ prefs: { ...get().prefs, ...p } })
+    set({ prefs: { ...get().prefs, ...p, stopOn: { ...get().prefs.stopOn, ...(p.stopOn || {}) } } })
     setKV('prefs', get().prefs).catch(() => {})
     const w = get().world
     if (w && p.assistantSubs !== undefined) w.flags.assistantSubs = p.assistantSubs

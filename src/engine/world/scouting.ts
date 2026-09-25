@@ -95,19 +95,41 @@ export function dailyScouting(w: World, rng: Rng) {
   }
 }
 
+const REGION_GROUPS: Record<string, string[]> = {
+  Scandinavia: ['Denmark', 'Norway', 'Sweden', 'Finland', 'Iceland'],
+  'Eastern Europe': ['Poland', 'Czechia', 'Slovakia', 'Hungary', 'Romania', 'Bulgaria', 'Serbia', 'Croatia', 'Ukraine', 'Russia', 'Slovenia', 'Bosnia and Herzegovina', 'Albania', 'North Macedonia', 'Montenegro', 'Kosovo', 'Georgia', 'Greece'],
+  Africa: ['Nigeria', 'Ghana', 'Senegal', 'Cameroon', "Côte d'Ivoire", 'Mali', 'Morocco', 'Algeria', 'Tunisia', 'Egypt', 'Congo DR', 'Guinea', 'Gambia', 'Burkina Faso', 'South Africa', 'Angola', 'Zambia', 'Cabo Verde', 'Gabon', 'Togo', 'Benin', 'Kenya'],
+  'South America': ['Brazil', 'Argentina', 'Uruguay', 'Colombia', 'Chile', 'Ecuador', 'Paraguay', 'Peru', 'Venezuela', 'Bolivia'],
+}
+const MAIN_REGIONS = new Set(['England', 'Spain', 'Germany', 'Italy', 'France', 'Portugal', 'Netherlands', 'Belgium', 'Brazil', 'Argentina', ...Object.values(REGION_GROUPS).flat()])
+
+export function inRegion(region: string, country: string, nation: string): boolean {
+  if (!region || region === 'Anywhere') return true
+  if (REGION_GROUPS[region]) return REGION_GROUPS[region].includes(country) || REGION_GROUPS[region].includes(nation)
+  if (region === 'Rest of World') return !MAIN_REGIONS.has(country) && !MAIN_REGIONS.has(nation)
+  return country === region || nation === region
+}
+
 function networkFind(w: World, s: Scout, rng: Rng): Player[] {
   const a = s.assignment!
   const pool = Object.values(w.players).filter((p) => {
     if (p.clubId === w.userClubId || p.academy) return false
     const club = w.clubs[p.clubId]
     const country = club?.country || p.nation
-    if (a.region && a.region !== 'Anywhere' && country !== a.region && p.nation !== a.region) return false
+    if (!inRegion(a.region || 'Anywhere', country, p.nation)) return false
     if (a.position && a.position !== 'Any' && !matchesPosition(p, a.position)) return false
     if (a.ageMax && ageOn(p.dob, w.date) > a.ageMax) return false
     return true
   })
   const n = 1 + Math.floor(rng.next() * (1 + s.experience * 0.6))
-  const scored = pool.map((p) => ({ p, s: p.pot * (0.6 + s.judgement * 0.08) + p.ovr * 0.4 + rng.next() * (12 - s.judgement * 2) - (w.transfers.knowledge[p.id] || 0) * 0.1 }))
+  const userAvg = w.clubs[w.userClubId]?.squadAvg || 70
+  const scored = pool.map((p) => {
+    let v = p.pot * (0.6 + s.judgement * 0.08) + p.ovr * 0.4
+    if (a.focus === 'High Potential') v += (p.pot - p.ovr) * 1.2
+    if (a.focus === 'Ready Now') v += p.ovr >= userAvg - 2 ? 12 : -8
+    if (a.focus === 'Bargain') v += (p.pot - p.value / 2e6) * 0.3 + (p.transferListed ? 8 : 0) + (p.contract.until <= w.season + 1 ? 6 : 0)
+    return { p, s: v + rng.next() * (12 - s.judgement * 2) - (w.transfers.knowledge[p.id] || 0) * 0.1 }
+  })
   scored.sort((x, y) => y.s - x.s)
   return scored.slice(0, n).map((x) => x.p)
 }

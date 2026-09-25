@@ -27,6 +27,9 @@ export function attendanceFor(w: World, f: Fixture): number {
   return Math.round(cap * fill)
 }
 
+/** How much sharper AI sides play against the user, per career difficulty. */
+export const DIFFICULTY_BOOST: Record<string, number> = { Beginner: 0.93, Amateur: 0.96, 'Semi-Pro': 0.985, Professional: 1, 'World Class': 1.015, Legendary: 1.03, Ultimate: 1.045 }
+
 export function matchContext(w: World, f: Fixture, commentary: boolean): MatchContext {
   const comp = w.competitions[f.compId]
   const knockout = !!f.tieId
@@ -49,6 +52,7 @@ export function matchContext(w: World, f: Fixture, commentary: boolean): MatchCo
     injuryRate: w.settings.injuries === 'Low' ? 0.55 : w.settings.injuries === 'High' ? 1.5 : 1,
     commentary,
     userSide: f.home === w.userClubId ? 0 : f.away === w.userClubId ? 1 : -1,
+    aiBoost: DIFFICULTY_BOOST[w.settings.difficulty] ?? 1,
   }
 }
 

@@ -40,6 +40,7 @@ export interface MatchContext {
   commentary: boolean
   userSide?: 0 | 1 | -1
   assistantSubs?: boolean
+  aiBoost?: number // difficulty multiplier applied to the side the user is facing
 }
 
 interface LP {
@@ -191,12 +192,14 @@ export class MatchSim {
   rebuild(s: Side) {
     let wA = 0, wC = 0, wD = 0, wT = 0, sA = 0, sC = 0, sD = 0, sT = 0, pace = 0, paceW = 0, aer = 0, aerW = 0, gk = 55, press = 0
     const on = s.onPitch
+    const us = this.ctx.userSide
+    const boost = us === 0 || us === 1 ? (s.idx === us ? 1 : this.ctx.aiBoost ?? 1) : 1
     for (const lp of on) {
       const key = POSKEY[lp.pos]
       const inv = INV[key]
       const rm = ROLE_MOD[lp.role] || [1, 1, 1, 1]
       const fm = FOCUS_MOD[lp.focus] || [1, 1, 1, 1]
-      const c = this.cond(lp)
+      const c = this.cond(lp) * boost
       const wa = inv[0] * rm[0] * fm[0], wc = inv[1] * rm[1] * fm[1], wd = inv[2] * rm[2] * fm[2], wt = inv[3] * rm[3] * fm[3]
       wA += wa; wC += wc; wD += wd; wT += wt
       sA += wa * lp.q.att * c; sC += wc * lp.q.cre * c; sD += wd * lp.q.def * c; sT += wt * lp.q.ctl * c

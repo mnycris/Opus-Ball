@@ -1,122 +1,83 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useEffect, type ComponentType } from 'react'
+import { useGame } from './store/game'
+import { applyTheme } from './ui/theme'
+import { BottomNav } from './ui/components/layout'
+import { Icon } from './ui/icons/Icon'
+import { MainMenu } from './ui/screens/Menu'
+import { ROUTES, TAB_ROOT } from './ui/routes'
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const world = useGame((s) => s.world)
+  const refreshSaves = useGame((s) => s.refreshSaves)
+  const loadDb = useGame((s) => s.loadDb)
+  const userClubId = world?.userClubId
+  const clubTheme = world ? world.clubs[world.userClubId]?.theme : undefined
+
+  useEffect(() => {
+    refreshSaves()
+    // warm the database in the background so New Career opens instantly
+    const t = window.setTimeout(() => loadDb(), 400)
+    return () => window.clearTimeout(t)
+  }, [])
+
+  useEffect(() => {
+    applyTheme(world && !world.flags.unemployed ? world.clubs[world.userClubId] : undefined)
+  }, [userClubId, clubTheme, world?.flags.unemployed])
+
+  // Android back button / browser back → in-app back
+  useEffect(() => {
+    const onPop = () => {
+      const s = useGame.getState()
+      if (s.world && (s.overlay.length || s.stacks[s.tab].length)) s.back()
+      history.pushState(null, '', location.href)
+    }
+    history.pushState(null, '', location.href)
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
+  }, [])
 
   return (
+    <div className="app">
+      {world ? <Career /> : <MainMenu />}
+      <div id="sheet-host" />
+      <Toast />
+    </div>
+  )
+}
+
+function Career() {
+  const tab = useGame((s) => s.tab)
+  const stacks = useGame((s) => s.stacks)
+  const overlay = useGame((s) => s.overlay)
+  useGame((s) => s.v)
+  const stack = stacks[tab]
+  const top = stack[stack.length - 1]
+  const Root = TAB_ROOT[tab]
+  const View: ComponentType<any> | undefined = top ? ROUTES[top.name] : undefined
+  const ov = overlay[overlay.length - 1]
+  const Ov = ov ? ROUTES[ov.name] : undefined
+  return (
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+      <div className="layer" key={`${tab}:${stack.length}:${top?.name ?? 'root'}`}>
+        {View ? <View params={top!.params} /> : <Root />}
+      </div>
+      <BottomNav />
+      {Ov && (
+        <div className="overlay overlay-in" key={`ov:${overlay.length}:${ov.name}`}>
+          <Ov params={ov.params} />
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+      )}
     </>
   )
 }
 
-export default App
+function Toast() {
+  const toast = useGame((s) => s.toast)
+  if (!toast) return null
+  return (
+    <div className="toast" key={toast.id} style={{ borderColor: toast.kind === 'err' ? 'rgba(255,77,94,.5)' : toast.kind === 'ok' ? 'rgba(43,240,143,.4)' : undefined }}>
+      <Icon name={toast.kind === 'err' ? 'warning' : toast.kind === 'ok' ? 'check' : 'info'} size={18} color={toast.kind === 'err' ? 'var(--neg)' : toast.kind === 'ok' ? 'var(--acc)' : 'var(--info)'} />
+      {toast.text}
+    </div>
+  )
+}

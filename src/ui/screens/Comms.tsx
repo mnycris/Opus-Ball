@@ -1,0 +1,288 @@
+import { useMemo, useState } from 'react'
+import { useGame, useWorld, haptic } from '../../store/game'
+import type { InboxMessage, NewsItem, World } from '../../domain/types'
+import { Icon } from '../icons/Icon'
+import { Badge, CompLogo, Empty, Face, Ovr, PosChip } from '../components/atoms'
+import { Chips, Screen, Stepper } from '../components/layout'
+import { fmtDate } from '../../domain/dates'
+import { fmtMoney, roundValue } from '../../domain/finance'
+import { runAction } from '../actions'
+import { respondConversation } from '../../engine/world/morale'
+import { applyPress, pressQuestions } from '../../engine/world/press'
+import { counterIncomingBid } from '../../engine/world/userActions'
+import { Portrait } from '../components/Portrait'
+import { staffNames } from '../../engine/world/messages'
+import { hashString } from '../../domain/rng'
+import { seededAvatar } from '../components/Portrait'
+import { askingPrice } from '../../engine/world/transfers'
+
+const CAT_ICON: Record<string, string> = {
+  Board: 'board', Transfers: 'transfers', Squad: 'squad', Scouting: 'scout', Youth: 'youth', Medical: 'injury', Competitions: 'trophy',
+  Player: 'chat', Assistant: 'manager', Media: 'news', Finance: 'money',
+}
+
+function MsgAvatar({ w, m, size = 42 }: { w: World; m: InboxMessage; size?: number }) {
+  const img = m.image
+  if (img?.kind === 'player' && w.players[img.id as number]) { const p = w.players[img.id as number]; return <Face p={p} size={size} radius={12} club={w.clubs[p.clubId]} /> }
+  if (img?.kind === 'club' && w.clubs[img.id as number]) return <div className="msg-av"><Badge club={w.clubs[img.id as number]} size={size - 10} /></div>
+  if (img?.kind === 'comp') return <div className="msg-av"><CompLogo k={String(img.id)} size={size - 14} /></div>
+  const staff = /Chairman|Director|Assistant|Medical|Youth|Scout/.test(m.fromRole)
+  if (staff) return <Portrait cfg={{ ...seededAvatar(hashString(m.from)), outfit: m.fromRole === 'Head of Medical' ? 'Tracksuit' : 'Suit', tie: m.fromRole === 'Chairman' }} size={size} radius={12} bg={['#27324a', '#0b0f17']} />
+  return <div className="msg-av"><Icon name={CAT_ICON[m.category] || 'inbox'} size={20} /></div>
+}
+
+export function Inbox() {
+  const w = useWorld()
+  const go = useGame((s) => s.go)
+  const mutate = useGame((s) => s.mutate)
+  const [cat, setCat] = useState<string>('All')
+  const cats = ['All', 'Unread', 'Transfers', 'Squad', 'Player', 'Board', 'Medical', 'Scouting', 'Youth', 'Competitions']
+  const list = w.inbox.filter((m) => cat === 'All' || (cat === 'Unread' ? !m.read : m.category === cat || (cat === 'Squad' && m.category === 'Assistant')))
+  const unread = w.inbox.filter((m) => !m.read).length
+  return (
+    <Screen title="Inbox" sub={`${unread} unread`} back right={unread ? <button className="btn xs" onClick={() => mutate((w) => w.inbox.forEach((m) => (m.read = true)))}>Mark all read</button> : undefined}>
+      <Chips items={cats.map((c) => ({ id: c, label: c }))} value={cat} onChange={setCat} />
+      {!list.length && <Empty icon="inbox" title="Nothing here" text="Messages from your staff, players, the board and other clubs appear here." />}
+      <div className="pad" style={{ marginTop: 10 }}>
+        <div className="card list">
+          {list.slice(0, 150).map((m) => (
+            <button key={m.id} className={`li tap msg-row ${m.read ? '' : 'unread'}`} style={{ width: '100%', textAlign: 'left' }} onClick={() => { mutate((w) => { const x = w.inbox.find((y) => y.id === m.id); if (x) x.read = true }, { save: false }); go({ name: 'message', params: { id: m.id } }) }}>
+              <MsgAvatar w={w} m={m} />
+              <div className="meta">
+                <div className="row between"><span className="tiny dim ellipsis">{m.from} · {m.fromRole}</span><span className="tiny dim" style={{ flex: 'none' }}>{fmtDate(m.date, 'dm')}</span></div>
+                <div className="t ellipsis" style={{ marginTop: 2 }}>{m.subject}</div>
+                <div className="s ellipsis">{m.body}</div>
+              </div>
+              {!m.read && <span className="status-dot" style={{ background: 'var(--acc)' }} />}
+              {m.actions.length > 0 && !m.resolved && m.read && <Icon name="forward" size={16} color="var(--t3)" />}
+            </button>
+          ))}
+        </div>
+      </div>
+    </Screen>
+  )
+}
+
+export function Message({ params }: { params: { id: string } }) {
+  const w = useWorld()
+  const back = useGame((s) => s.back)
+  const mutate = useGame((s) => s.mutate)
+  const m = w.inbox.find((x) => x.id === params.id)
+  if (!m) return <Screen title="Message" back><Empty icon="inbox" title="Message not found" /></Screen>
+  const expired = m.expires && w.date > m.expires
+  const player = m.playerId ? w.players[m.playerId] : undefined
+  return (
+    <Screen title={m.category} back right={<button className="iconbtn" aria-label="Delete" onClick={() => { mutate((w) => { w.inbox = w.inbox.filter((x) => x.id !== m.id) }); back() }}><Icon name="trash" size={19} /></button>}>
+      <div className="pad stack fade-up">
+        <div className="row" style={{ gap: 12 }}>
+          <MsgAvatar w={w} m={m} size={52} />
+          <div className="grow"><div className="b">{m.from}</div><div className="tiny dim">{m.fromRole} · {fmtDate(m.date, 'long')}</div></div>
+        </div>
+        <div className="h2" style={{ fontSize: 26 }}>{m.subject}</div>
+        <div className="msg-body">{m.body}</div>
+        {player && (
+          <button className="card tap row" style={{ padding: 12, gap: 12, textAlign: 'left' }} onClick={() => useGame.getState().go({ name: 'player', params: { id: player.id } })}>
+            <Face p={player} size={46} radius={12} club={w.clubs[player.clubId]} />
+            <div className="grow"><div className="b">{player.name}</div><div className="tiny dim">{w.clubs[player.clubId]?.name || 'Free agent'} · {fmtMoney(player.value)}</div></div>
+            <PosChip pos={player.positions[0]} /><Ovr v={player.ovr} size="sm" />
+          </button>
+        )}
+        {m.actions.length > 0 && (
+          <div className="stack" style={{ gap: 8, marginTop: 6 }}>
+            {m.resolved || expired ? <div className="tiny dim row tight"><Icon name="check" size={14} /> {expired && !m.resolved ? 'This request has expired.' : 'Actioned'}</div> : null}
+            {m.actions.map((a) => {
+              const decision = ['acceptBid', 'rejectBid', 'negotiateBid', 'acceptCounter'].includes(a.action)
+              const disabled = decision && (m.resolved || !!expired)
+              return <button key={a.label} className={`btn block ${a.primary ? 'club' : a.danger ? 'danger' : ''}`} disabled={disabled} onClick={() => { haptic('medium'); runAction(a, m.id) }}>{a.label}</button>
+            })}
+          </div>
+        )}
+      </div>
+    </Screen>
+  )
+}
+
+// ---------------------------------------------------------------- news
+const NEWS_FILTERS = ['All', 'My Club', 'Transfers', 'Rumours', 'Results', 'Injuries', 'Awards']
+export function News() {
+  const w = useWorld()
+  const [f, setF] = useState('All')
+  const list = useMemo(() => w.news.filter((n) =>
+    f === 'All' ? true : f === 'My Club' ? n.userRelated : f === 'Transfers' ? n.kind === 'transfer' || n.kind === 'contract' : f === 'Rumours' ? n.kind === 'rumour'
+      : f === 'Results' ? n.kind === 'result' || n.kind === 'title' || n.kind === 'relegation' : f === 'Injuries' ? n.kind === 'injury' : n.kind === 'award' || n.kind === 'record' || n.kind === 'milestone'), [w.news.length, f])
+  return (
+    <Screen title="News" back>
+      <Chips items={NEWS_FILTERS.map((c) => ({ id: c, label: c }))} value={f} onChange={setF} />
+      {!list.length && <Empty icon="news" title="No stories yet" />}
+      <div className="pad stack" style={{ marginTop: 10 }}>
+        {list.slice(0, 120).map((n, i) => <NewsCard key={n.id} w={w} n={n} lead={i === 0} />)}
+      </div>
+    </Screen>
+  )
+}
+
+const KIND_LABEL: Record<string, string> = { transfer: 'Transfer', rumour: 'Rumour', result: 'Result', injury: 'Injury', manager: 'Manager', record: 'Record', milestone: 'Milestone', youth: 'Youth', contract: 'Contract', title: 'Champions', relegation: 'Relegation', award: 'Award', board: 'Board', preview: 'Preview' }
+
+function NewsCard({ w, n, lead }: { w: World; n: NewsItem; lead?: boolean }) {
+  const go = useGame((s) => s.go)
+  const p = n.playerIds[0] ? w.players[n.playerIds[0]] : undefined
+  const c = n.clubIds[0] ? w.clubs[n.clubIds[0]] : undefined
+  const comp = n.compId ? w.competitions[n.compId] : undefined
+  return (
+    <button className={`card tap news-item ${lead ? 'lead' : ''}`} onClick={() => p ? go({ name: 'player', params: { id: p.id } }) : c ? go({ name: 'club', params: { id: c.id } }) : undefined}>
+      <div className="row" style={{ gap: 12, padding: 12, alignItems: 'flex-start' }}>
+        {p ? <Face p={p} size={lead ? 64 : 48} radius={12} club={w.clubs[p.clubId]} /> : c ? <div className="msg-av" style={{ width: lead ? 64 : 48, height: lead ? 64 : 48 }}><Badge club={c} size={lead ? 50 : 36} /></div> : comp ? <div className="msg-av"><CompLogo k={comp.logoKey || comp.key} size={30} /></div> : null}
+        <div className="grow" style={{ textAlign: 'left', minWidth: 0 }}>
+          <div className="row tight"><span className={`news-kind k-${n.kind}`}>{KIND_LABEL[n.kind] || n.kind}</span><span className="tiny dim">{fmtDate(n.date, 'dm')}</span></div>
+          <div className={lead ? 'h3' : 'b'} style={{ marginTop: 5, fontSize: lead ? 21 : 15, lineHeight: 1.12 }}>{n.headline}</div>
+          <div className="small muted" style={{ marginTop: 5 }}>{n.body}</div>
+        </div>
+      </div>
+    </button>
+  )
+}
+
+// ---------------------------------------------------------------- conversation
+export function ConversationScreen({ params }: { params: { id: string; msgId?: string } }) {
+  const w = useWorld()
+  const mutate = useGame((s) => s.mutate)
+  const back = useGame((s) => s.back)
+  const [reply, setReply] = useState<string>()
+  const c = w.conversations.find((x) => x.id === params.id)
+  if (!c) return <Screen title="Conversation" back><Empty icon="chat" title="Conversation not found" /></Screen>
+  const p = w.players[c.playerId]
+  const club = w.clubs[p?.clubId]
+  return (
+    <Screen title="Player Conversation" sub={c.kind} back>
+      <div className="pad stack fade-up">
+        <div className="row" style={{ gap: 12 }}>
+          {p && <Face p={p} size={64} radius={16} club={club} />}
+          <div className="grow"><div className="h3">{p?.name}</div><div className="tiny dim">{p?.contract.role} · Morale {Math.round(p?.morale || 0)}</div></div>
+        </div>
+        <div className="bubble them">{c.prompt}</div>
+        {c.resolved ? (
+          <>
+            <div className="bubble me">{c.options.find((o) => o.id === c.choice)?.text}</div>
+            {reply && <div className="bubble them">{reply}</div>}
+            <button className="btn block" onClick={back}>Done</button>
+          </>
+        ) : (
+          <div className="stack" style={{ gap: 8 }}>
+            <div className="label">Your response</div>
+            {c.options.map((o) => (
+              <button key={o.id} className="btn block answer" onClick={() => {
+                haptic('medium')
+                let r = ''
+                mutate((w) => {
+                  r = respondConversation(w, c.id, o.id)
+                  const m = w.inbox.find((x) => x.id === params.msgId || x.actions.some((a) => a.payload === c.id))
+                  if (m) { m.resolved = true; m.read = true }
+                })
+                setReply(r)
+                if (w.flags.openRenewal === c.playerId) {
+                  mutate((w) => { w.flags.openRenewal = undefined })
+                  useGame.getState().open({ name: 'renewal', params: { id: c.playerId } })
+                }
+              }}>{o.text}</button>
+            ))}
+          </div>
+        )}
+      </div>
+    </Screen>
+  )
+}
+
+// ---------------------------------------------------------------- press conference
+export function PressConference({ params }: { params: { kind: 'pre' | 'post'; fixtureId: string } }) {
+  const w = useWorld()
+  const mutate = useGame((s) => s.mutate)
+  const close = useGame((s) => s.close)
+  const qs = useMemo(() => pressQuestions(w, params.kind, params.fixtureId), [params.fixtureId, params.kind])
+  const [i, setI] = useState(0)
+  const [answers, setAnswers] = useState<Record<string, string>>({})
+  const [summary, setSummary] = useState<string[]>()
+  const q = qs[i]
+  return (
+    <Screen title="Press Conference" sub={params.kind === 'pre' ? 'Pre-match' : 'Post-match'} back onBack={close} noNav>
+      <div className="pad stack fade-up">
+        <div className="press-stage">
+          <Portrait cfg={w.user.avatar} size={86} radius={18} />
+          <div className="press-mics"><Icon name="chat" size={20} /></div>
+        </div>
+        {!summary && q && (
+          <>
+            <div className="row between"><span className="label">Question {i + 1} of {qs.length}</span><span className="tiny dim">{q.reporter} · {q.outlet}</span></div>
+            {q.playerId && w.players[q.playerId] && <div className="row tight"><Face p={w.players[q.playerId]} size={28} radius={8} club={w.clubs[w.userClubId]} /><span className="small b">{w.players[q.playerId].name}</span></div>}
+            <div className="bubble them" style={{ fontSize: 16 }}>{q.text}</div>
+            <div className="stack" style={{ gap: 8 }}>
+              {q.options.map((o) => (
+                <button key={o.id} className="btn block answer" onClick={() => {
+                  haptic()
+                  const next = { ...answers, [q.id]: o.id }
+                  setAnswers(next)
+                  if (i + 1 < qs.length) setI(i + 1)
+                  else { let out: string[] = []; mutate((w) => { out = applyPress(w, params.kind, params.fixtureId, qs, next) }); setSummary(out) }
+                }}>
+                  <span className="tone">{o.tone}</span>{o.text}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+        {!q && !summary && <Empty icon="chat" title="No questions today" />}
+        {summary && (
+          <div className="card pad-card stack" style={{ gap: 8 }}>
+            <div className="h3">Press conference over</div>
+            {summary.length ? summary.map((s) => <div key={s} className="row tight small"><Icon name="info" size={14} color="var(--info)" />{s}</div>) : <div className="muted small">Your comments were well received.</div>}
+            <button className="btn primary block" style={{ marginTop: 8 }} onClick={close}>Done</button>
+          </div>
+        )}
+      </div>
+    </Screen>
+  )
+}
+
+// ---------------------------------------------------------------- selling negotiation (user counters an AI bid)
+export function SellNegotiation({ params }: { params: { offerId: string; msgId?: string } }) {
+  const w = useWorld()
+  const mutate = useGame((s) => s.mutate)
+  const close = useGame((s) => s.close)
+  const o = w.transfers.offers[params.offerId]
+  const p = o ? w.players[o.playerId] : undefined
+  const [fee, setFee] = useState(() => o ? roundValue(Math.max(o.fee * 1.25, p ? askingPrice(w, p) : 0)) : 0)
+  const [log, setLog] = useState<string[]>([])
+  if (!o || !p) return <Screen title="Negotiation" back onBack={close} noNav><Empty icon="handshake" title="Offer no longer available" /></Screen>
+  const buyer = w.clubs[o.fromClubId]
+  const done = !['Offer Submitted', 'Counter Offer'].includes(o.status)
+  const step = fee >= 50e6 ? 1e6 : fee >= 10e6 ? 5e5 : fee >= 2e6 ? 1e5 : 25e3
+  return (
+    <Screen title="Negotiation" sub={`${buyer.name} for ${p.name}`} back onBack={close} noNav>
+      <div className="pad stack fade-up">
+        <div className="card pad-card row" style={{ gap: 12 }}>
+          <Face p={p} size={56} radius={14} club={w.clubs[p.clubId]} />
+          <div className="grow"><div className="b">{p.name}</div><div className="tiny dim">Value {fmtMoney(p.value)} · Contract to {p.contract.until + 1}</div></div>
+          <Badge club={buyer} size={42} />
+        </div>
+        <div className="card pad-card">
+          <div className="label">Their offer</div>
+          <div className="display" style={{ fontSize: 34, marginTop: 4 }}>{fmtMoney(o.fee)}</div>
+        </div>
+        {log.map((l, i) => <div key={i} className="bubble them">{l}</div>)}
+        {!done && (
+          <>
+            <div className="label">Your asking price</div>
+            <Stepper value={fee} min={Math.max(0, o.fee)} max={o.fee * 4 + 1e6} step={step} onChange={setFee} fmt={(v) => fmtMoney(v)} />
+            <button className="btn club block" onClick={() => { let r = { ok: false, text: '' }; mutate((w) => { r = counterIncomingBid(w, o.id, fee) }, { roster: true }); setLog([...log, r.text]); if (r.ok) useGame.getState().notify(r.text, 'ok') }}>Counter-offer</button>
+            <div className="row">
+              <button className="btn grow" onClick={() => { runAction({ label: '', action: 'acceptBid', payload: o.id }, params.msgId); close() }}>Accept {fmtMoney(o.fee, { short: true })}</button>
+              <button className="btn danger grow" onClick={() => { runAction({ label: '', action: 'rejectBid', payload: o.id }, params.msgId); close() }}>Reject</button>
+            </div>
+          </>
+        )}
+        {done && <button className="btn primary block" onClick={close}>Done</button>}
+      </div>
+    </Screen>
+  )
+}
+
+void staffNames

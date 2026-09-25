@@ -20,6 +20,7 @@ import { advancePlayoff, createPlayoffs, leagueFinished, seasonRollover } from '
 import { postNews, sendInbox, staffNames } from './messages'
 import { rollInjury } from './matchRunner'
 import { rosterOf } from './roster'
+import { processPendingDeals } from './userActions'
 
 export type StopReason = 'match' | 'inbox' | 'deadline' | 'season-end' | 'window' | 'sacked' | 'none' | 'limit'
 
@@ -201,6 +202,7 @@ function endOfDay(w: World, rng: Rng) {
   dailyYouth(w, rng)
   // transfers
   processOffers(w, rng)
+  processPendingDeals(w, rng)
   aiTransferDay(w, rng)
   // conversations & morale
   if (!w.flags.unemployed) maybeConversations(w, rng)
