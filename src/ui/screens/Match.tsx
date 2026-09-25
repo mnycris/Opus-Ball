@@ -643,7 +643,7 @@ function ManageSheet({ open, onClose, sim, side, w }: { open: boolean; onClose: 
                 {!waiting.includes(out) && <button className="btn xs" onClick={() => setOut(undefined)}>Change</button>}
               </div>
               <div className="card list">
-                {bench.map((id) => {
+                {[...bench].sort((a, b) => (outR ? posRating(w.players[b], outR.pos) - posRating(w.players[a], outR.pos) : 0)).map((id) => {
                   const p = w.players[id]
                   const fit = outR ? posRating(p, outR.pos) : p.ovr
                   return (

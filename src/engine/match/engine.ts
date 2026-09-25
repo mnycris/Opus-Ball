@@ -269,8 +269,9 @@ export class MatchSim {
     }
     this.rebuild(s)
     this.injuredWaiting = this.injuredWaiting.filter((x) => x.lp !== out)
+    const atBreak = this.phase === 'HT' || this.phase === 'ETHT'
     this.push({
-      min: this.displayMinute(), add: this.added || undefined, type: 'sub', side, player: inn.p.id, player2: out.p.id,
+      min: atBreak ? (this.phase === 'HT' ? 46 : 106) : this.displayMinute(), add: atBreak ? undefined : this.added || undefined, type: 'sub', side, player: inn.p.id, player2: out.p.id,
       text: line(this.rng, reason === 'injury' ? 'subInjury' : 'sub', { t: s.name, p: callName(inn.p.name), q: callName(out.p.name) }),
     })
     return true

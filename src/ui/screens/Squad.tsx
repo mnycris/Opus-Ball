@@ -13,7 +13,7 @@ import { wageBill, loanedOut } from '../../engine/world/userActions'
 import { yearsLeft } from '../../engine/world/transfers'
 import { fmtDate } from '../../domain/dates'
 
-type View = 'overview' | 'status' | 'stats' | 'contract'
+type View = 'overview' | 'status' | 'stats' | 'contract' | 'cards'
 type Sort = 'pos' | 'ovr' | 'age' | 'value' | 'pot'
 
 export function SquadHub() {
@@ -55,7 +55,7 @@ export function SquadHub() {
         </div>
       </div>
       <div className="pad" style={{ marginTop: 12 }}>
-        <Seg small items={[{ id: 'overview', label: 'Overview' }, { id: 'status', label: 'Status' }, { id: 'stats', label: 'Stats' }, { id: 'contract', label: 'Contract' }]} value={view} onChange={setView} />
+        <Seg small items={[{ id: 'cards', label: 'Cards' }, { id: 'overview', label: 'List' }, { id: 'status', label: 'Status' }, { id: 'stats', label: 'Stats' }, { id: 'contract', label: 'Deal' }]} value={view} onChange={setView} />
       </div>
       <div style={{ marginTop: 10 }} className="row between">
         <Chips items={[{ id: 'ALL', label: 'All' }, { id: 'GK', label: 'GK' }, { id: 'DEF', label: 'DEF' }, { id: 'MID', label: 'MID' }, { id: 'ATT', label: 'ATT' }]} value={grp} onChange={setGrp} />
@@ -65,12 +65,38 @@ export function SquadHub() {
         {(['pos', 'ovr', 'pot', 'age', 'value'] as Sort[]).map((s) => <button key={s} className={`chip ${sort === s ? 'on' : ''}`} style={{ height: 26 }} onClick={() => { haptic(); setSort(s) }}>{s === 'pos' ? 'Position' : s === 'ovr' ? 'OVR' : s === 'pot' ? 'POT' : s === 'age' ? 'Age' : 'Value'}</button>)}
       </div>
       <div className="pad" style={{ marginTop: 10 }}>
-        <div className="card list">
-          {list.map((p) => <SquadRow key={p.id} w={w} p={p} view={view} />)}
-        </div>
+        {view === 'cards' ? (
+          <div className="pcard-grid stagger">{list.map((p) => <PlayerCard key={p.id} w={w} p={p} />)}</div>
+        ) : (
+          <div className="card list">
+            {list.map((p) => <SquadRow key={p.id} w={w} p={p} view={view} />)}
+          </div>
+        )}
       </div>
       <LoanedOutSection w={w} />
     </Screen>
+  )
+}
+
+export function PlayerCard({ w, p }: { w: World; p: Player }) {
+  const go = useGame((s) => s.go)
+  const club = w.clubs[p.clubId]
+  const st = playerStatus(w, p)
+  const tier = p.ovr >= 85 ? 't-elite' : p.ovr >= 80 ? 't-gold' : p.ovr >= 70 ? 't-silver' : 't-bronze'
+  return (
+    <button className={`pcard ${tier}`} style={{ ['--pc' as any]: club?.theme || '#2a3346' }} onClick={() => { haptic(); go({ name: 'player', params: { id: p.id } }) }}>
+      <span className="pcard-shine" />
+      <div className="pcard-top">
+        <div className="col" style={{ alignItems: 'center' }}>
+          <span className="pcard-ovr">{p.ovr}</span>
+          <span className="pcard-pos">{p.positions[0]}</span>
+        </div>
+        {st.key !== 'ok' && <span className="pcard-status" style={{ background: st.color }}><Icon name={st.icon} size={10} color="#fff" /></span>}
+      </div>
+      <div className="pcard-face"><Face p={p} size={66} radius={10} club={club} /></div>
+      <div className="pcard-name ellipsis">{p.name}</div>
+      <div className="pcard-meta"><span>{ageOf(w, p)}</span><span className="dot-sep" /><span>POT {p.pot}</span></div>
+    </button>
   )
 }
 
