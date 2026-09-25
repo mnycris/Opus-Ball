@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { Backdrop } from '../components/Backdrop'
+import { Fx } from '../components/Fx'
 import { useGame, useWorld, haptic } from '../../store/game'
 import type { Prospect, World } from '../../domain/types'
 import { Icon } from '../icons/Icon'
 import { Empty, Face, Flag, Ovr, PosChip, Stars, StatRow } from '../components/atoms'
 import { Confirm, HubActions, Screen, Seg, Sheet, Tabs } from '../components/layout'
 import { Portrait, seededAvatar } from '../components/Portrait'
+import { Silhouette } from '../components/Silhouette'
 import { fmtMoney } from '../../domain/finance'
 import { fmtDate } from '../../domain/dates'
 import { academyOf } from '../../engine/world/roster'
@@ -29,7 +30,7 @@ export function Academy() {
     <Screen title="Youth Academy" sub={`${club.short} Academy · ${squad.length}/15`} right={<HubActions />}>
       <div className="pad">
         <div className="hero" style={{ padding: 16, minHeight: 120 }}>
-          <Backdrop art="academy" opacity={0.6} fade="left" />
+          <Fx kind="pitch" />
           <div className="row between" style={{ position: 'relative', zIndex: 1, marginTop: 34 }}>
             <div><div className="label" style={{ color: 'rgba(255,255,255,.75)' }}>Academy rating</div><div style={{ marginTop: 6 }}><Stars n={club.youthRating / 2} size={16} /></div></div>
             <div style={{ textAlign: 'right' }}><div className="label" style={{ color: 'rgba(255,255,255,.75)' }}>Youth scouts</div><div className="display" style={{ fontSize: 26, marginTop: 4 }}>{w.youthScouts.length}/3</div></div>
@@ -87,7 +88,7 @@ function Prospects({ w, list }: { w: World; list: Prospect[] }) {
       <div className="card list">
         {[...list].sort((a, b) => b.potRange[1] - a.potRange[1]).map((p) => (
           <button key={p.id} className="li tap" style={{ width: '100%', textAlign: 'left' }} onClick={() => setSel(p)}>
-            <Portrait cfg={seededAvatar(p.faceSeed, p.nation)} size={42} radius={10} kit={userClub(w).kit[0]} />
+            <div className="face" style={{ width: 42, height: 42, borderRadius: 10 }}><Silhouette size={42} kit={userClub(w).kit[0]} trim={userClub(w).kit[1]} seed={p.faceSeed} /></div>
             <div className="meta"><div className="t small ellipsis">{p.name}</div><div className="s row tight"><Flag w={w} nation={p.nation} size={10} />{p.age} yrs · {p.playerType} · found {fmtDate(p.found, 'dm')}</div></div>
             <PosChip pos={p.positions[0]} />
             <div className="col" style={{ alignItems: 'center' }}><Ovr v={`${p.ovrRange[0]}-${p.ovrRange[1]}`} size="sm" style={{ fontSize: 13 }} /><span className="tiny gold num">{p.potRange[0]}-{p.potRange[1]}</span></div>
@@ -98,7 +99,7 @@ function Prospects({ w, list }: { w: World; list: Prospect[] }) {
         {sel && (
           <div className="stack" style={{ gap: 12 }}>
             <div className="row" style={{ gap: 12 }}>
-              <Portrait cfg={seededAvatar(sel.faceSeed, sel.nation)} size={72} radius={16} kit={userClub(w).kit[0]} />
+              <div className="face" style={{ width: 72, height: 72, borderRadius: 16 }}><Silhouette size={72} kit={userClub(w).kit[0]} trim={userClub(w).kit[1]} seed={sel.faceSeed} /></div>
               <div className="grow"><div className="b">{sel.fullName}</div><div className="tiny dim row tight"><Flag w={w} nation={sel.nation} size={11} />{sel.nation} · {sel.age} · {sel.height} cm · {sel.foot === 'L' ? 'Left' : 'Right'} foot</div><div className="row tight" style={{ marginTop: 6 }}><PosChip pos={sel.positions[0]} /><span className="small">OVR <b>{sel.ovrRange[0]}–{sel.ovrRange[1]}</b></span><span className="small gold">POT <b>{sel.potRange[0]}–{sel.potRange[1]}</b></span></div></div>
             </div>
             <div className="grid2">

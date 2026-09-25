@@ -44,18 +44,23 @@ function CompCard({ w, c }: { w: World; c: Competition }) {
   const go = useGame((s) => s.go)
   const me = w.userClubId
   let status = ''
-  if (c.format === 'league' || (c.format === 'uefa' && c.table)) {
-    const t = sortTable(w, c)
-    const pos = t.findIndex((r) => r.clubId === me) + 1
-    const row = t[pos - 1]
-    status = pos ? `${ordinal(pos)} · ${row.pts - (row.ded || 0)} pts · ${row.p} played` : ''
+  const myRow = c.table?.find((r) => r.clubId === me)
+  if ((c.format === 'league' || (c.format === 'uefa' && c.table)) && myRow) {
+    if (!myRow.p) status = c.format === 'uefa' ? 'League phase · 8 matches' : `${c.clubs.length} clubs · season starts ${fmtDate((fixturesOf(w, me).find((f) => f.compId === c.id)?.date) || w.date, 'dm')}`
+    else {
+      const t = sortTable(w, c)
+      const pos = t.findIndex((r) => r.clubId === me) + 1
+      status = `${ordinal(pos)} · ${myRow.pts - (myRow.ded || 0)} pts · ${myRow.p} played`
+    }
   }
   if (c.format !== 'league') {
-    const active = [...c.rounds].reverse().find((r) => r.drawn && r.fixtures.some((id) => { const f = w.fixtures[id]; return f.home === me || f.away === me }))
-    const out = c.rounds.some((r) => r.winners && r.pool?.includes(me) && !r.winners.includes(me)) || (active && active.winners && !active.winners.includes(me) && active.fixtures.every((id) => w.fixtures[id].played))
+    const mine = (id: string) => { const f = w.fixtures[id]; return f && (f.home === me || f.away === me) }
+    const active = [...c.rounds].reverse().find((r) => r.drawn && r.fixtures.some(mine))
+    const roundDone = (r: typeof c.rounds[number]) => r.fixtures.filter(mine).every((id) => w.fixtures[id].played)
+    const out = c.rounds.some((r) => r.drawn && r.fixtures.some(mine) && roundDone(r) && r.winners && r.winners.length > 0 && !r.winners.includes(me))
     if (c.winner === me) status = 'Winners!'
     else if (out) status = `Eliminated${active ? ` · ${active.name}` : ''}`
-    else if (active) status = `${active.name}${c.format === 'uefa' && c.table && !status ? '' : ''}`
+    else if (active && !(c.format === 'uefa' && !myRow?.p && active === c.rounds[0])) status = active.fixtures.filter(mine).every((id) => w.fixtures[id].played) ? `${active.name} · through` : active.name
     else if (!status) status = c.rounds[0] ? `${c.rounds[0].name} · ${fmtDate(c.rounds[0].date, 'dm')}` : 'Upcoming'
   }
   const next = fixturesOf(w, me).find((f) => !f.played && f.compId === c.id)

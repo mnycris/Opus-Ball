@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from
 import type { Club, Player, Position, World } from '../../domain/types'
 import { GROUP_COLOR, POS_GROUP } from '../../domain/constants'
 import { badgeUrls, compLogoUrl, faceUrls, flagUrl, isFailed, markFailed, MONO_LOGOS } from '../../services/assets'
-import { Portrait, seededAvatar } from './Portrait'
+import { Silhouette } from './Silhouette'
 import { Icon } from '../icons/Icon'
 import { ovrColor } from '../../domain/ratings'
 import { hashString } from '../../domain/rng'
@@ -21,12 +21,21 @@ export function ImgChain({ srcs, alt, style, className, fallback }: { srcs: stri
 
 export function Face({ p, size = 48, radius = 12, club, ring }: { p: Player | { id: number; regen?: boolean; faceSeed?: number; nation?: string; name?: string; jersey?: number }; size?: number; radius?: number; club?: Club; ring?: string }) {
   const seed = (p as Player).faceSeed ?? hashString(String(p.id))
-  const cfg = useMemo(() => seededAvatar(seed, (p as Player).nation), [seed, (p as Player).nation])
-  const bg: [string, string] | undefined = club ? [club.theme, '#0a0e16'] : undefined
-  const portrait = <Portrait cfg={cfg} size={size} radius={radius} bg={bg} kit={club?.kit?.[0]} />
+  const kit = club?.kit?.[0] || '#2a3346'
+  const trim = club?.kit?.[1] || '#ffffff'
+  const srcs = useMemo(() => faceUrls(p as Player).filter((u) => !isFailed(u)), [p.id])
+  const [i, setI] = useState(0)
+  const [loaded, setLoaded] = useState(false)
+  useEffect(() => { setI(0); setLoaded(false) }, [p.id])
+  const src = srcs[i]
   return (
-    <div className="face" style={{ width: size, height: size, borderRadius: radius, boxShadow: ring ? `0 0 0 2px ${ring}` : undefined, background: club ? `linear-gradient(180deg, ${club.theme}, #0a0e16)` : undefined }}>
-      <ImgChain srcs={faceUrls(p as Player)} alt={(p as Player).name || ''} fallback={portrait} />
+    <div className="face" style={{ width: size, height: size, borderRadius: radius, boxShadow: ring ? `0 0 0 2px ${ring}` : undefined, background: club ? `linear-gradient(180deg, ${club.theme}cc, #0a0e16)` : undefined }}>
+      {!loaded && <Silhouette size={size} kit={kit} trim={trim} number={(p as Player).jersey} seed={seed} />}
+      {src && (
+        <img key={src} src={src} alt={(p as Player).name || ''} loading="lazy" decoding="async" draggable={false}
+          style={{ position: loaded ? 'static' : 'absolute', inset: 0, opacity: loaded ? 1 : 0, transition: 'opacity .3s' }}
+          onLoad={() => setLoaded(true)} onError={() => { markFailed(src); setI(i + 1) }} />
+      )}
     </div>
   )
 }

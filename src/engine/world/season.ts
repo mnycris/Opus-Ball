@@ -1,4 +1,5 @@
-import type { Competition, Player, SeasonArchive, World } from '../../domain/types'
+import type { Competition, Fixture, Player, SeasonArchive, World } from '../../domain/types'
+import { createSim } from './matchRunner'
 import { Rng, clamp } from '../../domain/rng'
 import { addDays, ageOn, weekday } from '../../domain/dates'
 import { clubBudget, dynamicValue, roundValue } from '../../domain/finance'
@@ -153,7 +154,7 @@ export function seasonRollover(w: World, rng: Rng): SeasonArchive {
     })
   }
   // ---- promotion / relegation
-  movePromotions(w, archive)
+  movePromotions(w, archive, rng)
   // ---- board review
   finaliseObjectives(w)
   updateBoardConfidence(w)
@@ -260,7 +261,7 @@ function rosterAcademy(w: World) {
   return Object.values(w.players).filter((p) => p.academy && p.clubId === w.userClubId)
 }
 
-function movePromotions(w: World, archive: SeasonArchive) {
+function movePromotions(w: World, archive: SeasonArchive, rng: Rng) {
   // group leagues by country ordered by level
   const byCountry: Record<string, number[]> = {}
   for (const lg of Object.values(w.leagues)) (byCountry[lg.country] ||= []).push(lg.id)
@@ -282,8 +283,7 @@ function movePromotions(w: World, archive: SeasonArchive) {
         const cand = upT[up.releplayoff - 1]
         const challenger = down.promoplayoff ? dnT[down.promoplayoff - 1] : undefined
         if (challenger && !promo.includes(challenger)) {
-          const a = w.clubs[cand], b = w.clubs[challenger]
-          if (b.squadAvg + 1.5 > a.squadAvg && Math.random() < 0.35) { rele.push(cand); promo.push(challenger) }
+          if (relegationPlayoff(w, up.id, cand, challenger, archive.season, rng) === challenger) { rele.push(cand); promo.push(challenger) }
         }
       }
       const n = Math.min(rele.length, promo.length)
@@ -294,6 +294,34 @@ function movePromotions(w: World, archive: SeasonArchive) {
       for (const c of R) postNews(w, { headline: `${w.clubs[c].short} relegated from the ${up.short}`, body: `${w.clubs[c].name} drop into the ${down.name}.`, kind: 'relegation', playerIds: [], clubIds: [c], importance: c === w.userClubId ? 5 : 2, userRelated: c === w.userClubId })
     }
   }
+}
+
+/** Two-legged relegation play-off played with the match engine (lower-tier side at home first). */
+function relegationPlayoff(w: World, upId: number, top: number, low: number, season: number, rng: Rng): number {
+  const base = (leg: 1 | 2, home: number, away: number): Fixture => ({
+    id: `RPO${upId}-${season}-${leg}`, compId: '', roundName: `Relegation play-off · leg ${leg}`, date: `${season + 1}-05-${leg === 1 ? '28' : '31'}`,
+    time: '20:30', home, away, played: false, leg, tieId: `RPO${upId}-${season}`,
+  })
+  const f1 = base(1, low, top)
+  const s1 = createSim(w, f1, false)
+  s1.ctx.knockout = false
+  const r1 = s1.runToEnd()
+  const f2 = base(2, top, low)
+  const s2 = createSim(w, f2, false)
+  s2.ctx.knockout = true
+  s2.ctx.extraTime = true
+  s2.ctx.aggregate = [r1.score[1], r1.score[0]]
+  const r2 = s2.runToEnd()
+  const aggTop = r1.score[1] + r2.score[0], aggLow = r1.score[0] + r2.score[1]
+  const winner = r2.pens ? (r2.pens[0] > r2.pens[1] ? top : low) : aggTop >= aggLow ? top : low
+  const lg = w.leagues[upId]
+  postNews(w, {
+    headline: winner === low ? `${w.clubs[low].short} win promotion via the play-off` : `${w.clubs[top].short} survive the relegation play-off`,
+    body: `${w.clubs[low].name} ${r1.score[0]}-${r1.score[1]} ${w.clubs[top].name}, then ${w.clubs[top].name} ${r2.score[0]}-${r2.score[1]} ${w.clubs[low].name}${r2.pens ? ` (${r2.pens[0]}-${r2.pens[1]} pens)` : ''}. Aggregate ${aggTop}-${aggLow}. ${w.clubs[winner].name} will play in the ${lg?.name} next season.`,
+    kind: winner === low ? 'title' : 'result', playerIds: [], clubIds: [top, low], importance: top === w.userClubId || low === w.userClubId ? 5 : 3, userRelated: top === w.userClubId || low === w.userClubId,
+  })
+  void rng
+  return winner
 }
 
 function moveClub(w: World, clubId: number, from: number, to: number) {

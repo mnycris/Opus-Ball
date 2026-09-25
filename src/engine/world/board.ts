@@ -91,6 +91,8 @@ export function evaluateObjective(w: World, o: Objective): number {
       const won = comp.winner === club.id
       if (won) return 1
       void reached
+      const winRequired = o.target >= comp.rounds.length - 1
+      if (winRequired) return comp.status === 'finished' ? clamp(last / (o.target + 1), 0, 0.9) : clamp((last + 1) / (o.target + 2), 0, 0.95)
       return clamp((last + 1) / (o.target + 1), 0, 1)
     }
     case 'uefaRound': {
@@ -110,14 +112,34 @@ export function evaluateObjective(w: World, o: Objective): number {
     case 'balance': return clamp(club.finance.balance / Math.max(1, o.target), 0, 1)
     case 'marquee': return w.transfers.history.some((t) => t.to === club.id && t.season === w.season && (w.players[t.playerId]?.ovr || 0) >= o.target) ? 1 : 0
     case 'leagueGoals': return comp ? clamp((comp.table?.find((r) => r.clubId === club.id)?.gf || 0) / o.target, 0, 1) : 0
-    case 'attendance': return 0.85 + (club.prestige.domestic >= 6 ? 0.15 : 0.05)
+    case 'attendance': {
+      // real average home attendance against stadium capacity
+      let sum = 0, n = 0
+      for (const f of Object.values(w.fixtures)) {
+        if (!f.played || !f.result || f.home !== club.id || f.neutral || w.competitions[f.compId]?.season !== w.season) continue
+        sum += Math.min(1, f.result.attendance / Math.max(1, club.capacity)); n++
+      }
+      if (!n) return 0.5
+      return clamp((sum / n) / o.target, 0, 1)
+    }
     case 'u21mins': {
       const mins = rosterOf(w, club.id).filter((p) => ageOn(p.dob, w.date) <= 21).reduce((a, p) => a + Object.values(p.season).reduce((b, s) => b + s.mins, 0), 0)
       return clamp(mins / o.target, 0, 1)
     }
     case 'promoteYouth': return (w.flags.youthPromoted?.[w.season] || 0) >= 1 ? 1 : 0
     case 'signYoung': return w.transfers.history.some((t) => t.to === club.id && t.season === w.season && w.players[t.playerId] && ageOn(w.players[t.playerId].dob, w.date) <= 21 && w.players[t.playerId].pot >= 80) ? 1 : 0
-    case 'europeQual': return o.target ? 0.5 : 1
+    case 'europeQual': {
+      const lg = Object.values(w.competitions).find((c) => c.season === w.season && c.format === 'league' && c.clubs.includes(club.id))
+      const slots = w.leagues[club.leagueId]?.uefa?.length || 0
+      const cupWin = Object.values(w.competitions).some((c) => c.season === w.season && c.format === 'cup' && c.winner === club.id)
+      if (!o.target) return 1
+      if (cupWin) return 1
+      if (!lg || !slots) return 0
+      const pos = positionOf(w, lg, club.id)
+      const played = lg.table?.find((r) => r.clubId === club.id)?.p || 0
+      if (!played) return 0.5
+      return pos <= slots ? 1 : clamp(1 - (pos - slots) / 8, 0, 0.9)
+    }
   }
   return 0.5
 }

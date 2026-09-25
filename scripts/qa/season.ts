@@ -9,7 +9,7 @@ import { sortTable } from '../../src/engine/competitions/tables'
 const raw: RawDb = JSON.parse(fs.readFileSync('public/data/world.json', 'utf8'))
 const clubName = process.argv[2] || 'Arsenal FC'
 const seasons = Number(process.argv[3] || 1)
-const club = raw.clubs.find((c) => c.dbName === clubName)!.id
+const club = (raw.clubs.find((c) => c.dbName === clubName) || raw.clubs.find((c) => c.name === clubName) || raw.clubs.find((c) => c.name.includes(clubName)))!.id
 const w = createWorld(raw, {
   clubId: club,
   manager: { firstName: 'Alex', lastName: 'Ferris', nationality: 'England', dob: '1984-03-02', avatar: { skin: 2, hair: 1, hairColor: 1, beard: 0, eyes: 0, brows: 0, glasses: 0, outfit: 'Suit', outfitColor: '#111', tie: true } },

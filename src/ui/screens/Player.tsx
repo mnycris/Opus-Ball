@@ -35,6 +35,7 @@ export function PlayerProfile({ params }: { params: { id: number } }) {
       <div className="pad">
         <div className="player-hero" style={{ ['--pc' as any]: club?.theme || '#2a3346' }}>
           <div className="player-hero-bg" />
+          <span className="holo" />
           <div className="row" style={{ position: 'relative', zIndex: 1, alignItems: 'flex-end', gap: 12 }}>
             <div className="col" style={{ alignItems: 'center', gap: 8, paddingBottom: 6 }}>
               <Ovr v={p.ovr} size="xl" style={{ background: 'rgba(0,0,0,.35)' }} />

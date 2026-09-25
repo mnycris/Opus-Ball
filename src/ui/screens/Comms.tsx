@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Backdrop } from '../components/Backdrop'
+import { Fx } from '../components/Fx'
 import { useGame, useWorld, haptic } from '../../store/game'
 import type { InboxMessage, NewsItem, World } from '../../domain/types'
 import { Icon } from '../icons/Icon'
@@ -207,7 +207,7 @@ export function PressConference({ params }: { params: { kind: 'pre' | 'post'; fi
     <Screen title="Press Conference" sub={params.kind === 'pre' ? 'Pre-match' : 'Post-match'} back onBack={close} noNav>
       <div className="pad stack fade-up">
         <div className="press-stage">
-          <Backdrop art="press" opacity={0.7} fade="full" />
+          <Fx kind="spotlight" />
           <Portrait cfg={w.user.avatar} size={86} radius={18} />
           <div className="press-mics"><Icon name="chat" size={20} /></div>
         </div>

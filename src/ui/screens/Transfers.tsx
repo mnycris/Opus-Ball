@@ -1,12 +1,12 @@
 import { useMemo, useState } from 'react'
-import { Backdrop } from '../components/Backdrop'
+import { Fx } from '../components/Fx'
 import { useGame, useWorld, haptic } from '../../store/game'
 import type { ContractOffer, Player, Position, SquadRole, TransferOffer, World } from '../../domain/types'
 import { Icon } from '../icons/Icon'
 import { Badge, Empty, Face, Flag, Ovr, PosChip, Stars } from '../components/atoms'
 import { Chips, HubActions, Screen, Seg, Sheet, Stepper, Tabs } from '../components/layout'
 import { fmtMoney, roundValue } from '../../domain/finance'
-import { diffDays, fmtDate } from '../../domain/dates'
+import { addDays, diffDays, fmtDate } from '../../domain/dates'
 import { POS_GROUP, SQUAD_ROLES } from '../../domain/constants'
 import { allPlayers, rosterOf } from '../../engine/world/roster'
 import { knowledge, matchesPosition, potRange, scoutNetwork } from '../../engine/world/scouting'
@@ -33,7 +33,7 @@ export function TransferHub() {
     <Screen title="Transfers" sub={windowLabel(w)} right={<HubActions />}>
       <div className="pad">
         <div className={`hero budget-hero ${deadline ? 'deadline' : ''}`}>
-          <Backdrop art="boardroom" opacity={0.32} fade="left" />
+          <Fx kind="mesh" />
           <div style={{ position: 'relative', zIndex: 1, padding: 16 }}>
             {deadline && <div className="deadline-banner"><Icon name="deadline" size={16} /> DEADLINE DAY · window closes tonight</div>}
             <div className="row between" style={{ alignItems: 'flex-end' }}>
@@ -54,6 +54,7 @@ export function TransferHub() {
       </div>
       {tab === 'hub' && (
         <div className="pad stack" style={{ marginTop: 12 }}>
+          {win && diffDays(win.close, w.date) <= 1 && <DeadlineTicker w={w} />}
           {incoming.length > 0 && <>
             <div className="label">Offers for your players</div>
             <div className="card list">
@@ -85,6 +86,26 @@ export function TransferHub() {
       )}
       {tab === 'deals' && <DoneDeals w={w} mine />}
     </Screen>
+  )
+}
+
+function DeadlineTicker({ w }: { w: World }) {
+  const go = useGame((s) => s.go)
+  const deals = w.transfers.history.filter((h) => h.date >= addDays(w.date, -1) && (h.type === 'transfer' || h.type === 'loan' || h.type === 'free')).slice(0, 12)
+  return (
+    <div className="card deadline-card">
+      <div className="card-h"><div className="row tight"><span className="live-dot" /><span className="label" style={{ color: '#ff8a95' }}>Deadline Day Live</span></div><span className="tiny dim">{deals.length} deals</span></div>
+      <div className="list">
+        {!deals.length && <div className="li muted small">Phones are ringing across Europe. Deals will appear here as they're confirmed.</div>}
+        {deals.map((h, i) => (
+          <button key={i} className="li tap" style={{ width: '100%', textAlign: 'left', minHeight: 48 }} onClick={() => w.players[h.playerId] && go({ name: 'player', params: { id: h.playerId } })}>
+            <Badge club={w.clubs[h.to]} size={26} />
+            <div className="meta"><div className="t small ellipsis">{h.playerName}</div><div className="s row tight">{w.clubs[h.from]?.short || 'Free agent'} <Icon name="forward" size={11} /> {w.clubs[h.to]?.short}</div></div>
+            <b className="small">{h.type === 'loan' ? 'Loan' : h.type === 'free' ? 'Free' : fmtMoney(h.fee, { short: true })}</b>
+          </button>
+        ))}
+      </div>
+    </div>
   )
 }
 
@@ -251,7 +272,7 @@ export function Scouting() {
     <Screen title="Scouting Network" sub="Global Transfer Network" back>
       <div className="pad stack">
         <div className="art-banner">
-          <Backdrop art="scouting" opacity={0.7} fade="left" />
+          <Fx kind="radar" />
           <div className="content"><div className="kicker">Global Transfer Network</div><div className="h2" style={{ marginTop: 6 }}>{w.scouts.length} scout{w.scouts.length === 1 ? '' : 's'} active</div><div className="small muted" style={{ marginTop: 4, maxWidth: 230 }}>{w.scouts.filter((s) => s.assignment).length} on assignment · {Object.keys(w.transfers.knowledge).length} players known</div></div>
         </div>
         <div className="card pad-card small muted">Assign scouts to search a region for a type of player. Reports reveal attributes, PlayStyles and a narrowed potential range. Knowledge grows faster with experienced scouts; judgement improves how accurately they spot potential.</div>
@@ -380,7 +401,7 @@ export function Negotiation({ params }: { params: { playerId: number; offerId?: 
     <Screen title="Negotiation Room" sub={seller ? `${seller.name}` : 'Free agent'} back onBack={close} noNav>
       <div className="pad stack fade-up">
         <div className="negotiation-top">
-          <Backdrop art="boardroom" opacity={0.5} fade="full" />
+          <Fx kind="mesh" />
           <div className="col center" style={{ gap: 6 }}><Badge club={club} size={46} /><span className="tiny b">{club.short}</span></div>
           <div className="col center grow" style={{ gap: 6 }}>
             <Face p={p} size={80} radius={18} club={seller} />

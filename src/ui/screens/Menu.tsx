@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Backdrop } from '../components/Backdrop'
+import { Fx } from '../components/Fx'
 import { useGame, haptic } from '../../store/game'
 import { Icon } from '../icons/Icon'
 import { Badge, Empty } from '../components/atoms'
@@ -20,6 +20,22 @@ export function MainMenu() {
   return <Home onView={setView} />
 }
 
+function CrestMarquee() {
+  const raw = useGame((s) => s.raw)
+  if (!raw) return null
+  const top = [...raw.clubs].filter((c) => c.badge && c.leagueId).sort((a, b) => b.squadAvg - a.squadAvg).slice(0, 36)
+  const rows = [top.filter((_, i) => i % 2 === 0), top.filter((_, i) => i % 2 === 1)]
+  return (
+    <div className="crest-marquee" aria-hidden>
+      {rows.map((r, k) => (
+        <div key={k} className={`marquee-row ${k ? 'rev' : ''}`}>
+          {[...r, ...r].map((c, i) => <Badge key={`${c.id}-${i}`} club={c as any} size={34} />)}
+        </div>
+      ))}
+    </div>
+  )
+}
+
 function Home({ onView }: { onView: (v: View) => void }) {
   const saves = useGame((s) => s.saves)
   const loadCareer = useGame((s) => s.loadCareer)
@@ -29,7 +45,7 @@ function Home({ onView }: { onView: (v: View) => void }) {
   return (
     <div className="screen no-nav no-top menu-screen">
       <div className="menu-bg" aria-hidden>
-        <Backdrop art="menu" opacity={0.62} position="center 70%" fade="full" />
+        <Fx kind="floodlights" />
         <div className="menu-lights" />
         <svg className="menu-pitch" viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice">
           <g fill="none" stroke="rgba(255,255,255,.07)" strokeWidth="2">
@@ -48,7 +64,8 @@ function Home({ onView }: { onView: (v: View) => void }) {
           <div className="muted small" style={{ marginTop: 6, maxWidth: 300 }}>EA SPORTS FC 27 ratings · Real 2026/27 leagues, fixtures and European competitions</div>
         </div>
 
-        <div className="stack stagger" style={{ marginTop: 'auto', paddingBottom: 'calc(var(--sab) + 24px)' }}>
+        <div style={{ marginTop: 'auto' }}><CrestMarquee /></div>
+        <div className="stack stagger" style={{ marginTop: 22, paddingBottom: 'calc(var(--sab) + 24px)' }}>
           {last && (
             <button className="card tap continue-card" disabled={busy} onClick={async () => { haptic('medium'); setBusy(true); const ok = await loadCareer(last.id); if (!ok) { setBusy(false); useGame.getState().notify('Save could not be loaded', 'err') } }}>
               <div className="row" style={{ padding: 14, gap: 14 }}>

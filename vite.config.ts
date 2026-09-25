@@ -32,12 +32,6 @@ export default defineConfig({
         navigateFallback: 'index.html',
         runtimeCaching: [
           {
-            // Opus Ball art (Higgsfield CDN)
-            urlPattern: /^https:\/\/d8j0ntlcm91z4\.cloudfront\.net\/.*/i,
-            handler: 'CacheFirst',
-            options: { cacheName: 'opus-art', expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 365 }, cacheableResponse: { statuses: [0, 200] } },
-          },
-          {
             // real player headshots and crests from the SoFIFA CDN, cached once seen
             urlPattern: /^https:\/\/cdn\.sofifa\.net\/.*/i,
             handler: 'CacheFirst',

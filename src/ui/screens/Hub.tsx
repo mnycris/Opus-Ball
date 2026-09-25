@@ -15,7 +15,7 @@ import { userFixtureOn } from '../../engine/world/advance'
 import { ordinal } from './Menu'
 import type { Fixture, World } from '../../domain/types'
 import { Portrait } from '../components/Portrait'
-import { Backdrop } from '../components/Backdrop'
+import { Fx } from '../components/Fx'
 
 const WD = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
 
@@ -56,7 +56,7 @@ export function Hub() {
       right={<HubActions />}
     >
       <div className="pad stack stagger">
-        {w.flags.celebrate && <Celebration w={w} />}
+        {w.flags.celebrate && w.flags.celebrate.date >= addDays(w.date, -60) && <Celebration w={w} />}
         {next ? <NextMatchCard w={w} f={next} today={!!today} /> : <SeasonDoneCard w={w} />}
         <CalendarStrip w={w} />
 
@@ -145,7 +145,7 @@ function Celebration({ w }: { w: World }) {
   if (!c) return null
   return (
     <div className="hero celebrate-card">
-      <Backdrop art="trophy" opacity={0.8} fade="full" />
+      <Fx kind="confetti" />
       <div style={{ position: 'relative', zIndex: 1, padding: 18 }} className="col center">
         <CompLogo k={compLogoKey(c)} size={52} name={c.name} />
         <div className="kicker gold" style={{ marginTop: 10 }}>Champions</div>
@@ -168,6 +168,7 @@ function StatusLine({ icon, color, n, label }: { icon: string; color: string; n:
 function Tile({ icon, label, children, onClick, badge }: { icon: string; label: string; children: React.ReactNode; onClick: () => void; badge?: number }) {
   return (
     <button className="card tap tile" onClick={() => { haptic(); onClick() }}>
+      <span className="wm"><Icon name={icon} size={96} strokeWidth={1.4} /></span>
       <div className="row between" style={{ marginBottom: 10 }}>
         <div className="row tight"><Icon name={icon} size={16} color="var(--club2)" /><span className="label">{label}</span></div>
         {!!badge && <span className="pill" style={{ background: 'var(--neg)', color: '#fff' }}>{badge}</span>}

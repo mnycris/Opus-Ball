@@ -250,17 +250,79 @@ select.input option { background: #151b27; }
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
 
-/* ---------- art backdrops ---------- */
-.backdrop { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
-.backdrop img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.8s ease; display: block; }
-.backdrop::after { content: ''; position: absolute; inset: 0; }
-.backdrop.fade-bottom::after { background: linear-gradient(180deg, rgba(5, 7, 12, 0.15) 0%, rgba(5, 7, 12, 0.55) 55%, rgba(5, 7, 12, 0.95) 100%); }
-.backdrop.fade-left::after { background: linear-gradient(90deg, rgba(5, 7, 12, 0.9) 0%, rgba(5, 7, 12, 0.35) 70%, rgba(5, 7, 12, 0.2) 100%); }
-.backdrop.fade-full::after { background: rgba(5, 7, 12, 0.45); }
-.hero > .backdrop { border-radius: inherit; }
-.art-banner { position: relative; overflow: hidden; border-radius: var(--r-lg); border: 1px solid var(--line); min-height: 120px; background: linear-gradient(135deg, rgba(var(--club-rgb), 0.5), var(--s1)); }
-.art-banner > .content { position: relative; z-index: 1; padding: 16px; }
-
-.negotiation-top > *:not(.backdrop), .press-stage > *:not(.backdrop) { position: relative; z-index: 1; }
-.press-stage .press-mics { position: absolute; }
 .celebrate-card { background: radial-gradient(80% 90% at 50% 20%, rgba(244, 197, 66, 0.35), #0b0a05 80%); border-color: rgba(244, 197, 66, 0.5); }
+
+/* ============================================================================
+   FX — pure UI effect layers (EA FC–style light, lines and motion; no imagery)
+   ========================================================================== */
+.fx { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; border-radius: inherit; }
+.fx > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.fx .beam { position: absolute; top: -30%; width: 42%; height: 170%; transform-origin: 50% 0; mix-blend-mode: screen; filter: blur(6px);
+  background: linear-gradient(180deg, rgba(255, 255, 255, calc(0.2 * var(--fx-i))) 0%, rgba(var(--club-rgb), calc(0.16 * var(--fx-i))) 35%, transparent 72%);
+  clip-path: polygon(44% 0, 56% 0, 100% 100%, 0 100%); animation: beamSway 9s ease-in-out infinite alternate; }
+.fx .beam.b1 { left: -12%; transform: rotate(-24deg); }
+.fx .beam.b2 { left: 12%; transform: rotate(-9deg); animation-delay: -3s; opacity: 0.7; }
+.fx .beam.b3 { right: 12%; transform: rotate(9deg); animation-delay: -5s; opacity: 0.7; }
+.fx .beam.b4 { right: -12%; transform: rotate(24deg); animation-delay: -1.5s; }
+@keyframes beamSway { from { rotate: -3deg; opacity: 0.55; } to { rotate: 3deg; opacity: 1; } }
+.fx .flare { position: absolute; top: 3%; width: 90px; height: 90px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0 6%, rgba(210, 255, 236, 0.35) 18%, transparent 62%); animation: flicker 5s ease-in-out infinite; }
+.fx .flare.f1 { left: 6%; } .fx .flare.f2 { right: 6%; animation-delay: -2.2s; }
+@keyframes flicker { 0%, 100% { opacity: 0.85; transform: scale(1); } 50% { opacity: 1; transform: scale(1.08); } }
+.fx .particles i { position: absolute; bottom: -10px; width: 3px; height: 3px; border-radius: 50%; background: rgba(255, 255, 255, 0.55); box-shadow: 0 0 6px rgba(255, 255, 255, 0.6); animation: rise linear infinite; }
+@keyframes rise { from { transform: translateY(0); opacity: 0; } 10% { opacity: 1; } to { transform: translateY(-110vh); opacity: 0; } }
+.fx-spotlight .beam { width: 55%; }
+.fx-spotlight .beam.b1 { left: -4%; transform: rotate(-16deg); } .fx-spotlight .beam.b2 { left: 22%; transform: rotate(0); } .fx-spotlight .beam.b3 { right: -4%; transform: rotate(16deg); }
+.fx-tunnel svg { animation: tunnelPulse 6s ease-in-out infinite alternate; }
+@keyframes tunnelPulse { from { opacity: 0.75; transform: scale(1); } to { opacity: 1; transform: scale(1.04); } }
+.fx-pitch svg { opacity: 0.9; mask-image: linear-gradient(90deg, transparent, #000 35%); -webkit-mask-image: linear-gradient(90deg, transparent, #000 35%); }
+.fx .radar { position: absolute; right: -40px; top: 50%; width: 220px; height: 220px; transform: translateY(-50%); }
+.fx .radar svg { width: 100%; height: 100%; }
+.fx .radar .sweep { position: absolute; inset: 10px; border-radius: 50%; background: conic-gradient(from 0deg, rgba(var(--acc-rgb), 0.35), transparent 22%); animation: spin 4s linear infinite; }
+.fx .radar .blip { animation: blip 2.4s ease-in-out infinite; }
+@keyframes blip { 0%, 100% { opacity: 0.15; } 40% { opacity: 1; } }
+.fx .mesh { position: absolute; inset: -20%; background:
+  repeating-linear-gradient(120deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 16px),
+  repeating-linear-gradient(60deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 16px);
+  mask-image: radial-gradient(70% 90% at 85% 20%, #000, transparent 75%); -webkit-mask-image: radial-gradient(70% 90% at 85% 20%, #000, transparent 75%); animation: drift 30s linear infinite; }
+@keyframes drift { to { transform: translate(32px, 0); } }
+.fx .grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px); background-size: 22px 22px;
+  mask-image: linear-gradient(90deg, transparent 20%, #000); -webkit-mask-image: linear-gradient(90deg, transparent 20%, #000); }
+.fx .rays { position: absolute; left: 50%; top: 40%; width: 220%; aspect-ratio: 1; transform: translate(-50%, -50%);
+  background: repeating-conic-gradient(from 0deg, rgba(244, 197, 66, 0.16) 0 6deg, transparent 6deg 18deg); animation: spin 40s linear infinite;
+  mask-image: radial-gradient(circle, #000 0, transparent 60%); -webkit-mask-image: radial-gradient(circle, #000 0, transparent 60%); }
+.fx .confetti i { position: absolute; top: -12px; width: 7px; height: 11px; border-radius: 1.5px; animation: fall linear infinite; opacity: 0.9; }
+@keyframes fall { from { transform: translateY(0) rotate(0); } to { transform: translateY(420px) rotate(540deg); } }
+.fx .sheen { position: absolute; top: 0; bottom: 0; left: -60%; width: 45%; background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.07), transparent); transform: skewX(-18deg); animation: sheen 7s ease-in-out infinite; }
+@keyframes sheen { 0%, 70% { left: -60%; } 100% { left: 130%; } }
+.hero > .fx, .art-banner > .fx, .negotiation-top > .fx, .press-stage > .fx { z-index: 0; }
+
+/* ---------- FC-style surface refresh ---------- */
+.app::before { content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0; opacity: 0.05; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+.card { border: 1px solid transparent; background: linear-gradient(180deg, var(--s2), var(--s1)) padding-box, linear-gradient(160deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.03) 38%, rgba(255, 255, 255, 0.07)) border-box; }
+.card.tap { position: relative; overflow: hidden; }
+.card.tap::after { content: ''; position: absolute; top: 0; bottom: 0; left: -70%; width: 50%; background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.08), transparent); transform: skewX(-18deg); transition: left 0s; pointer-events: none; }
+.card.tap:active::after { left: 130%; transition: left 0.5s ease; }
+.tile { position: relative; overflow: hidden; }
+.tile .wm { position: absolute; right: -14px; bottom: -18px; opacity: 0.07; pointer-events: none; color: #fff; }
+.hero { box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.14); }
+.navitem.on::after { content: ''; position: absolute; inset: 8px 18%; border-radius: 12px; background: radial-gradient(60% 80% at 50% 0%, rgba(var(--club-rgb), 0.35), transparent 70%); z-index: -1; }
+.btn.primary { position: relative; overflow: hidden; }
+.btn.primary::after, .continue-btn::after { content: ''; position: absolute; top: 0; bottom: 0; left: -60%; width: 40%; background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.45), transparent); transform: skewX(-18deg); animation: sheen 5s ease-in-out infinite; pointer-events: none; }
+.continue-btn { position: relative; overflow: hidden; }
+.menu-bg .fx { z-index: 0; }
+
+/* ---------- menu crest marquee & holo player card ---------- */
+.crest-marquee { margin: 0 -20px; display: flex; flex-direction: column; gap: 14px; mask-image: linear-gradient(90deg, transparent, #000 15%, #000 85%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, #000 15%, #000 85%, transparent); opacity: 0.85; }
+.marquee-row { display: flex; gap: 22px; width: max-content; animation: marquee 60s linear infinite; }
+.marquee-row.rev { animation-direction: reverse; animation-duration: 70s; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+.player-hero .holo { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: overlay; opacity: 0.55;
+  background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.35) 32%, rgba(120, 255, 220, 0.25) 38%, rgba(255, 120, 220, 0.2) 44%, transparent 56%);
+  background-size: 250% 100%; animation: holo 6s ease-in-out infinite; }
+@keyframes holo { 0% { background-position: 120% 0; } 60%, 100% { background-position: -80% 0; } }
+.continue-btn.match { animation: matchGlow 1.8s ease-in-out infinite; }
+@keyframes matchGlow { 0%, 100% { box-shadow: 0 12px 30px rgba(244, 197, 66, 0.3); } 50% { box-shadow: 0 12px 40px rgba(244, 197, 66, 0.6), 0 0 0 3px rgba(244, 197, 66, 0.25); } }
+.deadline-card { border-color: rgba(255, 77, 94, 0.45) !important; background: linear-gradient(160deg, rgba(179, 18, 42, 0.25), var(--s1) 55%) !important; }
+.live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--neg); box-shadow: 0 0 0 0 rgba(255, 77, 94, 0.7); animation: livePulse 1.4s ease-out infinite; }
+@keyframes livePulse { to { box-shadow: 0 0 0 10px rgba(255, 77, 94, 0); } }

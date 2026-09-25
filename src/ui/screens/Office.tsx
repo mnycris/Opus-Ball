@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Backdrop } from '../components/Backdrop'
+import { Fx } from '../components/Fx'
 import { useGame, useWorld, haptic } from '../../store/game'
 import type { ObjectiveCategory, World } from '../../domain/types'
 import { Icon } from '../icons/Icon'
@@ -37,7 +37,7 @@ function Board({ w }: { w: World }) {
   return (
     <div className="pad stack" style={{ marginTop: 12 }}>
       <div className="art-banner row" style={{ gap: 16, padding: 16, display: 'flex' }}>
-        <Backdrop art="office" opacity={0.55} fade="left" />
+        <Fx kind="grid" />
         <div style={{ position: 'relative', zIndex: 1 }}><Ring v={w.board.overall} size={78} stroke={7} /></div>
         <div className="grow" style={{ position: 'relative', zIndex: 1 }}>
           <div className="label">Board confidence</div>
@@ -308,7 +308,7 @@ export function SeasonReview({ params }: { params: { season: number } }) {
     <Screen title="Season Review" sub={seasonLabel(a.season)} back onBack={close} noNav>
       <div className="pad stack fade-up">
         <div className="hero" style={{ padding: 18, textAlign: 'center' }}>
-          <Backdrop art="trophy" opacity={won.length ? 0.7 : 0.35} fade="full" />
+          {won.length ? <Fx kind="confetti" /> : <Fx kind="beams" />}
           <div style={{ position: 'relative', zIndex: 1 }} className="col center">
             <Badge club={club} size={84} />
             <div className="h1" style={{ marginTop: 10 }}>{a.userFinish ? `${ordinal(a.userFinish)} place` : 'Season complete'}</div>
