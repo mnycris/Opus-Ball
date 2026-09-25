@@ -1,0 +1,167 @@
+# club A | club B | derby name | intensity (1-3)
+Arsenal FC|Tottenham Hotspur|North London Derby|3
+Arsenal FC|Chelsea FC|London Derby|2
+Chelsea FC|Tottenham Hotspur|London Derby|2
+Chelsea FC|Fulham FC|West London Derby|1
+Liverpool FC|Everton FC|Merseyside Derby|3
+Liverpool FC|Manchester United|North West Derby|3
+Manchester City|Manchester United|Manchester Derby|3
+Manchester United|Leeds United|Roses Rivalry|2
+Newcastle United|Sunderland AFC|Tyne-Wear Derby|3
+Aston Villa|Birmingham City|Second City Derby|3
+Aston Villa|West Bromwich Albion|West Midlands Derby|2
+Nottingham Forest|Derby County|East Midlands Derby|3
+Nottingham Forest|Notts County|Nottingham Derby|1
+Brighton & Hove Albion|Crystal Palace|M23 Derby|3
+Ipswich Town|Norwich City|East Anglian Derby|3
+Southampton FC|Portsmouth|South Coast Derby|3
+AFC Bournemouth|Southampton FC|South Coast Derby|1
+West Ham United|Millwall FC|Dockers Derby|3
+West Ham United|Tottenham Hotspur|London Derby|2
+Crystal Palace|Millwall FC|South London Derby|1
+Charlton Athletic|Millwall FC|South London Derby|2
+Fulham FC|Queens Park Rangers|West London Derby|1
+Brentford|Queens Park Rangers|West London Derby|1
+Brentford|Fulham FC|West London Derby|1
+Cardiff City|Swansea City|South Wales Derby|3
+Sheffield United|Sheffield Wednesday|Steel City Derby|3
+Blackburn Rovers|Burnley|East Lancashire Derby|3
+Wolverhampton Wanderers|West Bromwich Albion|Black Country Derby|3
+Bristol City|Bristol Rovers|Bristol Derby|3
+Stoke City|Port Vale|Potteries Derby|3
+Preston North End|Blackpool FC|West Lancashire Derby|3
+Bolton Wanderers|Wigan Athletic|Lancashire Derby|2
+Leicester City|Nottingham Forest|East Midlands Derby|2
+Leicester City|Coventry City|M69 Derby|2
+Watford|Luton Town|Beds-Herts Derby|3
+Oxford United|Swindon Town|A420 Derby|2
+Plymouth Argyle|Exeter City|Devon Derby|2
+Hull City|Grimsby Town|Humber Derby|1
+Middlesbrough FC|Sunderland AFC|Tees-Wear Derby|2
+Huddersfield Town|Leeds United|West Yorkshire Derby|1
+Bradford City|Huddersfield Town|West Yorkshire Derby|2
+AFC Wimbledon|Milton Keynes Dons|Dons Derby|3
+Cambridge United|Peterborough United|Cambridgeshire Derby|2
+Mansfield Town|Chesterfield|Derby of the Derbyshire|2
+Real Madrid|FC Barcelona|El Clásico|3
+Real Madrid|Atlético Madrid|El Derbi Madrileño|3
+FC Barcelona|RCD Espanyol|Derbi Barceloní|2
+Athletic Club|Real Sociedad|Derbi Vasco|3
+Real Betis Balompié|Sevilla FC|El Gran Derbi|3
+Valencia CF|Levante UD|Derbi Valenciano|2
+Valencia CF|Villarreal CF|Derbi de la Comunitat|2
+RC Celta|RC Deportivo A Coruña|O Noso Derbi|3
+Real Oviedo|Real Sporting de Gijón|Derbi Asturiano|3
+CD Tenerife|UD Las Palmas|Derbi Canario|3
+Atlético Madrid|Getafe CF|Derbi Madrileño|1
+Rayo Vallecano|Getafe CF|Derbi del Sur|1
+Bayern München|Borussia Dortmund|Der Klassiker|3
+Borussia Dortmund|Schalke 04|Revierderby|3
+Hamburger SV|Werder Bremen|Nordderby|3
+Hamburger SV|FC St. Pauli|Hamburger Stadtderby|3
+1. FC Köln|Borussia Mönchengladbach|Rheinderby|3
+1. FC Köln|Bayer 04 Leverkusen|Rheinderby|2
+1. FC Köln|Fortuna Düsseldorf|Rheinderby|2
+1. FC Union Berlin|Hertha BSC|Berliner Derby|3
+VfB Stuttgart|Karlsruher SC|Baden-Württemberg Derby|3
+1. FC Nürnberg|SpVgg Greuther Fürth|Frankenderby|3
+Eintracht Frankfurt|SV Darmstadt 98|Hessenderby|2
+Hannover 96|Eintracht Braunschweig|Niedersachsenderby|3
+1. FC Kaiserslautern|SV Waldhof Mannheim|Südwestderby|2
+1. FC Kaiserslautern|1. FC Saarbrücken|Südwestderby|2
+VfL Bochum 1848|Schalke 04|Revierderby|2
+Inter Milan|AC Milan|Derby della Madonnina|3
+Inter Milan|Juventus FC|Derby d'Italia|3
+AS Roma|SS Lazio|Derby della Capitale|3
+Juventus FC|Torino FC|Derby della Mole|3
+Genoa|Sampdoria|Derby della Lanterna|3
+AC Milan|Juventus FC|Classic Rivalry|2
+SSC Napoli|Juventus FC|Classic Rivalry|2
+SSC Napoli|AS Roma|Derby del Sole|2
+Fiorentina|Juventus FC|Classic Rivalry|2
+Bologna FC|Fiorentina|Derby dell'Appennino|2
+Hellas Verona FC|Vicenza|Derby Veneto|2
+Paris Saint-Germain|Olympique de Marseille|Le Classique|3
+Olympique Lyonnais|AS Saint-Étienne|Derby du Rhône|3
+Lille OSC|RC Lens|Derby du Nord|3
+OGC Nice|AS Monaco|Derby de la Côte d'Azur|2
+Olympique de Marseille|Olympique Lyonnais|Olympico|2
+Stade Rennais|FC Nantes|Derby de l'Ouest|3
+FC Metz|AS Nancy Lorraine|Derby Lorrain|3
+RC Strasbourg Alsace|FC Metz|Derby de l'Est|2
+Stade Brestois 29|FC Lorient|Derby Breton|2
+Ajax|Feyenoord|De Klassieker|3
+Ajax|PSV|De Topper|2
+Feyenoord|PSV|Rivalry|2
+Feyenoord|Sparta Rotterdam|Rotterdamse Derby|2
+FC Groningen|SC Heerenveen|Derby van het Noorden|3
+FC Twente|Go Ahead Eagles|Oostelijke Derby|1
+SL Benfica|Sporting CP|Derby de Lisboa|3
+SL Benfica|FC Porto|O Clássico|3
+FC Porto|Sporting CP|Clássico|2
+Sporting Clube de Braga|Vitória SC|Derby do Minho|3
+CD Nacional|Marítimo|Derby da Madeira|3
+Celtic FC|Rangers FC|Old Firm|3
+Heart of Midlothian FC|Hibernian|Edinburgh Derby|3
+Dundee FC|Dundee United FC|Dundee Derby|3
+Aberdeen FC|Rangers FC|Rivalry|2
+Galatasaray SK|Fenerbahçe SK|Kıtalararası Derbi|3
+Beşiktaş JK|Fenerbahçe SK|İstanbul Derbisi|3
+Beşiktaş JK|Galatasaray SK|İstanbul Derbisi|3
+Trabzonspor|Fenerbahçe SK|Rivalry|2
+Club Brugge KV|RSC Anderlecht|Topper|3
+Club Brugge KV|Cercle Brugge KSV|Brugse Derby|3
+RSC Anderlecht|Standard de Liège|Clasico|3
+Standard de Liège|Royal Charleroi Sporting Club|Derby Wallon|2
+FK Austria Wien|SK Rapid|Wiener Derby|3
+SK Sturm Graz|Grazer AK 1902|Grazer Derby|3
+FC Basel 1893|FC Zürich|Klassiker|3
+FC Zürich|Grasshopper Club Zürich|Zürcher Derby|3
+FC København|Brøndby IF|New Firm|3
+Rosenborg BK|Molde FK|Rivalry|2
+AIK|Djurgårdens IF|Stockholmsderbyt|3
+Djurgårdens IF|Hammarby Fotboll|Stockholmsderbyt|3
+AIK|Hammarby Fotboll|Stockholmsderbyt|3
+IFK Göteborg|GAIS|Göteborgsderbyt|2
+Malmö FF|IFK Göteborg|Rivalry|2
+Legia Warszawa|Lech Poznań|Rivalry|3
+Wisła Kraków|Cracovia|Święta Wojna|3
+FCSB|Dinamo Bucureşti|Eternal Derby|3
+FCSB|Rapid Bucuresti|Bucharest Derby|3
+CFR Cluj|Universitatea Cluj|Cluj Derby|3
+Shamrock Rovers|Bohemian FC|Dublin Derby|3
+Al Hilal|Al Nassr|Riyadh Derby|3
+Al Ittihad|Al Ahli SFC|Jeddah Derby|3
+Al Hilal|Al Ittihad|Classico|2
+LA Galaxy|Los Angeles FC|El Tráfico|3
+Seattle Sounders FC|Portland Timbers|Cascadia Derby|3
+Vancouver Whitecaps FC|Seattle Sounders FC|Cascadia Derby|2
+New York City FC|New York Red Bulls|Hudson River Derby|3
+Inter Miami|Orlando City SC|Florida Derby|2
+Club América|Guadalajara|El Súper Clásico|3
+Club América|Pumas UNAM|Clásico Capitalino|3
+Club América|Cruz Azul|Clásico Joven|3
+Tigres UANL|Monterrey|Clásico Regiomontano|3
+Guadalajara|Atlas FC|Clásico Tapatío|3
+Boca Juniors|River Plate|Superclásico|3
+Racing Club|Independiente|Clásico de Avellaneda|3
+San Lorenzo de Almagro|Huracán|Clásico de Barrio|3
+Rosario Central|Newell's Old Boys|Clásico Rosarino|3
+Estudiantes de La Plata|Gimnasia y Esgrima La Plata|Clásico Platense|3
+Talleres|Belgrano de Córdoba|Clásico Cordobés|3
+Lanús|CA Banfield|Clásico del Sur|3
+Olympiacos FC|Panathinaikos FC|Derby of the Eternal Enemies|3
+AEK Athens|Panathinaikos FC|Athens Derby|2
+GNK Dinamo Zagreb|Hajduk Split|Eternal Derby|3
+SK Slavia Praha|Sparta Praha|Prague Derby|3
+Dynamo Kyiv|Shakhtar Donetsk|Klasychne|3
+APOEL FC|Omonoia FC|Nicosia Derby|3
+Flamengo|Fluminense|Fla-Flu|3
+Flamengo|Vasco da Gama|Clássico dos Milhões|3
+Palmeiras|Corinthians|Derby Paulista|3
+São Paulo|Corinthians|Majestoso|2
+Atlético Mineiro|Cruzeiro|Clássico Mineiro|3
+Peñarol|Club Nacional de Football|Clásico del Fútbol Uruguayo|3
+Sydney FC|Western Sydney Wanderers|Sydney Derby|3
+Melbourne Victory|Melbourne City FC|Melbourne Derby|3
+Shanghai Port|Shanghai Shenhua|Shanghai Derby|3

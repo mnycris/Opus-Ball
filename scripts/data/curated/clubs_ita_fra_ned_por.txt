@@ -1,0 +1,113 @@
+# FC27 club name | display | short | abbr | stadium | capacity | city | founded | kit primary | kit secondary | ui theme
+AC Milan|AC Milan|Milan|MIL|San Siro|75817|Milan|1899|#FB090B|#000000|#D6000D
+AS Roma|AS Roma|Roma|ROM|Stadio Olimpico|70634|Rome|1927|#8E1F2F|#F0BC42|#8E1F2F
+Atalanta BC|Atalanta|Atalanta|ATA|Gewiss Stadium|24950|Bergamo|1907|#1E71B8|#000000|#1E71B8
+Bologna FC|Bologna FC 1909|Bologna|BOL|Stadio Renato Dall'Ara|38279|Bologna|1909|#A21C26|#1A2F48|#A21C26
+Cagliari|Cagliari Calcio|Cagliari|CAG|Unipol Domus|16416|Cagliari|1920|#B01028|#002350|#B01028
+Como|Como 1907|Como|COM|Stadio Giuseppe Sinigaglia|13602|Como|1907|#003DA5|#FFFFFF|#0A4A9E
+Fiorentina|ACF Fiorentina|Fiorentina|FIO|Stadio Artemio Franchi|43147|Florence|1926|#482E92|#FFFFFF|#482E92
+Frosinone|Frosinone Calcio|Frosinone|FRO|Stadio Benito Stirpe|16227|Frosinone|1928|#FFE600|#1B4A9C|#1B4A9C
+Genoa|Genoa CFC|Genoa|GEN|Stadio Luigi Ferraris|36599|Genoa|1893|#A2142F|#002D62|#A2142F
+Inter Milan|Inter|Inter|INT|San Siro|75817|Milan|1908|#0068A8|#000000|#0068A8
+Juventus FC|Juventus|Juventus|JUV|Allianz Stadium|41507|Turin|1897|#FFFFFF|#000000|#1A1A1A
+Lecce|US Lecce|Lecce|LEC|Stadio Via del Mare|31533|Lecce|1908|#FFED00|#E30613|#E30613
+Monza|AC Monza|Monza|MON|U-Power Stadium|17102|Monza|1912|#E30613|#FFFFFF|#E30613
+Parma Calcio|Parma Calcio 1913|Parma|PAR|Stadio Ennio Tardini|22352|Parma|1913|#FFFFFF|#FFD200|#1B3F8F
+SS Lazio|SS Lazio|Lazio|LAZ|Stadio Olimpico|70634|Rome|1900|#87D8F7|#FFFFFF|#3BA7DA
+SSC Napoli|SSC Napoli|Napoli|NAP|Stadio Diego Armando Maradona|54726|Naples|1926|#12A0D7|#FFFFFF|#0E86C2
+Sassuolo|US Sassuolo|Sassuolo|SAS|MAPEI Stadium – Città del Tricolore|21584|Reggio Emilia|1920|#00A752|#000000|#00A752
+Torino FC|Torino FC|Torino|TOR|Stadio Olimpico Grande Torino|27958|Turin|1906|#8A1E03|#FFFFFF|#8A1E03
+Udinese Calcio|Udinese Calcio|Udinese|UDI|Bluenergy Stadium|25144|Udine|1896|#000000|#FFFFFF|#1A1A1A
+Venezia FC|Venezia FC|Venezia|VEN|Stadio Pier Luigi Penzo|11150|Venice|1907|#000000|#F28C00|#E36E00
+Arezzo|SS Arezzo|Arezzo|ARE|Stadio Città di Arezzo|13128|Arezzo|1923|#8B1B3E|#FFFFFF|#8B1B3E
+Ascoli|Ascoli Calcio|Ascoli|ASC|Stadio Cino e Lillo Del Duca|12461|Ascoli Piceno|1898|#000000|#FFFFFF|#1A1A1A
+Avellino|US Avellino|Avellino|AVE|Stadio Partenio-Adriano Lombardi|26308|Avellino|1912|#00843D|#FFFFFF|#00843D
+Benevento|Benevento Calcio|Benevento|BEN|Stadio Ciro Vigorito|16867|Benevento|1929|#FFD100|#E30613|#E30613
+Calcio Padova|Calcio Padova|Padova|PAD|Stadio Euganeo|18060|Padua|1910|#FFFFFF|#E30613|#E30613
+Carrarese|Carrarese Calcio|Carrarese|CRR|Stadio dei Marmi|4500|Carrara|1908|#FFD600|#003C8C|#003C8C
+Catanzaro|US Catanzaro|Catanzaro|CTZ|Stadio Nicola Ceravolo|14650|Catanzaro|1929|#FFD400|#C8102E|#C8102E
+Cesena FC|Cesena FC|Cesena|CES|Orogel Stadium Dino Manuzzi|23860|Cesena|1940|#FFFFFF|#000000|#1A1A1A
+Cremonese|US Cremonese|Cremonese|CRE|Stadio Giovanni Zini|16003|Cremona|1903|#9E9E9E|#C8102E|#C8102E
+Empoli|Empoli FC|Empoli|EMP|Stadio Carlo Castellani|16284|Empoli|1920|#005BAB|#FFFFFF|#005BAB
+Hellas Verona FC|Hellas Verona|Verona|VER|Stadio Marcantonio Bentegodi|31045|Verona|1903|#FFD100|#003F87|#003F87
+Mantova|Mantova 1911|Mantova|MAN|Stadio Danilo Martelli|14884|Mantua|1911|#E30613|#FFFFFF|#E30613
+Modena|Modena FC|Modena|MOD|Stadio Alberto Braglia|21151|Modena|1912|#FFD100|#003C8C|#003C8C
+Palermo FC|Palermo FC|Palermo|PAL|Stadio Renzo Barbera|36365|Palermo|1900|#F4A7C0|#000000|#E0679A
+Pisa|AC Pisa 1909|Pisa|PIS|Cetilar Arena|10500|Pisa|1909|#1E4E9D|#000000|#1E4E9D
+SS Juve Stabia|SS Juve Stabia|Juve Stabia|JST|Stadio Romeo Menti|12800|Castellammare di Stabia|1907|#FFD200|#0033A0|#0033A0
+Sampdoria|UC Sampdoria|Sampdoria|SAM|Stadio Luigi Ferraris|36599|Genoa|1946|#1B5497|#FFFFFF|#1B5497
+Südtirol|FC Südtirol|Südtirol|SUD|Stadio Druso|5539|Bolzano|1974|#FFFFFF|#E30613|#E30613
+Vicenza|LR Vicenza|Vicenza|VIC|Stadio Romeo Menti|12000|Vicenza|1902|#E30613|#FFFFFF|#E30613
+Virtus Entella|Virtus Entella|Entella|ENT|Stadio Comunale di Chiavari|5535|Chiavari|1914|#FFFFFF|#6CB4E4|#2E8BCB
+AJ Auxerre|AJ Auxerre|Auxerre|AJA|Stade de l'Abbé-Deschamps|18541|Auxerre|1905|#FFFFFF|#0B4CA0|#0B4CA0
+AS Monaco|AS Monaco|Monaco|ASM|Stade Louis II|16360|Monaco|1924|#E7212E|#FFFFFF|#E7212E
+Angers SCO|Angers SCO|Angers|SCO|Stade Raymond Kopa|19350|Angers|1919|#000000|#FFFFFF|#1A1A1A
+ESTAC Troyes|ESTAC Troyes|Troyes|TRO|Stade de l'Aube|20400|Troyes|1986|#004A9F|#FFFFFF|#004A9F
+FC Lorient|FC Lorient|Lorient|FCL|Stade du Moustoir|18110|Lorient|1926|#F58113|#000000|#F07000
+Le Havre AC|Le Havre AC|Le Havre|HAC|Stade Océane|25178|Le Havre|1872|#6FA8DC|#002D62|#3D7FC0
+Le Mans FC|Le Mans FC|Le Mans|LMF|MMArena|25000|Le Mans|1985|#E30613|#FFD100|#E30613
+Lille OSC|LOSC Lille|Lille|LIL|Decathlon Arena – Stade Pierre-Mauroy|50186|Villeneuve-d'Ascq|1944|#E01E13|#20325F|#D01710
+OGC Nice|OGC Nice|Nice|NIC|Allianz Riviera|35624|Nice|1904|#C8102E|#000000|#C8102E
+Olympique Lyonnais|Olympique Lyonnais|Lyon|OL|Groupama Stadium|59186|Décines-Charpieu|1950|#FFFFFF|#1B3F8F|#1B3F8F
+Olympique de Marseille|Olympique de Marseille|Marseille|OM|Orange Vélodrome|67394|Marseille|1899|#FFFFFF|#2FAEE0|#2FAEE0
+Paris FC|Paris FC|Paris FC|PFC|Stade Jean-Bouin|19904|Paris|1969|#0A2240|#FFFFFF|#1B3A66
+Paris Saint-Germain|Paris Saint-Germain|Paris SG|PSG|Parc des Princes|47929|Paris|1970|#004170|#DA291C|#004170
+RC Lens|RC Lens|Lens|RCL|Stade Bollaert-Delelis|38223|Lens|1906|#FFE600|#E30613|#E30613
+RC Strasbourg Alsace|RC Strasbourg Alsace|Strasbourg|RCS|Stade de la Meinau|26280|Strasbourg|1906|#009FE3|#FFFFFF|#0086C8
+Stade Brestois 29|Stade Brestois 29|Brest|SB29|Stade Francis-Le Blé|15931|Brest|1950|#E30613|#FFFFFF|#E30613
+Stade Rennais|Stade Rennais FC|Rennes|SRFC|Roazhon Park|29778|Rennes|1901|#E30613|#000000|#E30613
+Toulouse FC|Toulouse FC|Toulouse|TFC|Stadium de Toulouse|33150|Toulouse|1970|#5A2D82|#FFFFFF|#5A2D82
+AS Nancy Lorraine|AS Nancy Lorraine|Nancy|ASNL|Stade Marcel Picot|20087|Tomblaine|1967|#E30613|#FFFFFF|#E30613
+AS Saint-Étienne|AS Saint-Étienne|Saint-Étienne|ASSE|Stade Geoffroy-Guichard|41965|Saint-Étienne|1919|#009A44|#FFFFFF|#009A44
+Clermont Foot 63|Clermont Foot 63|Clermont|CF63|Stade Gabriel Montpied|11980|Clermont-Ferrand|1990|#C8102E|#0A2240|#C8102E
+Dijon FCO|Dijon FCO|Dijon|DFCO|Stade Gaston Gérard|15995|Dijon|1998|#E30613|#FFFFFF|#E30613
+En Avant Guingamp|En Avant Guingamp|Guingamp|EAG|Stade de Roudourou|18378|Guingamp|1912|#E30613|#000000|#E30613
+FC Annecy|FC Annecy|Annecy|FCA|Parc des Sports|15660|Annecy|1927|#E30613|#FFFFFF|#E30613
+FC Metz|FC Metz|Metz|FCM|Stade Saint-Symphorien|30000|Longeville-lès-Metz|1932|#7D1428|#FFFFFF|#7D1428
+FC Nantes|FC Nantes|Nantes|FCN|Stade de la Beaujoire|35322|Nantes|1943|#FCD405|#00843D|#00843D
+FC Sochaux-Montbéliard|FC Sochaux-Montbéliard|Sochaux|FCSM|Stade Auguste-Bonal|20025|Montbéliard|1928|#FFD100|#003C8C|#003C8C
+Grenoble Foot 38|Grenoble Foot 38|Grenoble|GF38|Stade des Alpes|20068|Grenoble|1892|#0055A5|#FFFFFF|#0055A5
+Montpellier HSC|Montpellier HSC|Montpellier|MHSC|Stade de la Mosson|32900|Montpellier|1974|#00214E|#F37021|#F37021
+Pau FC|Pau FC|Pau|PAU|Nouste Camp|4031|Pau|1959|#FFD100|#003C8C|#003C8C
+Red Star FC|Red Star FC|Red Star|RSFC|Stade Bauer|10000|Saint-Ouen|1897|#00843D|#FFFFFF|#00843D
+Rodez Aveyron Football|Rodez AF|Rodez|RAF|Stade Paul-Lignon|5955|Rodez|1929|#E30613|#FFD100|#E30613
+Stade Lavallois Mayenne FC|Stade Lavallois|Laval|SLMFC|Stade Francis-Le Basser|18739|Laval|1902|#F58113|#000000|#F07000
+Stade de Reims|Stade de Reims|Reims|SDR|Stade Auguste-Delaune|21684|Reims|1931|#E30613|#FFFFFF|#E30613
+US Boulogne Cote d'Opale|US Boulogne|Boulogne|USBCO|Stade de la Libération|14500|Boulogne-sur-Mer|1898|#E30613|#000000|#E30613
+USL Dunkerque|USL Dunkerque|Dunkerque|USLD|Stade Marcel-Tribut|4933|Dunkirk|1909|#0055A5|#FFFFFF|#0055A5
+ADO Den Haag|ADO Den Haag|ADO|ADO|Bingoal Stadion|15000|The Hague|1905|#FFD700|#00843D|#00843D
+AZ Alkmaar|AZ|AZ|AZ|AFAS Stadion|19478|Alkmaar|1967|#E30613|#FFFFFF|#E30613
+Ajax|AFC Ajax|Ajax|AJA|Johan Cruijff ArenA|55865|Amsterdam|1900|#FFFFFF|#D2122E|#D2122E
+Excelsior|Excelsior Rotterdam|Excelsior|EXC|Van Donge & De Roo Stadion|4400|Rotterdam|1902|#E30613|#000000|#E30613
+FC Groningen|FC Groningen|Groningen|GRO|Euroborg|22525|Groningen|1971|#00843D|#FFFFFF|#00843D
+FC Twente|FC Twente|Twente|TWE|De Grolsch Veste|30205|Enschede|1965|#E30613|#FFFFFF|#E30613
+FC Utrecht|FC Utrecht|Utrecht|UTR|Stadion Galgenwaard|23750|Utrecht|1970|#E30613|#FFFFFF|#E30613
+Feyenoord|Feyenoord|Feyenoord|FEY|De Kuip|47500|Rotterdam|1908|#E30613|#FFFFFF|#E30613
+Fortuna Sittard|Fortuna Sittard|Fortuna|FOR|Fortuna Sittard Stadion|12500|Sittard|1968|#FFD700|#00843D|#00843D
+Go Ahead Eagles|Go Ahead Eagles|GA Eagles|GAE|De Adelaarshorst|10400|Deventer|1902|#E30613|#FFD100|#E30613
+NEC Nijmegen|N.E.C.|NEC|NEC|Goffertstadion|12500|Nijmegen|1900|#E30613|#00843D|#E30613
+PEC Zwolle|PEC Zwolle|PEC Zwolle|PEC|MAC³PARK stadion|14000|Zwolle|1910|#0055A5|#FFFFFF|#0055A5
+PSV|PSV|PSV|PSV|Philips Stadion|35000|Eindhoven|1913|#ED1C24|#FFFFFF|#ED1C24
+SC Cambuur|SC Cambuur|Cambuur|CAM|Kooi Stadion|10500|Leeuwarden|1964|#FFD700|#0055A5|#0055A5
+SC Heerenveen|SC Heerenveen|Heerenveen|HEE|Abe Lenstra Stadion|27224|Heerenveen|1920|#0055A5|#FFFFFF|#0055A5
+Sparta Rotterdam|Sparta Rotterdam|Sparta|SPA|Het Kasteel|11026|Rotterdam|1888|#E30613|#FFFFFF|#E30613
+Telstar|SC Telstar|Telstar|TEL|BUKO Stadion|5200|Velsen-Zuid|1963|#FFFFFF|#0055A5|#0055A5
+Willem II|Willem II|Willem II|WIL|Koning Willem II Stadion|14700|Tilburg|1896|#E30613|#0055A5|#E30613
+Academico Viseu|Académico de Viseu|Académico|ACV|Estádio do Fontelo|6912|Viseu|1914|#000000|#FFFFFF|#1A1A1A
+Alverca|FC Alverca|Alverca|ALV|Complexo Desportivo FC Alverca|7705|Alverca do Ribatejo|1939|#E30613|#FFFFFF|#E30613
+CD Nacional|CD Nacional|Nacional|NAC|Estádio da Madeira|5132|Funchal|1910|#000000|#FFFFFF|#1A1A1A
+Casa Pia|Casa Pia AC|Casa Pia|CPA|Estádio Pina Manique|3000|Lisbon|1920|#000000|#FFFFFF|#1A1A1A
+Estrela da Amadora|CF Estrela da Amadora|Estrela|EST|Estádio José Gomes|9288|Amadora|1932|#E30613|#00843D|#00843D
+FC Arouca|FC Arouca|Arouca|ARO|Estádio Municipal de Arouca|5625|Arouca|1951|#FFD100|#0055A5|#0055A5
+FC Porto|FC Porto|Porto|FCP|Estádio do Dragão|50033|Porto|1893|#00428C|#FFFFFF|#00428C
+Famalicão|FC Famalicão|Famalicão|FAM|Estádio Municipal 22 de Junho|5305|Vila Nova de Famalicão|1931|#FFFFFF|#0055A5|#0055A5
+GD Estoril Praia|GD Estoril Praia|Estoril|EST|Estádio António Coimbra da Mota|5015|Estoril|1939|#FFD100|#0055A5|#0055A5
+Gil Vicente FC|Gil Vicente FC|Gil Vicente|GIL|Estádio Cidade de Barcelos|12046|Barcelos|1924|#E30613|#0055A5|#E30613
+Marítimo|CS Marítimo|Marítimo|MAR|Estádio do Marítimo|10600|Funchal|1910|#E30613|#00843D|#E30613
+Moreirense FC|Moreirense FC|Moreirense|MOR|Parque Comendador Joaquim de Almeida Freitas|6153|Moreira de Cónegos|1938|#00843D|#FFFFFF|#00843D
+Rio Ave FC|Rio Ave FC|Rio Ave|RAV|Estádio do Rio Ave FC|5300|Vila do Conde|1939|#00843D|#FFFFFF|#00843D
+SL Benfica|SL Benfica|Benfica|SLB|Estádio da Luz|64642|Lisbon|1904|#E83030|#FFFFFF|#D71920
+Santa Clara|CD Santa Clara|Santa Clara|SCL|Estádio de São Miguel|13277|Ponta Delgada|1921|#E30613|#FFFFFF|#E30613
+Sporting CP|Sporting CP|Sporting CP|SCP|Estádio José Alvalade|50095|Lisbon|1906|#008057|#FFFFFF|#008057
+Sporting Clube de Braga|SC Braga|Braga|SCB|Estádio Municipal de Braga|30286|Braga|1921|#E30613|#FFFFFF|#E30613
+Vitória SC|Vitória SC|Vitória|VSC|Estádio D. Afonso Henriques|30029|Guimarães|1922|#FFFFFF|#000000|#1A1A1A

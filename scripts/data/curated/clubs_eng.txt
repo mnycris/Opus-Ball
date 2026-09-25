@@ -1,0 +1,93 @@
+# FC27 club name | display | short | abbr | stadium | capacity | city | founded | kit primary | kit secondary | ui theme
+Arsenal FC|Arsenal|Arsenal|ARS|Emirates Stadium|60704|London|1886|#EF0107|#FFFFFF|#DB0007
+Aston Villa|Aston Villa|Villa|AVL|Villa Park|42640|Birmingham|1874|#670E36|#95BFE5|#7A1E48
+AFC Bournemouth|AFC Bournemouth|Bournemouth|BOU|Vitality Stadium|11307|Bournemouth|1899|#DA291C|#000000|#C8102E
+Brentford|Brentford|Brentford|BRE|Gtech Community Stadium|17250|London|1889|#E30613|#FFFFFF|#D20000
+Brighton & Hove Albion|Brighton & Hove Albion|Brighton|BHA|American Express Stadium|31876|Brighton|1901|#0057B8|#FFFFFF|#0057B8
+Chelsea FC|Chelsea|Chelsea|CHE|Stamford Bridge|40173|London|1905|#034694|#FFFFFF|#034694
+Coventry City|Coventry City|Coventry|COV|Coventry Building Society Arena|32609|Coventry|1883|#59CBE8|#FFFFFF|#2E9BD6
+Crystal Palace|Crystal Palace|Palace|CRY|Selhurst Park|25486|London|1905|#1B458F|#C4122E|#1B458F
+Everton FC|Everton|Everton|EVE|Hill Dickinson Stadium|52888|Liverpool|1878|#003399|#FFFFFF|#003399
+Fulham FC|Fulham|Fulham|FUL|Craven Cottage|29130|London|1879|#FFFFFF|#000000|#CC0000
+Hull City|Hull City|Hull|HUL|MKM Stadium|25586|Kingston upon Hull|1904|#F5A12D|#000000|#E08A00
+Ipswich Town|Ipswich Town|Ipswich|IPS|Portman Road|30056|Ipswich|1878|#0044AA|#FFFFFF|#0044AA
+Leeds United|Leeds United|Leeds|LEE|Elland Road|37645|Leeds|1919|#FFFFFF|#1D428A|#1D428A
+Liverpool FC|Liverpool|Liverpool|LIV|Anfield|61276|Liverpool|1892|#C8102E|#FFFFFF|#C8102E
+Manchester City|Manchester City|Man City|MCI|Etihad Stadium|61470|Manchester|1880|#6CABDD|#FFFFFF|#4A9BD8
+Manchester United|Manchester United|Man Utd|MUN|Old Trafford|74197|Manchester|1878|#DA291C|#FFFFFF|#DA291C
+Newcastle United|Newcastle United|Newcastle|NEW|St James' Park|52264|Newcastle upon Tyne|1892|#241F20|#FFFFFF|#3A3A3A
+Nottingham Forest|Nottingham Forest|Nott'm Forest|NFO|City Ground|30404|Nottingham|1865|#DD0000|#FFFFFF|#DD0000
+Sunderland AFC|Sunderland|Sunderland|SUN|Stadium of Light|48707|Sunderland|1879|#EB172B|#FFFFFF|#EB172B
+Tottenham Hotspur|Tottenham Hotspur|Spurs|TOT|Tottenham Hotspur Stadium|62850|London|1882|#FFFFFF|#132257|#132257
+Birmingham City|Birmingham City|Birmingham|BIR|St Andrew's @ Knighthead Park|29409|Birmingham|1875|#0000FF|#FFFFFF|#1E3FA8
+Blackburn Rovers|Blackburn Rovers|Blackburn|BLB|Ewood Park|31367|Blackburn|1875|#009EE0|#FFFFFF|#0070B8
+Bolton Wanderers|Bolton Wanderers|Bolton|BOL|Toughsheet Community Stadium|28723|Horwich|1874|#FFFFFF|#263C7E|#263C7E
+Bristol City|Bristol City|Bristol City|BRC|Ashton Gate|27000|Bristol|1894|#E21A23|#FFFFFF|#E21A23
+Burnley|Burnley|Burnley|BUR|Turf Moor|21944|Burnley|1882|#6C1D45|#99D6EA|#6C1D45
+Cardiff City|Cardiff City|Cardiff|CAR|Cardiff City Stadium|33280|Cardiff|1899|#0070B5|#FFFFFF|#0070B5
+Charlton Athletic|Charlton Athletic|Charlton|CHA|The Valley|27111|London|1905|#D4021D|#FFFFFF|#D4021D
+Derby County|Derby County|Derby|DER|Pride Park Stadium|32956|Derby|1884|#FFFFFF|#000000|#1A1A1A
+Lincoln City|Lincoln City|Lincoln|LIN|LNER Stadium|10669|Lincoln|1884|#E3000F|#FFFFFF|#D0000D
+Middlesbrough FC|Middlesbrough|Boro|MID|Riverside Stadium|34742|Middlesbrough|1876|#E11B22|#FFFFFF|#E11B22
+Millwall FC|Millwall|Millwall|MIL|The Den|20146|London|1885|#001D5E|#FFFFFF|#001D5E
+Norwich City|Norwich City|Norwich|NOR|Carrow Road|27359|Norwich|1902|#FFF200|#00A650|#00A650
+Portsmouth|Portsmouth|Pompey|POR|Fratton Park|20867|Portsmouth|1898|#001489|#FFFFFF|#001489
+Preston North End|Preston North End|Preston|PNE|Deepdale|23404|Preston|1880|#FFFFFF|#001A4C|#001A4C
+Queens Park Rangers|Queens Park Rangers|QPR|QPR|MATRADE Loftus Road|18439|London|1882|#1D5BA4|#FFFFFF|#1D5BA4
+Sheffield United|Sheffield United|Sheff Utd|SHU|Bramall Lane|32050|Sheffield|1889|#EE2737|#FFFFFF|#D71921
+Southampton FC|Southampton|Southampton|SOU|St Mary's Stadium|32384|Southampton|1885|#D71920|#FFFFFF|#D71920
+Stoke City|Stoke City|Stoke|STK|bet365 Stadium|30089|Stoke-on-Trent|1863|#E03A3E|#FFFFFF|#E03A3E
+Swansea City|Swansea City|Swansea|SWA|Swansea.com Stadium|21088|Swansea|1912|#FFFFFF|#121212|#121212
+Watford|Watford|Watford|WAT|Vicarage Road|22200|Watford|1881|#FBEE23|#ED2127|#E5C300
+West Bromwich Albion|West Bromwich Albion|West Brom|WBA|The Hawthorns|26850|West Bromwich|1878|#122F67|#FFFFFF|#122F67
+West Ham United|West Ham United|West Ham|WHU|London Stadium|62500|London|1895|#7A263A|#1BB1E7|#7A263A
+Wolverhampton Wanderers|Wolverhampton Wanderers|Wolves|WOL|Molineux Stadium|31750|Wolverhampton|1877|#FDB913|#231F20|#E5A000
+Wrexham|Wrexham|Wrexham|WRX|STōK Cae Ras|13341|Wrexham|1864|#D71920|#FFFFFF|#D71920
+AFC Wimbledon|AFC Wimbledon|Wimbledon|WIM|Cherry Red Records Stadium|9215|London|2002|#003A8F|#FFE500|#003A8F
+Barnsley|Barnsley|Barnsley|BAR|Oakwell|23287|Barnsley|1887|#DA291C|#FFFFFF|#DA291C
+Blackpool FC|Blackpool|Blackpool|BPL|Bloomfield Road|16616|Blackpool|1887|#F68712|#FFFFFF|#F68712
+Bradford City|Bradford City|Bradford|BRA|University of Bradford Stadium|25136|Bradford|1903|#6D0E2F|#F7B233|#8A1538
+Bromley|Bromley|Bromley|BRO|Glyn Hopkin Stadium|5300|London|1892|#FFFFFF|#000000|#1A1A1A
+Burton Albion|Burton Albion|Burton|BRT|Pirelli Stadium|6912|Burton upon Trent|1950|#FDE500|#000000|#D9BF00
+Cambridge United|Cambridge United|Cambridge|CAM|Cledara Abbey Stadium|8127|Cambridge|1912|#F8A51B|#000000|#E09000
+Doncaster Rovers|Doncaster Rovers|Doncaster|DON|Eco-Power Stadium|15231|Doncaster|1879|#E1261C|#FFFFFF|#E1261C
+Huddersfield Town|Huddersfield Town|Huddersfield|HUD|Accu Stadium|24121|Huddersfield|1908|#0E63AD|#FFFFFF|#0E63AD
+Leicester City|Leicester City|Leicester|LEI|King Power Stadium|32259|Leicester|1884|#003090|#FDBE11|#003090
+Leyton Orient|Leyton Orient|Orient|LEY|Gaughan Group Stadium|9271|London|1881|#D40000|#FFFFFF|#D40000
+Luton Town|Luton Town|Luton|LUT|Kenilworth Road|12000|Luton|1885|#F78F1E|#002D62|#E27000
+Mansfield Town|Mansfield Town|Mansfield|MAN|One Call Stadium|9186|Mansfield|1897|#F3C300|#0055A4|#0055A4
+Milton Keynes Dons|MK Dons|MK Dons|MKD|Stadium MK|30500|Milton Keynes|2004|#FFFFFF|#000000|#C8102E
+Notts County|Notts County|Notts County|NCO|Meadow Lane|19841|Nottingham|1862|#000000|#FFFFFF|#1A1A1A
+Oxford United|Oxford United|Oxford|OXF|Kassam Stadium|12500|Oxford|1893|#FFDD00|#002147|#002147
+Peterborough United|Peterborough United|Peterborough|PET|Weston Homes Stadium|15314|Peterborough|1934|#005DAA|#FFFFFF|#005DAA
+Plymouth Argyle|Plymouth Argyle|Plymouth|PLY|Home Park|17900|Plymouth|1886|#00573F|#FFFFFF|#00573F
+Reading FC|Reading|Reading|REA|Select Car Leasing Stadium|24161|Reading|1871|#004494|#FFFFFF|#004494
+Sheffield Wednesday|Sheffield Wednesday|Sheff Wed|SHW|Hillsborough|39732|Sheffield|1867|#0066B3|#FFFFFF|#0066B3
+Stevenage|Stevenage|Stevenage|STE|Lamex Stadium|7800|Stevenage|1976|#E2231A|#FFFFFF|#E2231A
+Stockport County|Stockport County|Stockport|STO|Edgeley Park|10852|Stockport|1883|#1B4A9C|#FFFFFF|#1B4A9C
+Wigan Athletic|Wigan Athletic|Wigan|WIG|The Brick Community Stadium|25138|Wigan|1932|#1D59AF|#FFFFFF|#1D59AF
+Wycombe Wanderers|Wycombe Wanderers|Wycombe|WYC|Adams Park|10137|High Wycombe|1887|#88C6ED|#002D72|#002D72
+Accrington Stanley|Accrington Stanley|Accrington|ACC|Wham Stadium|5450|Accrington|1968|#B91C2E|#FFFFFF|#B91C2E
+Barnet|Barnet|Barnet|BNT|The Hive London|6500|London|1888|#F6A01A|#000000|#E08900
+Bristol Rovers|Bristol Rovers|Bristol Rovers|BRR|Memorial Stadium|9832|Bristol|1883|#003C82|#FFFFFF|#003C82
+Cheltenham Town|Cheltenham Town|Cheltenham|CHT|Completely-Suzuki Stadium|7066|Cheltenham|1887|#D1001F|#FFFFFF|#D1001F
+Chesterfield|Chesterfield|Chesterfield|CHF|SMH Group Stadium|10504|Chesterfield|1866|#003DA5|#FFFFFF|#003DA5
+Colchester United|Colchester United|Colchester|COL|JobServe Community Stadium|10105|Colchester|1937|#005EB8|#FFFFFF|#005EB8
+Crawley Town|Crawley Town|Crawley|CRA|Broadfield Stadium|6134|Crawley|1896|#C8102E|#FFFFFF|#C8102E
+Crewe Alexandra|Crewe Alexandra|Crewe|CRE|Mornflake Stadium|10153|Crewe|1877|#E4002B|#FFFFFF|#E4002B
+Exeter City|Exeter City|Exeter|EXE|St James Park|8696|Exeter|1904|#E30613|#FFFFFF|#E30613
+Fleetwood Town|Fleetwood Town|Fleetwood|FLE|Highbury Stadium|5327|Fleetwood|1908|#E30613|#FFFFFF|#E30613
+Gillingham|Gillingham|Gillingham|GIL|Priestfield Stadium|11582|Gillingham|1893|#1B3F8F|#FFFFFF|#1B3F8F
+Grimsby Town|Grimsby Town|Grimsby|GRI|Blundell Park|9052|Cleethorpes|1878|#000000|#FFFFFF|#1A1A1A
+Newport County|Newport County|Newport|NPT|Rodney Parade|7850|Newport|1989|#F8A21A|#000000|#E08900
+Northampton Town|Northampton Town|Northampton|NTN|Sixfields Stadium|7798|Northampton|1897|#8B1A31|#FFFFFF|#8B1A31
+Oldham Athletic|Oldham Athletic|Oldham|OLD|Boundary Park|13512|Oldham|1895|#004A9F|#FFFFFF|#004A9F
+Port Vale|Port Vale|Port Vale|PVA|Vale Park|15036|Stoke-on-Trent|1876|#FFFFFF|#000000|#1A1A1A
+Rochdale|Rochdale|Rochdale|ROC|Crown Oil Arena|10249|Rochdale|1907|#0055A5|#000000|#0055A5
+Rotherham United|Rotherham United|Rotherham|ROT|AESSEAL New York Stadium|12021|Rotherham|1925|#E30613|#FFFFFF|#E30613
+Salford City|Salford City|Salford|SAL|Peninsula Stadium|5108|Salford|1940|#E30613|#FFFFFF|#E30613
+Shrewsbury Town|Shrewsbury Town|Shrewsbury|SHR|Croud Meadow|9875|Shrewsbury|1886|#003DA5|#F5A800|#003DA5
+Swindon Town|Swindon Town|Swindon|SWI|County Ground|15728|Swindon|1879|#D7141A|#FFFFFF|#D7141A
+Tranmere Rovers|Tranmere Rovers|Tranmere|TRA|Prenton Park|16587|Birkenhead|1884|#FFFFFF|#0050A0|#0050A0
+Walsall|Walsall|Walsall|WAL|Poundland Bescot Stadium|11300|Walsall|1888|#E30613|#FFFFFF|#E30613
+York City|York City|York|YOR|LNER Community Stadium|8500|York|1922|#C8102E|#002147|#C8102E

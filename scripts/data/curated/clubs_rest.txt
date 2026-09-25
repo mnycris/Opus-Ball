@@ -1,0 +1,287 @@
+# FC27 club name | display | short | abbr | stadium | capacity | city | founded | kit primary | kit secondary | ui theme
+Cercle Brugge KSV|Cercle Brugge|Cercle|CER|Jan Breydelstadion|29062|Bruges|1899|#00843D|#000000|#00843D
+Club Brugge KV|Club Brugge|Club Brugge|CLU|Jan Breydelstadion|29062|Bruges|1891|#0055A5|#000000|#0055A5
+KAA Gent|KAA Gent|Gent|GNT|Planet Group Arena|20185|Ghent|1864|#0055A5|#FFFFFF|#0055A5
+KRC Genk|KRC Genk|Genk|GNK|Cegeka Arena|23718|Genk|1988|#0055A5|#FFFFFF|#0055A5
+KV Kortrijk|KV Kortrijk|Kortrijk|KVK|Guldensporenstadion|9399|Kortrijk|1971|#E30613|#FFFFFF|#E30613
+KV Mechelen|KV Mechelen|Mechelen|KVM|AFAS Stadion Achter de Kazerne|16672|Mechelen|1904|#E30613|#FFD100|#E30613
+KVC Westerlo|KVC Westerlo|Westerlo|WES|Het Kuipje|8035|Westerlo|1933|#FFD100|#0055A5|#0055A5
+Lommel SK|Lommel SK|Lommel|LOM|Soevereinstadion|8000|Lommel|2003|#00843D|#FFFFFF|#00843D
+Oud-Heverlee Leuven|OH Leuven|OH Leuven|OHL|Den Dreef|10020|Leuven|2002|#FFFFFF|#E30613|#E30613
+RAAL La Louvière|RAAL La Louvière|La Louvière|RAAL|Stade du Tivoli|8050|La Louvière|2009|#00843D|#FFFFFF|#00843D
+RSC Anderlecht|RSC Anderlecht|Anderlecht|RSCA|Lotto Park|21500|Brussels|1908|#4F2D7F|#FFFFFF|#4F2D7F
+Royal Antwerp FC|Royal Antwerp FC|Antwerp|RAFC|Bosuilstadion|16649|Antwerp|1880|#E30613|#FFFFFF|#E30613
+Royal Charleroi Sporting Club|Sporting Charleroi|Charleroi|CHA|Stade du Pays de Charleroi|14000|Charleroi|1904|#000000|#FFFFFF|#1A1A1A
+SV Zulte Waregem|SV Zulte Waregem|Zulte Waregem|ZWA|Elindus Arena|12414|Waregem|2001|#E30613|#00843D|#E30613
+Sint-Truidense VV|Sint-Truidense VV|STVV|STV|Stayen|14600|Sint-Truiden|1924|#FFD100|#0055A5|#0055A5
+Standard de Liège|Standard Liège|Standard|STA|Stade Maurice Dufrasne|27670|Liège|1898|#E30613|#FFFFFF|#E30613
+Union Saint-Gilloise|Union Saint-Gilloise|Union SG|USG|Stade Joseph Marien|9400|Brussels|1897|#FFD100|#0055A5|#0055A5
+Waasland-Beveren|SK Beveren|Beveren|BEV|Freethiel Stadion|8190|Beveren|2010|#FFD100|#0055A5|#0055A5
+Aberdeen FC|Aberdeen|Aberdeen|ABE|Pittodrie Stadium|20866|Aberdeen|1903|#E30613|#FFFFFF|#E30613
+Celtic FC|Celtic|Celtic|CEL|Celtic Park|60411|Glasgow|1887|#018749|#FFFFFF|#018749
+Dundee FC|Dundee|Dundee|DUN|Dens Park|11775|Dundee|1893|#1A2B4A|#FFFFFF|#1A2B4A
+Dundee United FC|Dundee United|Dundee Utd|DDU|Tannadice Park|14223|Dundee|1909|#F47920|#000000|#F07000
+Falkirk FC|Falkirk|Falkirk|FAL|Falkirk Stadium|7937|Falkirk|1876|#1A2B4A|#FFFFFF|#1A2B4A
+Heart of Midlothian FC|Heart of Midlothian|Hearts|HEA|Tynecastle Park|19852|Edinburgh|1874|#7A1E3A|#FFFFFF|#7A1E3A
+Hibernian|Hibernian|Hibs|HIB|Easter Road|20421|Edinburgh|1875|#00843D|#FFFFFF|#00843D
+Kilmarnock FC|Kilmarnock|Kilmarnock|KIL|Rugby Park|15003|Kilmarnock|1869|#0055A5|#FFFFFF|#0055A5
+Motherwell FC|Motherwell|Motherwell|MOT|Fir Park|13677|Motherwell|1886|#F5A800|#7A1E3A|#7A1E3A
+Rangers FC|Rangers|Rangers|RAN|Ibrox Stadium|51700|Glasgow|1872|#1B458F|#FFFFFF|#1B458F
+St Johnstone FC|St Johnstone|St Johnstone|STJ|McDiarmid Park|10696|Perth|1884|#0055A5|#FFFFFF|#0055A5
+St. Mirren|St Mirren|St Mirren|STM|SMiSA Stadium|7937|Paisley|1877|#000000|#FFFFFF|#1A1A1A
+Alanyaspor|Alanyaspor|Alanyaspor|ALA|Alanya Oba Stadium|10128|Alanya|1948|#F58113|#00843D|#F07000
+Amed SK|Amed SK|Amed|AMD|Diyarbakır Stadium|33000|Diyarbakır|1972|#00843D|#E30613|#00843D
+Beşiktaş JK|Beşiktaş|Beşiktaş|BJK|Tüpraş Stadyumu|42445|Istanbul|1903|#000000|#FFFFFF|#1A1A1A
+Eyüpspor|Eyüpspor|Eyüpspor|EYP|Recep Tayyip Erdoğan Stadyumu|14234|Istanbul|1919|#5B2A86|#FFD100|#5B2A86
+Fenerbahçe SK|Fenerbahçe|Fenerbahçe|FB|Chobani Stadyumu Fenerbahçe Şükrü Saracoğlu|47430|Istanbul|1907|#FFED00|#002D72|#002D72
+Galatasaray SK|Galatasaray|Galatasaray|GS|RAMS Park|52280|Istanbul|1905|#A90432|#FDB912|#A90432
+Gaziantep FK|Gaziantep FK|Gaziantep|GFK|Gaziantep Stadyumu|33502|Gaziantep|1988|#E30613|#000000|#E30613
+Gençlerbirliği SK|Gençlerbirliği|Gençlerbirliği|GB|Eryaman Stadyumu|20560|Ankara|1923|#E30613|#000000|#E30613
+Göztepe SK|Göztepe|Göztepe|GOZ|Gürsel Aksel Stadyumu|19713|İzmir|1925|#FFD100|#E30613|#E30613
+Kasımpaşa SK|Kasımpaşa|Kasımpaşa|KAS|Recep Tayyip Erdoğan Stadyumu|14234|Istanbul|1921|#002D72|#FFFFFF|#002D72
+Kocaelispor|Kocaelispor|Kocaelispor|KOC|Kocaeli Stadyumu|34829|İzmit|1966|#00843D|#000000|#00843D
+Konyaspor|Konyaspor|Konyaspor|KON|Konya Büyükşehir Stadyumu|42000|Konya|1922|#00843D|#FFFFFF|#00843D
+Medipol Başakşehir FK|Başakşehir|Başakşehir|IBFK|Başakşehir Fatih Terim Stadyumu|17319|Istanbul|1990|#F58113|#002D72|#F07000
+Samsunspor|Samsunspor|Samsunspor|SAM|Samsun 19 Mayıs Stadyumu|33919|Samsun|1965|#E30613|#FFFFFF|#E30613
+Trabzonspor|Trabzonspor|Trabzonspor|TS|Papara Park|40782|Trabzon|1967|#7A1E3A|#6CB4E4|#7A1E3A
+Çaykur Rizespor|Çaykur Rizespor|Rizespor|RIZ|Çaykur Didi Stadyumu|15558|Rize|1968|#00843D|#0055A5|#00843D
+FC Red Bull Salzburg|FC Red Bull Salzburg|Salzburg|RBS|Red Bull Arena|17218|Wals-Siezenheim|1933|#FFFFFF|#D8002D|#D8002D
+FK Austria Wien|FK Austria Wien|Austria Wien|FAK|Generali Arena|17656|Vienna|1911|#5B2A86|#FFFFFF|#5B2A86
+SK Rapid|SK Rapid Wien|Rapid Wien|SCR|Allianz Stadion|28000|Vienna|1899|#00843D|#FFFFFF|#00843D
+SK Sturm Graz|SK Sturm Graz|Sturm Graz|STU|Merkur Arena|16364|Graz|1909|#000000|#FFFFFF|#1A1A1A
+Grazer AK 1902|Grazer AK|GAK|GAK|Merkur Arena|16364|Graz|1902|#E30613|#FFFFFF|#E30613
+LASK Linz|LASK|LASK|LASK|Raiffeisen Arena|19080|Linz|1908|#000000|#FFFFFF|#1A1A1A
+SC Rheindorf Altach|SCR Altach|Altach|ALT|Cashpoint Arena|8500|Altach|1929|#000000|#FFD100|#1A1A1A
+SV Ried|SV Ried|Ried|RIE|Josko Arena|7680|Ried im Innkreis|1912|#00843D|#000000|#00843D
+TSV Hartberg|TSV Hartberg|Hartberg|HAR|Profertil Arena|5024|Hartberg|1946|#0055A5|#FFFFFF|#0055A5
+WSG Tirol|WSG Tirol|WSG Tirol|WSG|Tivoli Stadion Tirol|16008|Innsbruck|1930|#00843D|#FFFFFF|#00843D
+Wolfsberger AC|Wolfsberger AC|WAC|WAC|Lavanttal-Arena|7300|Wolfsberg|1931|#000000|#FFFFFF|#1A1A1A
+Austria Lustenau|SC Austria Lustenau|Lustenau|LUS|Reichshofstadion|5138|Lustenau|1914|#00843D|#FFFFFF|#00843D
+BSC Young Boys|BSC Young Boys|Young Boys|YB|Stadion Wankdorf|31500|Bern|1898|#FFD100|#000000|#E0B800
+FC Basel 1893|FC Basel 1893|Basel|FCB|St. Jakob-Park|38512|Basel|1893|#E30613|#0055A5|#C8102E
+FC Lausanne-Sport|FC Lausanne-Sport|Lausanne|LS|Stade de la Tuilière|12544|Lausanne|1896|#0055A5|#FFFFFF|#0055A5
+FC Lugano|FC Lugano|Lugano|LUG|Stadio Cornaredo|6330|Lugano|1908|#000000|#FFFFFF|#1A1A1A
+FC Luzern|FC Luzern|Luzern|FCL|Swissporarena|16490|Lucerne|1901|#0055A5|#FFFFFF|#0055A5
+FC Sion|FC Sion|Sion|SIO|Stade Tourbillon|14283|Sion|1909|#E30613|#FFFFFF|#E30613
+FC St. Gallen 1879|FC St. Gallen 1879|St. Gallen|FCSG|kybunpark|19455|St. Gallen|1879|#00843D|#FFFFFF|#00843D
+FC Thun|FC Thun|Thun|THU|Stockhorn Arena|10014|Thun|1898|#E30613|#FFFFFF|#E30613
+FC Vaduz|FC Vaduz|Vaduz|VAD|Rheinpark Stadion|7584|Vaduz|1932|#E30613|#0055A5|#0055A5
+FC Zürich|FC Zürich|FC Zürich|FCZ|Letzigrund|26104|Zürich|1896|#FFFFFF|#0055A5|#0055A5
+Grasshopper Club Zürich|Grasshopper Club Zürich|Grasshoppers|GCZ|Letzigrund|26104|Zürich|1886|#0055A5|#FFFFFF|#0055A5
+Servette FC|Servette FC|Servette|SFC|Stade de Genève|30084|Geneva|1890|#8B1B3E|#FFFFFF|#8B1B3E
+AC Horsens|AC Horsens|Horsens|ACH|CASA Arena Horsens|10400|Horsens|1994|#FFD100|#000000|#E0B800
+Aarhus Gymnastikforening|AGF|AGF|AGF|Ceres Park|19433|Aarhus|1880|#FFFFFF|#0055A5|#0055A5
+Brøndby IF|Brøndby IF|Brøndby|BIF|Brøndby Stadion|28000|Brøndby|1964|#FFD100|#0055A5|#0055A5
+FC København|FC København|FCK|FCK|Parken|38065|Copenhagen|1992|#FFFFFF|#0055A5|#0055A5
+FC Midtjylland|FC Midtjylland|Midtjylland|FCM|MCH Arena|11432|Herning|1999|#000000|#E30613|#E30613
+FC Nordsjælland|FC Nordsjælland|Nordsjælland|FCN|Right to Dream Park|10300|Farum|1991|#E30613|#FFD100|#E30613
+Lyngby Boldklub|Lyngby BK|Lyngby|LBK|Lyngby Stadion|10000|Kongens Lyngby|1921|#0055A5|#FFFFFF|#0055A5
+Odense Boldklub|OB|OB|OB|Nature Energy Park|15761|Odense|1887|#0055A5|#FFFFFF|#0055A5
+Randers FC|Randers FC|Randers|RFC|Cepheus Park Randers|10300|Randers|2003|#0055A5|#FFFFFF|#0055A5
+Silkeborg IF|Silkeborg IF|Silkeborg|SIF|JYSK Park|10000|Silkeborg|1917|#E30613|#FFFFFF|#E30613
+Sønderjyske Fodbold|Sønderjyske|SønderjyskE|SJE|Sydbank Park|10000|Haderslev|2004|#0055A5|#FFFFFF|#0055A5
+Viborg FF|Viborg FF|Viborg|VFF|Energi Viborg Arena|9566|Viborg|1896|#00843D|#FFFFFF|#00843D
+Aalesunds FK|Aalesunds FK|Aalesund|AAFK|Color Line Stadion|10778|Ålesund|1914|#F58113|#0055A5|#F07000
+FK Bodø/Glimt|FK Bodø/Glimt|Bodø/Glimt|BOD|Aspmyra Stadion|8270|Bodø|1916|#FFE600|#000000|#E0C400
+Fredrikstad FK|Fredrikstad FK|Fredrikstad|FFK|Nye Fredrikstad Stadion|12560|Fredrikstad|1903|#E30613|#FFFFFF|#E30613
+Hamarkameratene|HamKam|HamKam|HAM|Briskeby Arena|7800|Hamar|1918|#00843D|#FFFFFF|#00843D
+IK Start|IK Start|Start|IKS|Sparebanken Sør Arena|14300|Kristiansand|1905|#FFD100|#000000|#E0B800
+KFUM-Kameratene Oslo|KFUM Oslo|KFUM Oslo|KFUM|KFUM Arena|3300|Oslo|1939|#E30613|#FFFFFF|#E30613
+Kristiansund BK|Kristiansund BK|Kristiansund|KBK|Kristiansund Stadion|4444|Kristiansund|2003|#0055A5|#FFFFFF|#0055A5
+Lillestrøm SK|Lillestrøm SK|Lillestrøm|LSK|Åråsen Stadion|11500|Lillestrøm|1917|#FFD100|#000000|#E0B800
+Molde FK|Molde FK|Molde|MFK|Aker Stadion|11249|Molde|1911|#0055A5|#FFFFFF|#0055A5
+Rosenborg BK|Rosenborg BK|Rosenborg|RBK|Lerkendal Stadion|21405|Trondheim|1917|#FFFFFF|#000000|#1A1A1A
+SK Brann|SK Brann|Brann|BRA|Brann Stadion|16750|Bergen|1908|#E30613|#FFFFFF|#E30613
+Sandefjord Fotball|Sandefjord Fotball|Sandefjord|SAN|Release Arena|6582|Sandefjord|1998|#0055A5|#FFFFFF|#0055A5
+Sarpsborg 08 FF|Sarpsborg 08|Sarpsborg|S08|Sarpsborg Stadion|8022|Sarpsborg|2000|#0055A5|#FFFFFF|#0055A5
+Tromsø IL|Tromsø IL|Tromsø|TIL|Romssa Arena|6859|Tromsø|1920|#E30613|#FFFFFF|#E30613
+Viking FK|Viking FK|Viking|VIK|SR-Bank Arena|15900|Stavanger|1899|#0055A5|#FFFFFF|#0055A5
+Vålerenga Fotball|Vålerenga|Vålerenga|VIF|Intility Arena|16555|Oslo|1913|#0055A5|#E30613|#0055A5
+AIK|AIK|AIK|AIK|Strawberry Arena|50000|Solna|1891|#000000|#FFD100|#1A1A1A
+BK Häcken|BK Häcken|Häcken|HAC|Bravida Arena|6500|Gothenburg|1940|#FFD100|#000000|#E0B800
+Degerfors IF|Degerfors IF|Degerfors|DIF|Stora Valla|12500|Degerfors|1907|#E30613|#FFFFFF|#E30613
+Djurgårdens IF|Djurgårdens IF|Djurgården|DIF|3Arena|30000|Stockholm|1891|#0055A5|#002D72|#0055A5
+GAIS|GAIS|GAIS|GAIS|Gamla Ullevi|18416|Gothenburg|1894|#00843D|#000000|#00843D
+Halmstads BK|Halmstads BK|Halmstad|HBK|Örjans Vall|10873|Halmstad|1914|#0055A5|#FFFFFF|#0055A5
+Hammarby Fotboll|Hammarby IF|Hammarby|HIF|3Arena|30000|Stockholm|1915|#00843D|#FFFFFF|#00843D
+IF Brommapojkarna|IF Brommapojkarna|Brommapojkarna|IFB|Grimsta IP|5000|Stockholm|1942|#E30613|#000000|#E30613
+IF Elfsborg|IF Elfsborg|Elfsborg|IFE|Borås Arena|16284|Borås|1904|#FFD100|#000000|#E0B800
+IFK Göteborg|IFK Göteborg|Göteborg|IFK|Gamla Ullevi|18416|Gothenburg|1904|#0055A5|#FFFFFF|#0055A5
+IK Sirius|IK Sirius|Sirius|SIR|Studenternas IP|10522|Uppsala|1907|#0055A5|#000000|#0055A5
+Kalmar FF|Kalmar FF|Kalmar|KFF|Guldfågeln Arena|12182|Kalmar|1910|#E30613|#FFFFFF|#E30613
+Malmö FF|Malmö FF|Malmö|MFF|Eleda Stadion|22500|Malmö|1910|#6CB4E4|#FFFFFF|#3B8FD0
+Mjällby AIF|Mjällby AIF|Mjällby|MAIF|Strandvallen|7000|Hällevik|1939|#FFD100|#000000|#E0B800
+Västerås SK|Västerås SK|Västerås|VSK|Hitachi Energy Arena|7044|Västerås|1904|#00843D|#FFFFFF|#00843D
+Örgryte IS|Örgryte IS|Örgryte|ÖIS|Gamla Ullevi|18416|Gothenburg|1887|#E30613|#0055A5|#E30613
+Cracovia|Cracovia|Cracovia|CRA|Stadion Cracovii|15016|Kraków|1906|#E30613|#FFFFFF|#E30613
+GKS Katowice|GKS Katowice|Katowice|GKS|Arena Katowice|15048|Katowice|1964|#00843D|#FFD100|#00843D
+Górnik Zabrze|Górnik Zabrze|Górnik|GOR|Arena Zabrze|24563|Zabrze|1948|#0055A5|#E30613|#0055A5
+Jagiellonia Białystok|Jagiellonia Białystok|Jagiellonia|JAG|Chorten Arena|22372|Białystok|1920|#FFD100|#E30613|#E30613
+Korona Kielce|Korona Kielce|Korona|KOR|Exbud Arena|15550|Kielce|1973|#FFD100|#E30613|#E30613
+Lech Poznań|Lech Poznań|Lech|LPO|Enea Stadion|41609|Poznań|1922|#0055A5|#FFFFFF|#0055A5
+Legia Warszawa|Legia Warszawa|Legia|LEG|Stadion Wojska Polskiego|31103|Warsaw|1916|#00843D|#FFFFFF|#00843D
+Motor Lublin|Motor Lublin|Motor|MOT|Motor Lublin Arena|15247|Lublin|1950|#FFD100|#0055A5|#0055A5
+Piast Gliwice|Piast Gliwice|Piast|PIA|Stadion Piasta|10037|Gliwice|1945|#0055A5|#E30613|#0055A5
+Pogoń Szczecin|Pogoń Szczecin|Pogoń|POG|Stadion im. Floriana Krygiera|21163|Szczecin|1948|#7A1E3A|#0055A5|#7A1E3A
+Radomiak Radom|Radomiak Radom|Radomiak|RAD|Stadion im. Braci Czachorów|8840|Radom|1910|#00843D|#FFFFFF|#00843D
+Raków Częstochowa|Raków Częstochowa|Raków|RAK|Stadion Miejski Raków|5500|Częstochowa|1921|#E30613|#0055A5|#E30613
+Widzew Łódź|Widzew Łódź|Widzew|WID|Stadion Widzewa|18018|Łódź|1910|#E30613|#FFFFFF|#E30613
+Wisła Kraków|Wisła Kraków|Wisła|WIS|Stadion im. Henryka Reymana|33130|Kraków|1906|#E30613|#FFFFFF|#E30613
+Wisła Płock|Wisła Płock|Wisła Płock|WPL|Orlen Stadion|15004|Płock|1947|#0055A5|#FFFFFF|#0055A5
+Zagłębie Lubin|Zagłębie Lubin|Zagłębie|ZAG|KGHM Zagłębie Arena|16086|Lubin|1945|#F58113|#00843D|#F07000
+Śląsk Wrocław|Śląsk Wrocław|Śląsk|SLA|Tarczyński Arena|42771|Wrocław|1947|#00843D|#FFFFFF|#00843D
+Asociația Clubul Sportiv Petrolul 52|Petrolul Ploiești|Petrolul|PET|Stadionul Ilie Oană|15073|Ploiești|1924|#FFD100|#0055A5|#0055A5
+CFR Cluj|CFR Cluj|CFR Cluj|CFR|Stadionul Dr. Constantin Rădulescu|23500|Cluj-Napoca|1907|#7A1E3A|#FFFFFF|#7A1E3A
+Dinamo Bucureşti|Dinamo București|Dinamo|DIN|Arena Națională|55634|Bucharest|1948|#E30613|#FFFFFF|#E30613
+FC Argeș|FC Argeș|Argeș|ARG|Stadionul Nicolae Dobrin|15000|Pitești|1953|#5B2A86|#FFFFFF|#5B2A86
+FCSB|FCSB|FCSB|FCSB|Arena Națională|55634|Bucharest|1947|#E30613|#0055A5|#E30613
+FCV Farul Constanța|Farul Constanța|Farul|FAR|Stadionul Farul|15520|Constanța|1949|#0055A5|#FFFFFF|#0055A5
+Rapid Bucuresti|Rapid București|Rapid|RAP|Stadionul Giulești|14050|Bucharest|1923|#7A1E3A|#FFFFFF|#7A1E3A
+UTA Arad|UTA Arad|UTA|UTA|Stadionul Francisc von Neuman|12700|Arad|1945|#E30613|#FFFFFF|#E30613
+Universitatea Cluj|U Cluj|U Cluj|UCJ|Cluj Arena|30201|Cluj-Napoca|1919|#000000|#FFFFFF|#1A1A1A
+Universitatea Craiova|Universitatea Craiova|U Craiova|UCV|Stadionul Ion Oblemenco|30983|Craiova|1948|#0055A5|#FFFFFF|#0055A5
+Oțelul Galați|Oțelul Galați|Oțelul|OTE|Stadionul Oțelul|13500|Galați|1964|#E30613|#0055A5|#E30613
+Sepsi OSK|Sepsi OSK|Sepsi|SEP|Sepsi Arena|8400|Sfântu Gheorghe|2011|#E30613|#FFFFFF|#E30613
+Bohemian FC|Bohemian FC|Bohemians|BOH|Dalymount Park|4500|Dublin|1890|#E30613|#000000|#E30613
+Derry City|Derry City|Derry|DER|Brandywell Stadium|3700|Derry|1928|#E30613|#FFFFFF|#E30613
+Drogheda United|Drogheda United|Drogheda|DRO|Head in the Game Park|3000|Drogheda|1919|#7A1E3A|#6CB4E4|#7A1E3A
+Dundalk|Dundalk|Dundalk|DUN|Oriel Park|4500|Dundalk|1903|#FFFFFF|#000000|#1A1A1A
+Galway United|Galway United|Galway|GAL|Eamonn Deacy Park|5000|Galway|1937|#7A1E3A|#FFFFFF|#7A1E3A
+Shamrock Rovers|Shamrock Rovers|Shamrock|SHA|Tallaght Stadium|10500|Dublin|1901|#00843D|#FFFFFF|#00843D
+Shelbourne FC|Shelbourne|Shelbourne|SHE|Tolka Park|3600|Dublin|1895|#E30613|#FFFFFF|#E30613
+Sligo Rovers|Sligo Rovers|Sligo|SLI|The Showgrounds|3873|Sligo|1928|#E30613|#FFFFFF|#E30613
+St Patrick's Athletic FC|St Patrick's Athletic|St Pat's|STP|Richmond Park|5340|Dublin|1929|#E30613|#FFFFFF|#E30613
+Waterford FC|Waterford|Waterford|WAT|Regional Sports Centre|5160|Waterford|1930|#0055A5|#FFFFFF|#0055A5
+Al Hilal|Al Hilal|Al Hilal|HIL|Kingdom Arena|26000|Riyadh|1957|#0055A5|#FFFFFF|#0055A5
+Al Nassr|Al Nassr|Al Nassr|NAS|Al-Awwal Park|26000|Riyadh|1955|#FFE600|#0055A5|#0055A5
+Al Ittihad|Al Ittihad|Al Ittihad|ITT|King Abdullah Sports City|62345|Jeddah|1927|#FFE600|#000000|#1A1A1A
+Al Ahli SFC|Al Ahli|Al Ahli|AHL|King Abdullah Sports City|62345|Jeddah|1937|#00843D|#FFFFFF|#00843D
+Al Ettifaq|Al Ettifaq|Al Ettifaq|ETT|EGO Stadium|15000|Dammam|1945|#00843D|#E30613|#00843D
+Al Shabab|Al Shabab|Al Shabab|SHB|Al Shabab Club Stadium|15000|Riyadh|1947|#FFFFFF|#000000|#1A1A1A
+Al Qadsiah FC|Al Qadsiah|Al Qadsiah|QAD|Prince Saud bin Jalawi Stadium|15000|Khobar|1967|#E30613|#FFD100|#E30613
+Al Riyadh|Al Riyadh|Al Riyadh|RIY|Prince Faisal bin Fahd Sports City|22500|Riyadh|1954|#E30613|#000000|#E30613
+Inter Miami|Inter Miami CF|Inter Miami|MIA|Miami Freedom Park|25000|Miami|2018|#F7B5CD|#231F20|#E0679A
+Los Angeles FC|LAFC|LAFC|LAFC|BMO Stadium|22000|Los Angeles|2014|#000000|#C39E6D|#1A1A1A
+LA Galaxy|LA Galaxy|LA Galaxy|LA|Dignity Health Sports Park|27000|Carson|1994|#00245D|#FFD200|#00245D
+Seattle Sounders FC|Seattle Sounders FC|Seattle|SEA|Lumen Field|37722|Seattle|2007|#5D9741|#005595|#5D9741
+Portland Timbers|Portland Timbers|Portland|POR|Providence Park|25218|Portland|2009|#00482B|#D69A00|#00482B
+Atlanta United|Atlanta United|Atlanta|ATL|Mercedes-Benz Stadium|42500|Atlanta|2014|#80000A|#000000|#A6192E
+Austin FC|Austin FC|Austin|ATX|Q2 Stadium|20738|Austin|2018|#00B140|#000000|#00A33A
+CF Montréal|CF Montréal|Montréal|MTL|Stade Saputo|19619|Montreal|1992|#000000|#0033A1|#0033A1
+Charlotte FC|Charlotte FC|Charlotte|CLT|Bank of America Stadium|38000|Charlotte|2019|#1A85C8|#000000|#1A85C8
+Chicago Fire|Chicago Fire FC|Chicago|CHI|Soldier Field|24955|Chicago|1997|#AF2626|#0A174A|#AF2626
+Colorado Rapids|Colorado Rapids|Colorado|COL|Dick's Sporting Goods Park|18061|Commerce City|1995|#960A2C|#9CC2EA|#960A2C
+Columbus Crew|Columbus Crew|Columbus|CLB|Lower.com Field|20371|Columbus|1994|#FEDD00|#000000|#E0C200
+DC United|D.C. United|D.C. United|DC|Audi Field|20000|Washington, D.C.|1995|#000000|#EF3E42|#EF3E42
+FC Cincinnati|FC Cincinnati|Cincinnati|CIN|TQL Stadium|26000|Cincinnati|2015|#F05323|#263B80|#F05323
+FC Dallas|FC Dallas|Dallas|DAL|Toyota Stadium|20500|Frisco|1995|#E81F3E|#2A4076|#E81F3E
+Houston Dynamo|Houston Dynamo FC|Houston|HOU|Shell Energy Stadium|22039|Houston|2005|#FF6B00|#101820|#FF6B00
+Minnesota United FC|Minnesota United FC|Minnesota|MIN|Allianz Field|19400|Saint Paul|2015|#8CD2F4|#231F20|#4AA8DE
+Nashville SC|Nashville SC|Nashville|NSH|GEODIS Park|30000|Nashville|2017|#ECE83A|#1F1646|#1F1646
+New England Revolution|New England Revolution|New England|NE|Gillette Stadium|20000|Foxborough|1994|#0A2240|#CE0E2D|#0A2240
+New York City FC|New York City FC|NYCFC|NYC|Yankee Stadium|28743|New York|2013|#6CACE4|#041E42|#3B8FD0
+New York Red Bulls|New York Red Bulls|NY Red Bulls|RBNY|Sports Illustrated Stadium|25000|Harrison|1994|#ED1E36|#23326A|#ED1E36
+Orlando City SC|Orlando City SC|Orlando|ORL|Inter&Co Stadium|25500|Orlando|2010|#633492|#FFFFFF|#633492
+Philadelphia Union|Philadelphia Union|Philadelphia|PHI|Subaru Park|18500|Chester|2008|#071B2C|#B19B69|#1B3A5C
+Real Salt Lake|Real Salt Lake|Salt Lake|RSL|America First Field|20213|Sandy|2004|#B30838|#013A81|#B30838
+San Diego FC|San Diego FC|San Diego|SD|Snapdragon Stadium|35000|San Diego|2023|#0A2240|#F4B8C2|#1B3A66
+San Jose Earthquakes|San Jose Earthquakes|San Jose|SJ|PayPal Park|18000|San Jose|1994|#0067B1|#000000|#0067B1
+Sporting Kansas City|Sporting Kansas City|Sporting KC|SKC|Children's Mercy Park|18467|Kansas City|1995|#93B1D7|#002F65|#4A7FBF
+St. Louis CITY SC|St. Louis CITY SC|St. Louis|STL|Energizer Park|22423|St. Louis|2019|#EC1458|#001544|#EC1458
+Toronto FC|Toronto FC|Toronto|TOR|BMO Field|30000|Toronto|2006|#B81137|#455560|#B81137
+Vancouver Whitecaps FC|Vancouver Whitecaps FC|Vancouver|VAN|BC Place|22120|Vancouver|1974|#FFFFFF|#00245E|#00245E
+Club América|Club América|América|AME|Estadio Banorte|83264|Mexico City|1916|#FFE600|#002D72|#002D72
+Guadalajara|C.D. Guadalajara|Chivas|GDL|Estadio Akron|46232|Zapopan|1906|#E30613|#FFFFFF|#E30613
+Cruz Azul|Cruz Azul|Cruz Azul|CAZ|Estadio Ciudad de los Deportes|33000|Mexico City|1927|#0055A5|#FFFFFF|#0055A5
+Pumas UNAM|Pumas UNAM|Pumas|PUM|Estadio Olímpico Universitario|58445|Mexico City|1954|#002D72|#C5A252|#002D72
+Tigres UANL|Tigres UANL|Tigres|TIG|Estadio Universitario|41615|San Nicolás de los Garza|1960|#FDB913|#002D72|#E0A000
+Monterrey|C.F. Monterrey|Monterrey|MTY|Estadio BBVA|53500|Guadalupe|1945|#002D72|#FFFFFF|#002D72
+Toluca|Deportivo Toluca|Toluca|TOL|Estadio Nemesio Díez|30000|Toluca|1917|#E30613|#FFFFFF|#E30613
+Santos Laguna|Santos Laguna|Santos Laguna|SAN|Estadio Corona|29237|Torreón|1983|#00843D|#FFFFFF|#00843D
+Atlas FC|Atlas FC|Atlas|ATS|Estadio Jalisco|55110|Guadalajara|1916|#E30613|#000000|#E30613
+Club León|Club León|León|LEO|Estadio León|31297|León|1944|#00843D|#FFFFFF|#00843D
+Pachuca|C.F. Pachuca|Pachuca|PAC|Estadio Hidalgo|27512|Pachuca|1901|#002D72|#FFFFFF|#002D72
+Puebla FC|Club Puebla|Puebla|PUE|Estadio Cuauhtémoc|51726|Puebla|1944|#FFFFFF|#002D72|#002D72
+Atlético de San Luis|Atlético de San Luis|San Luis|ASL|Estadio Alfonso Lastras|25709|San Luis Potosí|2013|#E30613|#002D72|#E30613
+Tijuana|Club Tijuana|Tijuana|TIJ|Estadio Caliente|27333|Tijuana|2007|#E30613|#000000|#E30613
+Necaxa|Club Necaxa|Necaxa|NEC|Estadio Victoria|23851|Aguascalientes|1923|#E30613|#FFFFFF|#E30613
+Querétaro|Querétaro FC|Querétaro|QRO|Estadio Corregidora|34165|Querétaro|1950|#0055A5|#000000|#0055A5
+Boca Juniors|Boca Juniors|Boca|BOC|La Bombonera|57200|Buenos Aires|1905|#0033A0|#FFD100|#0033A0
+River Plate|River Plate|River|RIV|Estadio Mâs Monumental|85018|Buenos Aires|1901|#FFFFFF|#E30613|#E30613
+Racing Club|Racing Club|Racing|RAC|Estadio Presidente Perón|51389|Avellaneda|1903|#6CB4E4|#FFFFFF|#3B8FD0
+Independiente|Independiente|Independiente|IND|Estadio Libertadores de América|42069|Avellaneda|1905|#E30613|#FFFFFF|#E30613
+San Lorenzo de Almagro|San Lorenzo|San Lorenzo|SLO|Estadio Pedro Bidegain|47964|Buenos Aires|1908|#002D72|#E30613|#002D72
+Huracán|Huracán|Huracán|HUR|Estadio Tomás Adolfo Ducó|48314|Buenos Aires|1908|#FFFFFF|#E30613|#E30613
+Vélez Sarsfield|Vélez Sarsfield|Vélez|VEL|Estadio José Amalfitani|49540|Buenos Aires|1910|#FFFFFF|#0055A5|#0055A5
+Estudiantes de La Plata|Estudiantes de La Plata|Estudiantes|EST|Estadio Jorge Luis Hirschi|30018|La Plata|1905|#E30613|#FFFFFF|#E30613
+Gimnasia y Esgrima La Plata|Gimnasia La Plata|Gimnasia|GIM|Estadio Juan Carmelo Zerillo|21500|La Plata|1887|#FFFFFF|#002D72|#002D72
+Rosario Central|Rosario Central|Rosario Central|CEN|Estadio Gigante de Arroyito|41654|Rosario|1889|#002D72|#FFD100|#002D72
+Newell's Old Boys|Newell's Old Boys|Newell's|NOB|Estadio Marcelo Bielsa|42000|Rosario|1903|#E30613|#000000|#E30613
+Talleres|Talleres|Talleres|TAL|Estadio Mario Alberto Kempes|57000|Córdoba|1913|#002D72|#FFFFFF|#002D72
+Belgrano de Córdoba|Belgrano|Belgrano|BEL|Estadio Julio César Villagra|28000|Córdoba|1905|#6CB4E4|#FFFFFF|#3B8FD0
+Lanús|Lanús|Lanús|LAN|Estadio Ciudad de Lanús|47027|Lanús|1915|#7A1E3A|#FFFFFF|#7A1E3A
+CA Banfield|Banfield|Banfield|BAN|Estadio Florencio Sola|34901|Banfield|1896|#00843D|#FFFFFF|#00843D
+Argentinos Juniors|Argentinos Juniors|Argentinos|ARG|Estadio Diego Armando Maradona|26000|Buenos Aires|1904|#E30613|#FFFFFF|#E30613
+Tigre|Tigre|Tigre|TIG|Estadio José Dellagiovanna|26282|Victoria|1902|#002D72|#E30613|#002D72
+Platense|Platense|Platense|PLA|Estadio Ciudad de Vicente López|28530|Florida|1905|#5E3A1F|#FFFFFF|#6B4226
+Defensa y Justicia|Defensa y Justicia|Defensa|DYJ|Estadio Norberto Tomaghello|18000|Florencio Varela|1935|#FFD100|#00843D|#00843D
+Atlético Tucumán|Atlético Tucumán|Atl. Tucumán|ATU|Estadio Monumental José Fierro|35200|San Miguel de Tucumán|1902|#6CB4E4|#FFFFFF|#3B8FD0
+Club Atlético Unión|Unión de Santa Fe|Unión|UNI|Estadio 15 de Abril|28000|Santa Fe|1907|#E30613|#FFFFFF|#E30613
+CA Aldosivi|Aldosivi|Aldosivi|ALD|Estadio José María Minella|35354|Mar del Plata|1913|#00843D|#FFD100|#00843D
+Instituto Atlético Central Córdoba|Instituto|Instituto|INS|Estadio Juan Domingo Perón|26535|Córdoba|1918|#E30613|#FFFFFF|#E30613
+Club Atlético Sarmiento|Sarmiento|Sarmiento|SAR|Estadio Eva Perón|22000|Junín|1911|#00843D|#FFFFFF|#00843D
+Independiente Rivadavia|Independiente Rivadavia|Ind. Rivadavia|IRI|Estadio Bautista Gargantini|24000|Mendoza|1913|#002D72|#FFFFFF|#002D72
+Olympiacos FC|Olympiacos|Olympiacos|OLY|Georgios Karaiskakis Stadium|32115|Piraeus|1925|#E30613|#FFFFFF|#E30613
+Panathinaikos FC|Panathinaikos|Panathinaikos|PAO|Apostolos Nikolaidis Stadium|16003|Athens|1908|#00843D|#FFFFFF|#00843D
+AEK Athens|AEK Athens|AEK|AEK|OPAP Arena|32500|Athens|1924|#FFD100|#000000|#E0B800
+PAOK|PAOK|PAOK|PAOK|Toumba Stadium|28703|Thessaloniki|1926|#000000|#FFFFFF|#1A1A1A
+GNK Dinamo Zagreb|Dinamo Zagreb|Dinamo Zagreb|DZG|Stadion Maksimir|24851|Zagreb|1945|#0055A5|#FFFFFF|#0055A5
+Hajduk Split|Hajduk Split|Hajduk|HAJ|Stadion Poljud|33987|Split|1911|#FFFFFF|#0055A5|#0055A5
+SK Slavia Praha|SK Slavia Praha|Slavia|SLA|Fortuna Arena|19370|Prague|1892|#E30613|#FFFFFF|#E30613
+Sparta Praha|AC Sparta Praha|Sparta|SPA|epet ARENA|18349|Prague|1893|#7A1E3A|#FFFFFF|#7A1E3A
+Viktoria Plzeň|FC Viktoria Plzeň|Plzeň|PLZ|Doosan Arena|11700|Plzeň|1911|#E30613|#0055A5|#E30613
+Dynamo Kyiv|Dynamo Kyiv|Dynamo Kyiv|DYN|NSC Olimpiyskiy|70050|Kyiv|1927|#FFFFFF|#0055A5|#0055A5
+Shakhtar Donetsk|Shakhtar Donetsk|Shakhtar|SHK|Arena Lviv|34915|Donetsk|1936|#F58113|#000000|#F07000
+APOEL FC|APOEL|APOEL|APO|GSP Stadium|22859|Nicosia|1926|#FFD100|#0055A5|#0055A5
+Omonoia FC|Omonoia|Omonoia|OMO|GSP Stadium|22859|Nicosia|1948|#00843D|#FFFFFF|#00843D
+Ferencvárosi Torna Club|Ferencváros|Ferencváros|FTC|Groupama Aréna|22000|Budapest|1899|#00843D|#FFFFFF|#00843D
+Qarabağ FK|Qarabağ FK|Qarabağ|QAR|Tofiq Bahramov Republican Stadium|31200|Baku|1951|#000000|#FFFFFF|#1A1A1A
+HJK Helsinki|HJK Helsinki|HJK|HJK|Bolt Arena|10770|Helsinki|1907|#0055A5|#FFFFFF|#0055A5
+Ludogorets|Ludogorets Razgrad|Ludogorets|LUD|Huvepharma Arena|10422|Razgrad|2001|#00843D|#FFFFFF|#00843D
+Al Ain|Al Ain FC|Al Ain|AIN|Hazza bin Zayed Stadium|25053|Al Ain|1968|#5B2A86|#FFFFFF|#5B2A86
+Flamengo|Flamengo|Flamengo|FLA|Maracanã|78838|Rio de Janeiro|1895|#E30613|#000000|#E30613
+Palmeiras|Palmeiras|Palmeiras|PAL|Allianz Parque|43713|São Paulo|1914|#006437|#FFFFFF|#006437
+Corinthians|Corinthians|Corinthians|COR|Neo Química Arena|49205|São Paulo|1910|#FFFFFF|#000000|#1A1A1A
+São Paulo|São Paulo FC|São Paulo|SAO|MorumBIS|66795|São Paulo|1930|#FFFFFF|#E30613|#E30613
+Santos|Santos FC|Santos|SAN|Vila Belmiro|16068|Santos|1912|#FFFFFF|#000000|#1A1A1A
+Fluminense|Fluminense|Fluminense|FLU|Maracanã|78838|Rio de Janeiro|1902|#7A1E3A|#00843D|#7A1E3A
+Botafogo|Botafogo|Botafogo|BOT|Estádio Nilton Santos|44661|Rio de Janeiro|1904|#000000|#FFFFFF|#1A1A1A
+Vasco da Gama|Vasco da Gama|Vasco|VAS|São Januário|21880|Rio de Janeiro|1898|#000000|#FFFFFF|#1A1A1A
+Atlético Mineiro|Atlético Mineiro|Atlético-MG|CAM|Arena MRV|46000|Belo Horizonte|1908|#000000|#FFFFFF|#1A1A1A
+Cruzeiro|Cruzeiro|Cruzeiro|CRU|Mineirão|61927|Belo Horizonte|1921|#0033A0|#FFFFFF|#0033A0
+Grêmio|Grêmio|Grêmio|GRE|Arena do Grêmio|55662|Porto Alegre|1903|#0D80BF|#000000|#0D80BF
+Bahia|EC Bahia|Bahia|BAH|Arena Fonte Nova|47907|Salvador|1931|#0055A5|#E30613|#0055A5
+Red Bull Bragantino|Red Bull Bragantino|Bragantino|RBB|Estádio Nabi Abi Chedid|17022|Bragança Paulista|1928|#FFFFFF|#E30613|#E30613
+Mirassol|Mirassol FC|Mirassol|MIR|Estádio José Maria de Campos Maia|15000|Mirassol|1925|#FFD100|#00843D|#00843D
+Peñarol|Peñarol|Peñarol|PEN|Estadio Campeón del Siglo|40005|Montevideo|1891|#FFD100|#000000|#E0B800
+Club Nacional de Football|Nacional|Nacional|NAC|Gran Parque Central|34000|Montevideo|1899|#FFFFFF|#0033A0|#0033A0
+Sydney FC|Sydney FC|Sydney|SYD|Allianz Stadium|42500|Sydney|2004|#6CB4E4|#002D72|#3B8FD0
+Melbourne Victory|Melbourne Victory|Melbourne V.|MVC|AAMI Park|30050|Melbourne|2004|#002D72|#FFFFFF|#002D72
+Melbourne City FC|Melbourne City|Melbourne City|MCY|AAMI Park|30050|Melbourne|2009|#6CB4E4|#FFFFFF|#3B8FD0
+Western Sydney Wanderers|Western Sydney Wanderers|WS Wanderers|WSW|CommBank Stadium|30000|Sydney|2012|#E30613|#000000|#E30613
+Auckland FC|Auckland FC|Auckland|AKL|Go Media Stadium|25000|Auckland|2024|#0033A0|#FF7A00|#0033A0
+Adelaide United|Adelaide United|Adelaide|ADE|Coopers Stadium|16500|Adelaide|2003|#E30613|#FFFFFF|#E30613
+Brisbane Roar|Brisbane Roar|Brisbane|BRI|Suncorp Stadium|52500|Brisbane|2005|#F58113|#002D72|#F07000
+Wellington Phoenix|Wellington Phoenix|Wellington|WEL|Sky Stadium|34500|Wellington|2007|#FFD100|#000000|#E0B800
+Perth Glory|Perth Glory|Perth|PER|HBF Park|20500|Perth|1995|#5B2A86|#F58113|#5B2A86
+Newcastle Jets|Newcastle Jets|Newcastle J.|NEW|McDonald Jones Stadium|33000|Newcastle|2000|#0033A0|#FFD100|#0033A0
+Central Coast Mariners|Central Coast Mariners|CC Mariners|CCM|Industree Group Stadium|20059|Gosford|2004|#FFD100|#002D72|#002D72
+Macarthur FC|Macarthur FC|Macarthur|MAC|Campbelltown Stadium|17500|Campbelltown|2017|#000000|#C5A252|#1A1A1A
+FC Seoul|FC Seoul|FC Seoul|SEO|Seoul World Cup Stadium|66704|Seoul|1983|#E30613|#000000|#E30613
+Ulsan HD FC|Ulsan HD FC|Ulsan|ULS|Munsu Football Stadium|37897|Ulsan|1983|#0055A5|#FFD100|#0055A5
+Jeonbuk Hyundai Motors|Jeonbuk Hyundai Motors|Jeonbuk|JEO|Jeonju World Cup Stadium|42477|Jeonju|1994|#00843D|#FFFFFF|#00843D
+Pohang Steelers|Pohang Steelers|Pohang|POH|Pohang Steel Yard|17443|Pohang|1973|#E30613|#000000|#E30613
+Shanghai Port|Shanghai Port|Shanghai Port|SHP|Pudong Football Stadium|37000|Shanghai|2005|#E30613|#FFFFFF|#E30613
+Shanghai Shenhua|Shanghai Shenhua|Shenhua|SHS|Shanghai Stadium|72000|Shanghai|1993|#0033A0|#FFFFFF|#0033A0
+Beijing Guoan|Beijing Guoan|Beijing Guoan|BGA|Workers' Stadium|68000|Beijing|1992|#00843D|#FFFFFF|#00843D
+Shandong Taishan|Shandong Taishan|Shandong|SDT|Jinan Olympic Sports Center Stadium|56808|Jinan|1993|#F58113|#FFFFFF|#F07000

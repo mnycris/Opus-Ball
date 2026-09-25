@@ -1,0 +1,99 @@
+# FC27 club name | display | short | abbr | stadium | capacity | city | founded | kit primary | kit secondary | ui theme
+Athletic Club|Athletic Club|Athletic|ATH|San Mamés|53331|Bilbao|1898|#EE2523|#FFFFFF|#D9171C
+Atlético Madrid|Atlético de Madrid|Atlético|ATM|Riyadh Air Metropolitano|70692|Madrid|1903|#CB3524|#272E61|#CB3524
+CA Osasuna|CA Osasuna|Osasuna|OSA|El Sadar|23576|Pamplona|1920|#D91A21|#0A346F|#C2161C
+Deportivo Alavés|Deportivo Alavés|Alavés|ALA|Mendizorroza|19840|Vitoria-Gasteiz|1921|#0761AF|#FFFFFF|#0761AF
+Elche CF|Elche CF|Elche|ELC|Martínez Valero|31388|Elche|1923|#FFFFFF|#05642C|#05642C
+FC Barcelona|FC Barcelona|Barça|BAR|Spotify Camp Nou|99354|Barcelona|1899|#A50044|#004D98|#A50044
+Getafe CF|Getafe CF|Getafe|GET|Coliseum|16500|Getafe|1983|#005999|#FFFFFF|#005999
+Levante UD|Levante UD|Levante|LEV|Ciutat de València|26354|Valencia|1909|#B4053F|#004D98|#B4053F
+Málaga CF|Málaga CF|Málaga|MAL|La Rosaleda|30044|Málaga|1994|#6CB4E4|#FFFFFF|#1E7FC4
+RC Celta|RC Celta|Celta|CEL|Abanca-Balaídos|24870|Vigo|1923|#8AC3EE|#FFFFFF|#3B8FD0
+RC Deportivo A Coruña|RC Deportivo|Deportivo|DEP|Abanca-Riazor|32912|A Coruña|1906|#1B45A8|#FFFFFF|#1B45A8
+RCD Espanyol|RCD Espanyol|Espanyol|ESP|RCDE Stadium|40000|Cornellà de Llobregat|1900|#007FC8|#FFFFFF|#007FC8
+Racing Santander|Real Racing Club|Racing|RAC|El Sardinero|22222|Santander|1913|#FFFFFF|#00843D|#00843D
+Rayo Vallecano|Rayo Vallecano|Rayo|RAY|Estadio de Vallecas|14708|Madrid|1924|#FFFFFF|#E53027|#E53027
+Real Betis Balompié|Real Betis|Betis|BET|Estadio de La Cartuja|70000|Seville|1907|#00954C|#FFFFFF|#00954C
+Real Madrid|Real Madrid|Real Madrid|RMA|Santiago Bernabéu|78297|Madrid|1902|#FFFFFF|#FEBE10|#00529F
+Real Sociedad|Real Sociedad|Real Sociedad|RSO|Reale Arena|39500|San Sebastián|1909|#0067B1|#FFFFFF|#0067B1
+Sevilla FC|Sevilla FC|Sevilla|SEV|Ramón Sánchez-Pizjuán|43883|Seville|1890|#FFFFFF|#D81E05|#D81E05
+Valencia CF|Valencia CF|Valencia|VAL|Mestalla|49430|Valencia|1919|#FFFFFF|#EE3524|#E8630A
+Villarreal CF|Villarreal CF|Villarreal|VIL|Estadio de la Cerámica|23008|Villarreal|1923|#FFE667|#005187|#E3B800
+AD Ceuta FC|AD Ceuta FC|Ceuta|CEU|Alfonso Murube|6500|Ceuta|1996|#FFFFFF|#000000|#1A1A1A
+Albacete Balompié|Albacete Balompié|Albacete|ALB|Carlos Belmonte|17524|Albacete|1940|#FFFFFF|#B40E1E|#B40E1E
+Burgos CF|Burgos CF|Burgos|BUR|El Plantío|12194|Burgos|1985|#FFFFFF|#000000|#1A1A1A
+CD Castellón|CD Castellón|Castellón|CAS|Nou Castàlia|15500|Castellón de la Plana|1922|#000000|#FFFFFF|#1A1A1A
+CD Eldense|CD Eldense|Eldense|ELD|Nuevo Pepico Amat|4036|Elda|1921|#D40A1B|#1C3F94|#D40A1B
+CD Leganés|CD Leganés|Leganés|LEG|Butarque|12454|Leganés|1928|#0045A0|#FFFFFF|#0045A0
+CD Tenerife|CD Tenerife|Tenerife|TEN|Heliodoro Rodríguez López|22824|Santa Cruz de Tenerife|1912|#FFFFFF|#0033A0|#0033A0
+CE Sabadell FC|CE Sabadell|Sabadell|SAB|Nova Creu Alta|11908|Sabadell|1903|#0D4EA1|#FFFFFF|#0D4EA1
+Cádiz CF|Cádiz CF|Cádiz|CAD|Nuevo Mirandilla|20724|Cádiz|1910|#FFE600|#0045A0|#E0C400
+Córdoba CF|Córdoba CF|Córdoba|COR|Nuevo Arcángel|25100|Córdoba|1954|#FFFFFF|#00874E|#00874E
+FC Andorra|FC Andorra|Andorra|AND|Estadi Nacional|3306|Andorra la Vella|1942|#0033A0|#FFD100|#0033A0
+Girona FC|Girona FC|Girona|GIR|Estadi Montilivi|14624|Girona|1930|#E30613|#FFFFFF|#E30613
+Granada CF|Granada CF|Granada|GRA|Nuevo Los Cármenes|19336|Granada|1931|#E30613|#FFFFFF|#E30613
+RC Celta Fortuna|Celta Fortuna|Celta Fortuna|CEF|Estadio de Barreiro|4500|Vigo|1927|#8AC3EE|#FFFFFF|#3B8FD0
+RCD Mallorca|RCD Mallorca|Mallorca|MLL|Estadi Mallorca Son Moix|26020|Palma|1916|#E20613|#000000|#C8102E
+Real Oviedo|Real Oviedo|Oviedo|OVI|Carlos Tartiere|30500|Oviedo|1926|#0053A0|#FFFFFF|#0053A0
+Real Sociedad de Fútbol B|Real Sociedad B|Real Sociedad B|RSB|Zubieta|2500|San Sebastián|1951|#0067B1|#FFFFFF|#0067B1
+Real Sporting de Gijón|Real Sporting|Sporting|SPG|El Molinón|29029|Gijón|1905|#E30613|#FFFFFF|#E30613
+Real Valladolid CF|Real Valladolid|Valladolid|VLL|José Zorrilla|27618|Valladolid|1928|#5B2C86|#FFFFFF|#5B2C86
+SD Eibar|SD Eibar|Eibar|EIB|Ipurua|8164|Eibar|1940|#0E3D8F|#A61B29|#0E3D8F
+UD Almería|UD Almería|Almería|ALM|Power Horse Stadium|18331|Almería|1989|#EE2E24|#FFFFFF|#EE2E24
+UD Las Palmas|UD Las Palmas|Las Palmas|LPA|Estadio de Gran Canaria|32400|Las Palmas|1949|#FFE400|#0055A5|#0055A5
+1. FC Köln|1. FC Köln|Köln|KOE|RheinEnergieSTADION|50000|Cologne|1948|#FFFFFF|#ED1C24|#ED1C24
+1. FC Union Berlin|1. FC Union Berlin|Union Berlin|FCU|Stadion An der Alten Försterei|22012|Berlin|1966|#EB1923|#FFFFFF|#EB1923
+1. FSV Mainz 05|1. FSV Mainz 05|Mainz|M05|MEWA ARENA|33305|Mainz|1905|#C3141E|#FFFFFF|#C3141E
+Bayer 04 Leverkusen|Bayer 04 Leverkusen|Leverkusen|B04|BayArena|30210|Leverkusen|1904|#E32221|#000000|#E32221
+Bayern München|FC Bayern München|Bayern|FCB|Allianz Arena|75024|Munich|1900|#DC052D|#FFFFFF|#DC052D
+Borussia Dortmund|Borussia Dortmund|Dortmund|BVB|SIGNAL IDUNA PARK|81365|Dortmund|1909|#FDE100|#000000|#F5C400
+Borussia Mönchengladbach|Borussia Mönchengladbach|M'gladbach|BMG|BORUSSIA-PARK|54042|Mönchengladbach|1900|#FFFFFF|#00A651|#1A1A1A
+Eintracht Frankfurt|Eintracht Frankfurt|Frankfurt|SGE|Deutsche Bank Park|58000|Frankfurt|1899|#000000|#E1000F|#E1000F
+FC Augsburg|FC Augsburg|Augsburg|FCA|WWK ARENA|30660|Augsburg|1907|#BA3733|#46714D|#BA3733
+Hamburger SV|Hamburger SV|Hamburg|HSV|Volksparkstadion|57000|Hamburg|1887|#FFFFFF|#0A3D91|#0A3D91
+RB Leipzig|RB Leipzig|Leipzig|RBL|Red Bull Arena|47069|Leipzig|2009|#FFFFFF|#DD0741|#DD0741
+SC Freiburg|SC Freiburg|Freiburg|SCF|Europa-Park Stadion|34700|Freiburg|1904|#E2001A|#FFFFFF|#C8001A
+SC Paderborn 07|SC Paderborn 07|Paderborn|SCP|Home Deluxe Arena|15000|Paderborn|1907|#0A3478|#000000|#0A3478
+SV Elversberg|SV 07 Elversberg|Elversberg|SVE|URSAPHARM-Arena an der Kaiserlinde|10000|Spiesen-Elversberg|1907|#000000|#FFFFFF|#1A1A1A
+Schalke 04|FC Schalke 04|Schalke|S04|VELTINS-Arena|62271|Gelsenkirchen|1904|#004D9D|#FFFFFF|#004D9D
+TSG 1899 Hoffenheim|TSG Hoffenheim|Hoffenheim|TSG|PreZero Arena|30150|Sinsheim|1899|#1961B5|#FFFFFF|#1961B5
+VfB Stuttgart|VfB Stuttgart|Stuttgart|VFB|MHPArena|60058|Stuttgart|1893|#FFFFFF|#E32219|#E32219
+Werder Bremen|SV Werder Bremen|Bremen|SVW|Weserstadion|42100|Bremen|1899|#1D9053|#FFFFFF|#1D9053
+1. FC Heidenheim 1846|1. FC Heidenheim|Heidenheim|FCH|Voith-Arena|15000|Heidenheim|1846|#E30613|#003C8C|#E30613
+1. FC Kaiserslautern|1. FC Kaiserslautern|K'lautern|FCK|Fritz-Walter-Stadion|49327|Kaiserslautern|1900|#E1001A|#FFFFFF|#C8001A
+1. FC Magdeburg|1. FC Magdeburg|Magdeburg|FCM|Avnet Arena|30098|Magdeburg|1965|#0060AE|#FFFFFF|#0060AE
+1. FC Nürnberg|1. FC Nürnberg|Nürnberg|FCN|Max-Morlock-Stadion|50000|Nuremberg|1900|#A6192E|#000000|#A6192E
+DSC Arminia Bielefeld|Arminia Bielefeld|Bielefeld|DSC|SchücoArena|26515|Bielefeld|1905|#004E95|#000000|#004E95
+Dynamo Dresden|Dynamo Dresden|Dresden|SGD|Rudolf-Harbig-Stadion|32249|Dresden|1953|#FFD200|#000000|#E0B400
+Eintracht Braunschweig|Eintracht Braunschweig|Braunschweig|EBS|Eintracht-Stadion|23325|Braunschweig|1895|#FFE500|#0053A0|#0053A0
+FC Energie Cottbus|FC Energie Cottbus|Cottbus|FCE|LEAG Energie Stadion|22528|Cottbus|1966|#E30613|#FFFFFF|#E30613
+FC St. Pauli|FC St. Pauli|St. Pauli|STP|Millerntor-Stadion|29546|Hamburg|1910|#5E3A1F|#FFFFFF|#6B4226
+Hannover 96|Hannover 96|Hannover|H96|Heinz von Heiden Arena|49000|Hanover|1896|#E2001A|#000000|#C8001A
+Hertha BSC|Hertha BSC|Hertha|BSC|Olympiastadion|74475|Berlin|1892|#005CA9|#FFFFFF|#005CA9
+Holstein Kiel|Holstein Kiel|Kiel|KSV|Holstein-Stadion|15034|Kiel|1900|#00408D|#FFFFFF|#00408D
+Karlsruher SC|Karlsruher SC|Karlsruhe|KSC|BBBank Wildpark|34302|Karlsruhe|1894|#004B9B|#FFFFFF|#004B9B
+SV Darmstadt 98|SV Darmstadt 98|Darmstadt|D98|Merck-Stadion am Böllenfalltor|17810|Darmstadt|1898|#004E9E|#FFFFFF|#004E9E
+SpVgg Greuther Fürth|SpVgg Greuther Fürth|Fürth|SGF|Sportpark Ronhof Thomas Sommer|16626|Fürth|1903|#FFFFFF|#009A3E|#009A3E
+VfL Bochum 1848|VfL Bochum 1848|Bochum|BOC|Vonovia Ruhrstadion|26000|Bochum|1848|#005CA9|#FFFFFF|#005CA9
+VfL Osnabrück|VfL Osnabrück|Osnabrück|OSN|Bremer Brücke|15741|Osnabrück|1899|#5B2A86|#FFFFFF|#5B2A86
+VfL Wolfsburg|VfL Wolfsburg|Wolfsburg|WOB|Volkswagen Arena|30000|Wolfsburg|1945|#65B32E|#FFFFFF|#52A11F
+1. FC Saarbrücken|1. FC Saarbrücken|Saarbrücken|FCS|Ludwigsparkstadion|16003|Saarbrücken|1903|#0057A0|#000000|#0057A0
+Alemannia Aachen|Alemannia Aachen|Aachen|AAC|Tivoli|32960|Aachen|1900|#FFE600|#000000|#D9C200
+FC Ingolstadt 04|FC Ingolstadt 04|Ingolstadt|FCI|Audi Sportpark|15200|Ingolstadt|2004|#000000|#E30613|#E30613
+FC Würzburger Kickers|Würzburger Kickers|Würzburg|FWK|Akon Arena|13090|Würzburg|1907|#E30613|#FFFFFF|#E30613
+Fortuna Düsseldorf|Fortuna Düsseldorf|Düsseldorf|F95|MERKUR SPIEL-ARENA|54600|Düsseldorf|1895|#E2001A|#FFFFFF|#E2001A
+Hansa Rostock|F.C. Hansa Rostock|Rostock|FCH|Ostseestadion|29000|Rostock|1965|#004A9F|#FFFFFF|#004A9F
+MSV Duisburg|MSV Duisburg|Duisburg|MSV|Schauinsland-Reisen-Arena|31500|Duisburg|1902|#004F9F|#FFFFFF|#004F9F
+Rot-Weiss Essen|Rot-Weiss Essen|Essen|RWE|Stadion an der Hafenstraße|19962|Essen|1907|#E30613|#FFFFFF|#E30613
+SC Fortuna Köln|SC Fortuna Köln|Fortuna Köln|SCF|Südstadion|11748|Cologne|1948|#E30613|#FFFFFF|#E30613
+SC Preußen Münster|SC Preußen Münster|Münster|SCP|LVM-Preußenstadion|12000|Münster|1906|#000000|#007A33|#007A33
+SC Verl|SC Verl|Verl|SCV|Sportclub Arena|5207|Verl|1924|#000000|#FFFFFF|#1A1A1A
+SSV Jahn Regensburg|Jahn Regensburg|Regensburg|SSV|Jahnstadion Regensburg|15210|Regensburg|1907|#E30613|#FFFFFF|#E30613
+SV Meppen|SV Meppen|Meppen|SVM|Hänsch-Arena|13696|Meppen|1912|#0055A5|#FFFFFF|#0055A5
+SV Waldhof Mannheim|SV Waldhof Mannheim|Waldhof|SVW|Carl-Benz-Stadion|24302|Mannheim|1907|#003C8F|#000000|#003C8F
+SV Wehen Wiesbaden|SV Wehen Wiesbaden|Wiesbaden|SVWW|BRITA-Arena|15295|Wiesbaden|1926|#E30613|#000000|#E30613
+TSG 1899 Hoffenheim II|TSG Hoffenheim II|Hoffenheim II|TSG2|Dietmar-Hopp-Stadion|6350|Sinsheim|1899|#1961B5|#FFFFFF|#1961B5
+TSV Havelse|TSV Havelse|Havelse|HAV|Wilhelm-Langrehr-Stadion|3500|Garbsen|1912|#0055A5|#FFFFFF|#0055A5
+VfB Stuttgart II|VfB Stuttgart II|Stuttgart II|VFB2|GAZi-Stadion auf der Waldau|11410|Stuttgart|1893|#FFFFFF|#E32219|#E32219
+Viktoria Köln|FC Viktoria Köln|Viktoria Köln|VIK|Sportpark Höhenberg|8343|Cologne|1904|#E30613|#FFFFFF|#E30613
+SG Sonnenhof Großaspach|SG Sonnenhof Großaspach|Großaspach|SGS|WIRmachenDRUCK Arena|10001|Aspach|1994|#000000|#FFFFFF|#1A1A1A

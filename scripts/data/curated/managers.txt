@@ -1,0 +1,101 @@
+# FC27 club | manager | nationality | age | preferred formation | tactical vision
+Arsenal FC|Mikel Arteta|Spain|44|4-3-3 Attack|Possession
+Aston Villa|Unai Emery|Spain|54|4-2-3-1 Wide|Balanced
+AFC Bournemouth|Marco Rose|Germany|50|4-2-3-1 Narrow|Gegenpress
+Brentford|Keith Andrews|Republic of Ireland|46|4-2-3-1 Wide|Direct
+Brighton & Hove Albion|Fabian Hürzeler|Germany|33|4-2-3-1 Wide|Possession
+Chelsea FC|Xabi Alonso|Spain|44|3-4-2-1|Possession
+Coventry City|Frank Lampard|England|48|4-2-3-1 Wide|Balanced
+Crystal Palace|Pierre Sage|France|47|3-4-2-1|Counter-Attack
+Everton FC|David Moyes|Scotland|63|4-2-3-1 Wide|Park the Bus
+Fulham FC|Álvaro Arbeloa|Spain|43|4-3-3 Holding|Balanced
+Hull City|Sergej Jakirović|Bosnia and Herzegovina|49|4-2-3-1 Wide|Balanced
+Ipswich Town|Gary O'Neil|England|43|4-2-3-1 Wide|Counter-Attack
+Leeds United|Daniel Farke|Germany|49|4-3-3 Holding|Possession
+Liverpool FC|Andoni Iraola|Spain|44|4-2-3-1 Wide|Gegenpress
+Manchester City|Enzo Maresca|Italy|46|4-3-3 Holding|Possession
+Manchester United|Michael Carrick|England|45|4-2-3-1 Wide|Balanced
+Newcastle United|Matthias Jaissle|Germany|38|4-3-3 Attack|Gegenpress
+Nottingham Forest|Vítor Pereira|Portugal|58|3-4-3|Counter-Attack
+Sunderland AFC|Régis Le Bris|France|50|4-3-3 Holding|Balanced
+Tottenham Hotspur|Roberto De Zerbi|Italy|47|4-2-3-1 Wide|Possession
+FC Barcelona|Hansi Flick|Germany|61|4-2-3-1 Narrow|Gegenpress
+Real Madrid|José Mourinho|Portugal|63|4-2-3-1 Wide|Counter-Attack
+Atlético Madrid|Diego Simeone|Argentina|56|4-4-2|Park the Bus
+Real Betis Balompié|Manuel Pellegrini|Chile|73|4-2-3-1 Wide|Possession
+Athletic Club|Edin Terzić|Germany|43|4-2-3-1 Wide|Gegenpress
+Real Sociedad|Pellegrino Matarazzo|United States|48|4-3-3 Holding|Balanced
+Villarreal CF|Íñigo Pérez|Spain|38|4-4-2|Gegenpress
+Rayo Vallecano|Beñat San José|Spain|46|4-2-3-1 Wide|Gegenpress
+Deportivo Alavés|Eduardo Coudet|Argentina|52|4-4-2|Direct
+RC Celta|Claudio Giráldez|Spain|38|3-4-3|Possession
+Getafe CF|José Bordalás|Spain|62|4-4-2|Park the Bus
+RCD Espanyol|Manolo González|Spain|47|4-4-2|Counter-Attack
+CA Osasuna|Alessio Lisci|Italy|41|4-2-3-1 Wide|Balanced
+Elche CF|Eder Sarabia|Spain|45|3-5-2|Possession
+Valencia CF|Carlos Corberán|Spain|43|4-4-2|Balanced
+Sevilla FC|Matías Almeyda|Argentina|52|4-4-2|Gegenpress
+RC Deportivo A Coruña|Antonio Hidalgo|Spain|46|4-2-3-1 Wide|Possession
+Málaga CF|Juan Francisco Funes|Spain|53|4-4-2|Balanced
+Racing Santander|José Alberto López|Spain|44|4-3-3 Attack|Possession
+Bayern München|Vincent Kompany|Belgium|40|4-2-3-1 Wide|Possession
+Borussia Dortmund|Niko Kovač|Croatia|54|3-4-2-1|Balanced
+RB Leipzig|Martín Demichelis|Argentina|45|4-2-3-1 Wide|Gegenpress
+VfB Stuttgart|Sebastian Hoeneß|Germany|44|4-2-3-1 Wide|Possession
+TSG 1899 Hoffenheim|Christian Ilzer|Austria|48|3-5-2|Gegenpress
+SC Freiburg|Julian Schuster|Germany|41|4-2-3-1 Wide|Balanced
+Borussia Mönchengladbach|Eugen Polanski|Poland|40|4-2-3-1 Wide|Balanced
+1. FSV Mainz 05|Urs Fischer|Switzerland|60|3-5-2|Counter-Attack
+FC Augsburg|Manuel Baum|Germany|47|3-4-3|Balanced
+Schalke 04|Miron Muslić|Austria|43|3-4-3|Gegenpress
+Eintracht Frankfurt|Adi Hütter|Austria|56|3-4-2-1|Gegenpress
+Werder Bremen|Daniel Thioune|Germany|52|4-2-3-1 Wide|Balanced
+SV Elversberg|Vincent Wagner|Germany|40|4-3-3 Attack|Possession
+Hamburger SV|Merlin Polzin|Germany|35|3-4-3|Balanced
+SC Paderborn 07|Ralf Kettemann|Germany|40|4-2-3-1 Wide|Gegenpress
+1. FC Köln|René Wagner|Germany|37|4-4-2|Balanced
+1. FC Union Berlin|Mauro Lustrinelli|Switzerland|50|3-5-2|Counter-Attack
+Bayer 04 Leverkusen|Carles Martínez Novell|Spain|42|3-4-2-1|Possession
+AC Milan|Rúben Amorim|Portugal|41|3-4-3|Possession
+Inter Milan|Cristian Chivu|Romania|45|3-5-2|Balanced
+Juventus FC|Luciano Spalletti|Italy|67|3-4-2-1|Possession
+SSC Napoli|Massimiliano Allegri|Italy|59|3-5-2|Park the Bus
+AS Roma|Gian Piero Gasperini|Italy|68|3-4-2-1|Gegenpress
+Atalanta BC|Maurizio Sarri|Italy|67|4-3-3 Holding|Possession
+Bologna FC|Domenico Tedesco|Germany|40|4-2-3-1 Wide|Balanced
+Fiorentina|Fabio Grosso|Italy|48|4-3-3 Holding|Balanced
+Monza|Ivan Jurić|Croatia|50|3-4-2-1|Gegenpress
+Como|Cesc Fàbregas|Spain|39|4-2-3-1 Narrow|Possession
+Udinese Calcio|Kosta Runjaić|Germany|55|3-5-2|Balanced
+Venezia FC|Giovanni Stroppa|Italy|58|3-5-2|Possession
+Cagliari|Fabio Pisacane|Italy|40|3-5-2|Counter-Attack
+Genoa|Eusebio Di Francesco|Italy|56|4-3-3 Attack|Balanced
+Paris Saint-Germain|Luis Enrique|Spain|56|4-3-3 Attack|Possession
+Angers SCO|Stéphane Gilli|France|56|4-4-2|Counter-Attack
+AJ Auxerre|Will Still|Belgium|34|3-4-3|Balanced
+Stade Brestois 29|Julien Lachuer|France|49|4-3-3 Holding|Balanced
+Le Havre AC|Didier Digard|France|39|3-5-2|Counter-Attack
+Le Mans FC|Patrick Videira|Portugal|52|4-4-2|Balanced
+RC Lens|Dino Toppmöller|Germany|45|3-4-2-1|Gegenpress
+Lille OSC|Davide Ancelotti|Italy|37|4-2-3-1 Wide|Possession
+FC Lorient|Alexandre Dujeux|France|49|3-4-3|Balanced
+Olympique Lyonnais|Paulo Fonseca|Portugal|53|4-2-3-1 Wide|Possession
+Olympique de Marseille|Bruno Génésio|France|60|4-2-3-1 Wide|Balanced
+AS Monaco|Filipe Luís|Brazil|41|4-3-3 Attack|Possession
+OGC Nice|Olivier Pantaloni|France|59|4-4-2|Counter-Attack
+Paris FC|Liam Rosenior|England|42|3-4-3|Possession
+Stade Rennais|Franck Haise|France|55|3-4-3|Balanced
+RC Strasbourg Alsace|Hugo Oliveira|Portugal|46|3-4-2-1|Possession
+Toulouse FC|Jens Berthel Askou|Denmark|44|3-4-3|Gegenpress
+ESTAC Troyes|Stéphane Dumont|France|44|4-3-3 Holding|Balanced
+PSV|Peter Bosz|Netherlands|62|4-3-3 Attack|Gegenpress
+Feyenoord|Robin van Persie|Netherlands|43|4-3-3 Attack|Possession
+FC Porto|Francesco Farioli|Italy|37|4-3-3 Holding|Possession
+Sporting CP|Rui Borges|Portugal|45|3-4-3|Balanced
+Sporting Clube de Braga|Carlos Vicens|Spain|42|4-3-3 Attack|Possession
+Rangers FC|Danny Röhl|Germany|37|4-2-3-1 Wide|Gegenpress
+Galatasaray SK|Okan Buruk|Türkiye|53|4-2-3-1 Wide|Balanced
+Inter Miami|Javier Mascherano|Argentina|42|4-3-3 Attack|Possession
+Al Hilal|Simone Inzaghi|Italy|50|3-5-2|Balanced
+Al Nassr|Jorge Jesus|Portugal|72|4-4-2|Direct
+Boca Juniors|Claudio Úbeda|Argentina|57|4-4-2|Balanced
