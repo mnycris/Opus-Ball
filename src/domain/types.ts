@@ -331,7 +331,9 @@ export interface MatchResult {
   attendance: number
   detail: 'full' | 'stats' | 'quick'
   lineups?: [number[], number[]]
-  formations?: [string, string]
+  formations?: [string, string] // starting formations
+  captains?: [number, number]
+  mom?: [number, number][] // per simulated minute: [minute + added/100, momentum -1 (away) .. 1 (home)]
 }
 
 export interface Fixture {

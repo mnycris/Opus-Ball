@@ -203,6 +203,7 @@ function compact(r: MatchResult, keepEvents: boolean): MatchResult {
     players: keepEvents ? r.players.map((p) => ({ ...p })) : [],
     detail: keepEvents ? 'stats' : 'quick',
     lineups: keepEvents ? r.lineups : undefined,
+    mom: undefined,
   }
 }
 

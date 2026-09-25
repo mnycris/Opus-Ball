@@ -144,6 +144,14 @@ export function Tactics() {
   )
 }
 
+/** Swap two squad members wherever they are (XI slot, bench or reserves). */
+export function swapInSheet(w: World, s: TeamSheet, a: number, b: number) {
+  const sel = (id: number): Sel => { const i = s.lineup.indexOf(id); if (i >= 0) return { kind: 'slot', i }; if (s.bench.includes(id)) return { kind: 'bench', id }; return { kind: 'res', id } }
+  const A = sel(a), B = sel(b)
+  if (A.kind === 'res' && B.kind === 'res') return
+  swap(w, s, A, B)
+}
+
 function swap(w: World, s: TeamSheet, a: Sel, b: Sel) {
   const get = (x: Sel) => (x.kind === 'slot' ? s.lineup[x.i] : x.id)
   const ida = get(a), idb = get(b)

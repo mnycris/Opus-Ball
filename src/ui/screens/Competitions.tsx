@@ -148,7 +148,7 @@ export function CompScreen({ params }: { params: { id: string } }) {
   )
 }
 
-export function TableView({ w, c, compact }: { w: World; c: Competition; compact?: boolean }) {
+export function TableView({ w, c, compact, highlight }: { w: World; c: Competition; compact?: boolean; highlight?: number[] }) {
   const go = useGame((s) => s.go)
   const [mode, setMode] = useState<'short' | 'full' | 'form'>('short')
   const t = sortTable(w, c)
@@ -165,7 +165,7 @@ export function TableView({ w, c, compact }: { w: World; c: Competition; compact
               const z = zoneFor(w, c, i + 1, t.length)
               const next = zoneFor(w, c, i + 2, t.length)
               return (
-                <tr key={r.clubId} className={`${r.clubId === w.userClubId ? 'me' : ''} ${next !== z && i < t.length - 1 ? 'zone-break' : ''}`} onClick={() => go({ name: 'club', params: { id: r.clubId } })}>
+                <tr key={r.clubId} className={`${r.clubId === w.userClubId || highlight?.includes(r.clubId) ? 'me' : ''} ${next !== z && i < t.length - 1 ? 'zone-break' : ''}`} onClick={() => go({ name: 'club', params: { id: r.clubId } })}>
                   <td><span className="zone-num" style={{ borderColor: ZONE_COLOR[z] }}>{i + 1}</span></td>
                   <td className="l"><div className="row tight"><Badge club={w.clubs[r.clubId]} size={20} /><span className="ellipsis b" style={{ maxWidth: mode === 'full' ? 88 : 150 }}>{w.clubs[r.clubId]?.short}</span></div></td>
                   <td>{r.p}</td>

@@ -12,6 +12,27 @@ import { BODY_PARTS, callName, line } from './commentary'
 
 export type Phase = 'pre' | '1H' | 'HT' | '2H' | 'ET1' | 'ETHT' | 'ET2' | 'PENS' | 'FT'
 
+/**
+ * One simulated minute as seen from the stands: who had the ball, where play ended up and how much threat each side
+ * carried. Drives the 2D match view and the FotMob-style momentum graph. x runs 0 (home goal) → 100 (away goal).
+ */
+export interface MinuteFrame {
+  m: number
+  add: number
+  p: number // home possession share this minute
+  s: 0 | 1 // side on the ball at the end of the minute
+  x: number
+  y: number
+  k: string // dominant action: play | goal | save | miss | chance | woodwork | corner | freekick | offside | foul | yellow | red ...
+  mom: number // -1 (away pressure) .. 1 (home pressure)
+  ev: number // index of the first event produced in this minute
+}
+
+export interface LiveRating {
+  id: number; rating: number; energy: number; on: boolean; pos: Position; yellow: boolean; red: boolean; injured: boolean; slot: number
+  goals: number; assists: number; subOn?: number; subOff?: number; played: boolean
+}
+
 export interface SideInput {
   clubId: number
   name: string
@@ -57,6 +78,10 @@ interface LP {
   red: boolean
   injured: boolean
   impact: number
+  /** per-match form swing (good day / bad day), scaled by consistency */
+  form: number
+  /** live involvement accumulators (fractional passes, dribbles, blocks) */
+  inv: { pass: number; passC: number; drb: number; blk: number; acc: number }
   st: MatchPlayerStats
   q: { att: number; cre: number; def: number; ctl: number; pace: number; aer: number; gk: number; pr: number }
 }
@@ -89,6 +114,11 @@ const FOCUS_MOD: Record<string, [number, number, number, number]> = {
   Attack: [1.1, 1.03, 0.9, 1], Defend: [0.85, 0.95, 1.12, 1], Balanced: [1, 1, 1, 1], 'Build-Up': [0.9, 1.1, 1, 1.1],
   Roaming: [1.05, 1.1, 0.9, 1], Aggressive: [1, 1, 1.05, 0.95],
 }
+// share of a team's passes by role family
+const PASSW: Record<string, number> = { GK: 0.36, CB: 0.95, FB: 0.85, WB: 0.8, CDM: 1.15, CM: 1.2, CAM: 0.92, WM: 0.72, W: 0.6, CF: 0.62, ST: 0.42 }
+// FotMob credits duels, clearances and aerials we don't model individually: a small per-role base
+const RATE_BASE: Record<string, number> = { GK: 0.45, CB: 0.2, FB: 0.12, WB: 0.1, CDM: 0.1, CM: 0, CAM: -0.05, WM: -0.05, W: -0.05, CF: -0.1, ST: -0.1 }
+const ACC_BASE: Record<string, number> = { GK: 0.66, CB: 0.86, FB: 0.8, WB: 0.78, CDM: 0.86, CM: 0.85, CAM: 0.8, WM: 0.78, W: 0.76, CF: 0.76, ST: 0.72 }
 const MENT: Record<string, number> = { 'Ultra Defensive': -2, Defensive: -1, Balanced: 0, Attacking: 1, 'Ultra Attacking': 2 }
 
 function emptyTeamStats(): TeamMatchStats {
@@ -131,10 +161,14 @@ export class MatchSim {
   halfEventsWeight = 0
   paused = false
   injuredWaiting: { side: 0 | 1; lp: LP }[] = []
+  timeline: MinuteFrame[] = []
   private lastBuildMinute = 0
+  private lastPHome = 0.5
+  private vrng: Rng
 
   constructor(public home: SideInput, public away: SideInput, public ctx: MatchContext, seed: number) {
     this.rng = new Rng(seed)
+    this.vrng = new Rng((seed ^ 0x5bd1e995) >>> 0)
     this.sides = [new Side(home, 0), new Side(away, 1)]
     for (const s of this.sides) this.initSide(s)
   }
@@ -145,7 +179,9 @@ export class MatchSim {
       id: p.id, side, pos, mins: 0, rating: 6, goals: 0, assists: 0, shots: 0, sot: 0, xg: 0, passes: 0, passesCompleted: 0,
       keyPasses: 0, tackles: 0, interceptions: 0, saves: 0, fouls: 0, yellow: false, red: false, started: on,
     }
-    const lp: LP = { p, slot, pos, role, focus, energy: p.fitness, on, yellow: false, red: false, injured: false, impact: 0, st, q: { att: 0, cre: 0, def: 0, ctl: 0, pace: 0, aer: 0, gk: 0, pr: 0 } }
+    const swing = 0.3 * (1 - p.hidden.consistency / 140)
+    const form = clamp(this.rng.normal(0, swing), -0.55, 0.55)
+    const lp: LP = { p, slot, pos, role, focus, energy: p.fitness, on, yellow: false, red: false, injured: false, impact: 0, form, inv: { pass: 0, passC: 0, drb: 0, blk: 0, acc: 0 }, st, q: { att: 0, cre: 0, def: 0, ctl: 0, pace: 0, aer: 0, gk: 0, pr: 0 } }
     this.computeQ(lp)
     return lp
   }
@@ -342,7 +378,9 @@ export class MatchSim {
       this.addedPlanned = this.plannedStoppage()
       if (this.ctx.commentary && this.addedPlanned > 0) this.push({ min: endMin, type: 'info', side: -1, text: line(this.rng, 'added', { x: this.addedPlanned }) })
     }
+    const evStart = this.events.length
     this.simMinute()
+    this.frame(evStart)
     if (this.minute === endMin && this.added >= this.addedPlanned) this.endPeriod()
     return this.events.slice(start)
   }
@@ -456,6 +494,8 @@ export class MatchSim {
     const pHome = sigmoid(logit)
     H.possMinutes += pHome
     Aw.possMinutes += 1 - pHome
+    this.lastPHome = pHome
+    this.involve(pHome)
     const pos: 0 | 1 = this.rng.next() < pHome ? 0 : 1
     const turnover = pos !== this.lastPossessor
     this.lastPossessor = pos
@@ -596,14 +636,12 @@ export class MatchSim {
     shooter.st.xg += xg
     if (xg >= 0.3) X.stats.bigChances++
     if (creator) creator.st.keyPasses++
-    shooter.impact += 0.05 + xg * 0.3
-    if (creator) creator.impact += 0.08 + xg * 0.4
     // defender blocks
     const blockP = type === 'long' ? 0.28 : type === 'combo' || type === 'dribble' ? 0.18 : type === 'penalty' || type === 'freekick' ? (type === 'freekick' ? 0.2 : 0) : 0.07
     const intro = this.ctx.commentary ? this.chanceIntro(type, shooter, creator, v) : ''
     if (this.rng.next() < blockP * (Y.model.def / 70)) {
       const blocker = this.pickPlayer(Y, (l) => INV[POSKEY[l.pos]][2] * l.q.def)
-      if (blocker) { blocker.impact += 0.12; blocker.st.tackles++ }
+      if (blocker) blocker.inv.blk++
       this.push({ min: this.minute, add: this.added || undefined, type: 'chance', side, player: shooter.p.id, player2: creator?.p.id, xg, text: `${intro} ${line(this.rng, 'blocked', v)}`.trim() })
       if (this.rng.next() < 0.45) this.corner(side, true)
       X.momentum += 0.04
@@ -643,7 +681,7 @@ export class MatchSim {
     }
     const wood = this.rng.next() < 0.06
     const big = xg > 0.33 && !wood
-    if (big) shooter.impact -= 0.2
+    if (big) shooter.impact -= 0.3
     this.push({ min: this.minute, add: this.added || undefined, type: wood ? 'woodwork' : type === 'penalty' ? 'penMiss' : 'miss', side, player: shooter.p.id, player2: creator?.p.id, xg, big, text: `${intro} ${line(this.rng, wood ? 'woodwork' : type === 'penalty' ? 'penMiss' : big ? 'missBig' : 'miss', { p: callName(shooter.p.name), gk: gk ? callName(gk.p.name) : '' })}`.trim() })
     X.momentum += 0.03
   }
@@ -666,11 +704,10 @@ export class MatchSim {
     }
     if (!own) {
       shooter.st.goals++
-      shooter.impact += 1.0
-      if (creator) { creator.st.assists++; creator.impact += 0.65 }
+      if (creator) creator.st.assists++
     }
-    if (gk) gk.impact -= 0.25
-    for (const l of Y.onPitch) if (INV[POSKEY[l.pos]][2] > 0.6) l.impact -= 0.12
+    if (gk) gk.impact -= 0.32
+    for (const l of Y.onPitch) if (INV[POSKEY[l.pos]][2] > 0.6) l.impact -= 0.13
     X.momentum = clamp(X.momentum + 0.35, -1, 1)
     Y.momentum = clamp(Y.momentum - 0.15, -1, 1)
     const v = { p: callName(scorer.p.name), a: creator ? callName(creator.p.name) : '', t: own ? Y.name : X.name, gk: gk ? callName(gk.p.name) : '', venue: this.ctx.venue }
@@ -741,7 +778,7 @@ export class MatchSim {
       else {
         fouler.yellow = true
         fouler.st.yellow = true
-        fouler.impact -= 0.3
+        fouler.impact -= 0.25
         F.stats.yellows++
         this.push({ min: this.minute, add: this.added || undefined, type: 'yellow', side: foulSide, player: fouler.p.id, player2: victim.p.id, text: line(this.rng, 'yellow', { p: callName(fouler.p.name) }) })
       }
@@ -914,7 +951,7 @@ export class MatchSim {
   }
 
   private aiAttackingSub(s: Side) {
-    const out = s.onPitch.filter((l) => INV[POSKEY[l.pos]][2] > 0.5 && l.pos !== 'GK').sort((a, b) => a.impact - b.impact)[0]
+    const out = s.onPitch.filter((l) => INV[POSKEY[l.pos]][2] > 0.5 && l.pos !== 'GK').sort((a, b) => this.rate(a, false) - this.rate(b, false))[0]
     const att = s.bench.filter((b) => POS_GROUP[b.p.positions[0]] === 'ATT' || POS_GROUP[b.p.positions[0]] === 'MID').sort((a, b) => b.p.ovr - a.p.ovr)[0]
     if (out && att && this.canSub(s.idx)) this.substitute(s.idx, out.p.id, att.p.id)
   }
@@ -962,25 +999,106 @@ export class MatchSim {
   // ----------------------------------------------------------- ratings & result
   private finalRatings() {
     for (const s of this.sides) {
-      const gf = s.idx === 0 ? this.score[0] : this.score[1]
-      const ga = s.idx === 0 ? this.score[1] : this.score[0]
-      const win = gf > ga, loss = gf < ga
-      const all = [...s.lps, ...s.bench.filter((b) => b.st.mins > 0)]
-      for (const lp of all) {
+      for (const lp of [...s.lps, ...s.bench]) {
         if (lp.st.mins === 0 && !lp.st.started) continue
-        const g = POSKEY[lp.pos]
-        let r = 6.0 + lp.impact
-        r += win ? 0.35 : loss ? -0.3 : 0
-        if (ga === 0 && lp.st.mins >= 60 && (g === 'GK' || INV[g][2] >= 0.6)) r += g === 'GK' ? 0.7 : 0.45
-        if (g === 'GK') r += (lp.st.saves - ga) * 0.05
-        // quiet involvement proxy
-        r += (INV[g][3] * (s.stats.possession - 50)) / 100
-        r += this.rng.normal(0, 0.28) * (1 - lp.p.hidden.consistency / 160)
-        const minsF = clamp(lp.st.mins / 70, 0.25, 1)
-        r = 6.2 + (r - 6.2) * minsF
-        lp.st.rating = Math.round(clamp(r, 3.5, 10) * 10) / 10
+        lp.st.rating = this.rate(lp, true)
       }
     }
+  }
+
+  /**
+   * FotMob-style rating built from what the player actually did: passing volume and accuracy, defensive actions,
+   * chances created, shots, goals and assists (weighted by position), goalkeeping, discipline, clean sheets and the
+   * result, plus a small good-day/bad-day swing. Typical XI mean ≈ 6.7; a goal ≈ +1; standout displays reach 8–9+.
+   */
+  private rate(l: LP, final: boolean): number {
+    const st = l.st, g = POSKEY[l.pos]
+    const gf = this.score[st.side], ga = this.score[1 - st.side]
+    let r = 6.0 + RATE_BASE[g] + l.impact + l.form * 0.45
+    const gW = g === 'ST' || g === 'CF' ? 0.85 : g === 'W' || g === 'CAM' || g === 'WM' ? 0.95 : g === 'CM' || g === 'CDM' ? 1.05 : 1.2
+    r += st.goals * gW + st.assists * 0.65 + st.keyPasses * 0.12 + st.sot * 0.1 + st.xg * 0.25
+    r += st.tackles * 0.09 + st.interceptions * 0.08 + l.inv.drb * 0.06 + l.inv.blk * 0.1
+    const pa = l.inv.pass, pc = l.inv.passC
+    r += pc * 0.005 + (pa >= 8 ? (pc / pa - ACC_BASE[g]) * 1.3 : 0)
+    if (ga === 0 && st.mins >= 60) r += g === 'GK' ? 0.55 : INV[g][2] >= 0.6 ? 0.35 : g === 'CDM' ? 0.12 : 0
+    const diff = gf - ga
+    if (final) r += diff > 0 ? 0.25 : diff < 0 ? -0.2 : 0
+    else if (this.minute > 0) r += diff > 0 ? 0.12 : diff < 0 ? -0.1 : 0
+    // diminishing returns at both ends, like FotMob's scale where 9+ is rare
+    if (r > 7.2) r = 7.2 + (r - 7.2) * 0.76
+    if (r < 5.6) r = 5.6 - (5.6 - r) * 0.8
+    const minsF = clamp(st.mins / 60, 0.3, 1)
+    r = 6.2 + (r - 6.2) * minsF
+    return Math.round(clamp(r, 3, 10) * 10) / 10
+  }
+
+  private involve(pHome: number) {
+    for (const s of this.sides) {
+      const own = s.idx === 0 ? pHome : 1 - pHome
+      const t = s.tactics
+      const style = t.buildUp === 'Short Passing' ? 1.15 : t.buildUp === 'Long Ball' ? 0.78 : t.buildUp === 'Counter' ? 0.88 : 1
+      const on = s.onPitch
+      if (!on.length) continue
+      const teamPasses = (own * 9.6 + (1 - own) * 1.3) * style * (on.length / 11)
+      const teamAcc = clamp(0.7 + (s.model.ctl - 68) / 110 + (own - 0.5) * 0.16 + (style > 1 ? 0.03 : style < 0.9 ? -0.05 : 0), 0.6, 0.93)
+      let wsum = 0
+      for (const l of on) wsum += PASSW[POSKEY[l.pos]] * (1 + l.form * 0.4)
+      for (const l of on) {
+        const key = POSKEY[l.pos]
+        const n = teamPasses * PASSW[key] * (1 + l.form * 0.4) / wsum
+        const acc = clamp(teamAcc + (l.q.ctl - 70) / 180 + (key === 'GK' ? -0.12 : key === 'ST' || key === 'CF' ? -0.07 : key === 'CB' ? 0.03 : 0) + l.form * 0.05, 0.45, 0.97)
+        l.inv.pass += n
+        l.inv.passC += n * acc
+      }
+      const out = 1 - own
+      if (this.rng.next() < 0.36 * out * (0.7 + t.pressing / 120)) {
+        const d = this.pickPlayer(s, (l) => INV[POSKEY[l.pos]][2] * Math.pow(l.p.attrs[A.standingTackle] / 65, 2) * (1 + l.form) + 0.01)
+        if (d) d.st.tackles++
+      }
+      if (this.rng.next() < 0.2 * out) {
+        const d = this.pickPlayer(s, (l) => INV[POSKEY[l.pos]][2] * Math.pow(l.p.attrs[A.interceptions] / 65, 2) * (1 + l.form) + 0.01)
+        if (d) d.st.interceptions++
+      }
+      if (this.rng.next() < 0.17 * own) {
+        const d = this.pickPlayer(s, (l) => INV[POSKEY[l.pos]][0] * Math.pow(l.p.attrs[A.dribbling] / 65, 3) * (1 + l.form) + 0.01)
+        if (d) d.inv.drb++
+      }
+    }
+  }
+
+  private frame(evStart: number) {
+    const evs = this.events.slice(evStart)
+    const threat: [number, number] = [0, 0]
+    const rank: Record<string, number> = { goal: 9, penGoal: 9, owngoal: 9, woodwork: 7, save: 6, penMiss: 6, var: 6, miss: 5, chance: 5, red: 4, secondYellow: 4, corner: 3, freekick: 3, yellow: 2, offside: 2, foul: 1, injury: 1 }
+    let k = 'play', ks: 0 | 1 = this.lastPossessor, best = 0
+    for (const e of evs) {
+      if (e.side === -1) continue
+      const w = e.type === 'goal' || e.type === 'penGoal' ? 1.15 : e.type === 'owngoal' ? 0.9 : e.xg != null ? 0.28 + e.xg * 1.6 : e.type === 'corner' ? 0.3 : e.type === 'freekick' ? 0.22 : e.type === 'offside' ? 0.12 : 0
+      threat[e.side] += w
+      const r = rank[e.type] || 0
+      if (r > best) { best = r; k = e.type; ks = e.side }
+    }
+    // fouls are recorded against the fouling side; play happens around the victim's attack
+    const atk: 0 | 1 = k === 'foul' || k === 'yellow' || k === 'red' || k === 'secondYellow' ? (1 - ks) as 0 | 1 : ks
+    const edge = (v: number) => (atk === 0 ? v : 100 - v)
+    const vr = () => this.vrng.next()
+    let x: number, y = 18 + vr() * 64
+    switch (k) {
+      case 'goal': case 'penGoal': case 'owngoal': x = edge(100.8); y = 45 + vr() * 10; break
+      case 'save': case 'miss': case 'chance': case 'woodwork': case 'penMiss': case 'var': x = edge(87 + vr() * 8); y = 30 + vr() * 40; break
+      case 'corner': x = edge(99.4); y = vr() < 0.5 ? 1 : 99; break
+      case 'freekick': x = edge(68 + vr() * 12); break
+      case 'offside': x = edge(74 + vr() * 12); break
+      case 'foul': case 'yellow': case 'red': case 'secondYellow': case 'injury': x = edge(35 + vr() * 45); break
+      default: {
+        const s = this.sides[ks], o = this.sides[1 - ks as 0 | 1]
+        const push = clamp(50 + (s.model.att + s.model.cre - o.model.def * 2) / 6 + MENT[s.tactics.mentality] * 5 - MENT[o.tactics.mentality] * 3, 38, 66)
+        x = ks === 0 ? clamp(push + this.vrng.normal(0, 14), 8, 88) : 100 - clamp(push + this.vrng.normal(0, 14), 8, 88)
+      }
+    }
+    const pAdj = (this.lastPHome - 0.5) * 0.5
+    const mom = clamp(Math.tanh(threat[0] - threat[1] + pAdj), -1, 1)
+    this.timeline.push({ m: this.minute, add: this.added, p: this.lastPHome, s: k === 'play' ? ks : atk, x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10, k, mom: Math.round(mom * 100) / 100, ev: evStart })
   }
 
   result(): MatchResult {
@@ -989,24 +1107,19 @@ export class MatchSim {
     const statsOut: [TeamMatchStats, TeamMatchStats] = [this.sides[0].stats, this.sides[1].stats]
     statsOut[0].possession = poss0
     statsOut[1].possession = 100 - poss0
-    // passes from possession share and style
+    // passes from what each player actually did, minute by minute
     for (const s of this.sides) {
       const st = s.stats
-      const poss = st.possession / 100
-      const style = s.tactics.buildUp === 'Short Passing' ? 1.18 : s.tactics.buildUp === 'Long Ball' ? 0.8 : s.tactics.buildUp === 'Counter' ? 0.88 : 1
-      st.passes = Math.round((330 + 520 * poss) * style * (0.93 + this.rng.next() * 0.14))
-      const acc = clamp(0.71 + (s.model.ctl - 68) / 120 + (poss - 0.5) * 0.18 + (style > 1 ? 0.03 : style < 0.9 ? -0.05 : 0), 0.6, 0.94)
-      st.passAcc = Math.round(acc * 100)
       st.xg = Math.round(st.xg * 100) / 100
-      const on = [...s.lps, ...s.bench.filter((b) => b.st.mins > 0)]
-      const wsum = on.reduce((a, l) => a + (INV[POSKEY[l.pos]][3] + 0.15) * l.st.mins, 0) || 1
-      for (const l of on) {
-        const share = ((INV[POSKEY[l.pos]][3] + 0.15) * l.st.mins) / wsum
-        l.st.passes = Math.round(st.passes * share)
-        l.st.passesCompleted = Math.round(l.st.passes * clamp(acc + (l.q.ctl - 70) / 200, 0.5, 0.97))
-        l.st.tackles += Math.round(INV[POSKEY[l.pos]][2] * (l.st.mins / 90) * (1.2 + this.rng.next() * 2.5))
-        l.st.interceptions += Math.round(INV[POSKEY[l.pos]][2] * (l.st.mins / 90) * (0.5 + this.rng.next() * 2) * (l.p.attrs[A.interceptions] / 70))
+      let tp = 0, tc = 0
+      for (const l of [...s.lps, ...s.bench]) {
+        if (!l.st.mins && !l.st.started) continue
+        l.st.passes = Math.round(l.inv.pass)
+        l.st.passesCompleted = Math.min(l.st.passes, Math.round(l.inv.passC))
+        tp += l.st.passes; tc += l.st.passesCompleted
       }
+      st.passes = tp
+      st.passAcc = tp ? Math.round((tc / tp) * 100) : 0
     }
     // late-bound ratings for players involved (ensure computed)
     const players: MatchPlayerStats[] = []
@@ -1025,17 +1138,19 @@ export class MatchSim {
       attendance: this.ctx.attendance,
       detail: 'full',
       lineups: [this.sides[0].input.sheet.lineup, this.sides[1].input.sheet.lineup],
-      formations: [this.sides[0].formation, this.sides[1].formation],
+      formations: [this.sides[0].input.sheet.formation, this.sides[1].input.sheet.formation],
+      captains: [this.sides[0].input.sheet.captain, this.sides[1].input.sheet.captain],
+      mom: this.timeline.map((f) => [f.m + f.add / 100, f.mom] as [number, number]),
     }
   }
 
   // ----------------------------------------------------------- UI helpers
-  liveRatings(side: 0 | 1): { id: number; rating: number; energy: number; on: boolean; pos: Position; yellow: boolean; red: boolean; injured: boolean; slot: number }[] {
+  liveRatings(side: 0 | 1): LiveRating[] {
     const s = this.sides[side]
-    return [...s.lps, ...s.bench].map((l) => {
-      const minsF = clamp(l.st.mins / 70, 0.25, 1)
-      return { id: l.p.id, rating: Math.round(clamp(6.2 + (l.impact) * minsF, 3.5, 10) * 10) / 10, energy: l.energy, on: l.on, pos: l.pos, yellow: l.yellow, red: l.red, injured: l.injured, slot: l.slot }
-    })
+    return [...s.lps, ...s.bench].map((l) => ({
+      id: l.p.id, rating: this.rate(l, false), energy: l.energy, on: l.on, pos: l.pos, yellow: l.yellow, red: l.red, injured: l.injured, slot: l.slot,
+      goals: l.st.goals, assists: l.st.assists, subOn: l.subOn, subOff: l.subOff, played: l.st.mins > 0 || l.st.started,
+    }))
   }
 
   liveStats(): [TeamMatchStats, TeamMatchStats] {
@@ -1044,14 +1159,22 @@ export class MatchSim {
     const a = { ...this.sides[0].stats, possession: this.minute ? p0 : 50 }
     const b = { ...this.sides[1].stats, possession: this.minute ? 100 - p0 : 50 }
     for (const [s, st] of [[this.sides[0], a], [this.sides[1], b]] as const) {
-      const poss = st.possession / 100
-      st.passes = Math.round((330 + 520 * poss) * (this.minute / 90))
-      st.passAcc = Math.round(clamp(0.71 + (s.model.ctl - 68) / 120 + (poss - 0.5) * 0.18, 0.6, 0.94) * 100)
+      let tp = 0, tc = 0
+      for (const l of [...s.lps, ...s.bench]) { tp += l.inv.pass; tc += l.inv.passC }
+      st.passes = Math.round(tp)
+      st.passAcc = tp ? Math.round((tc / tp) * 100) : 0
       st.xg = Math.round(st.xg * 100) / 100
     }
     return [a, b]
   }
 
+  /** Live per-player stats (passes rounded from the running accumulators). */
+  playerStats(side: 0 | 1, id: number): MatchPlayerStats | undefined {
+    const l = [...this.sides[side].lps, ...this.sides[side].bench].find((x) => x.p.id === id)
+    if (!l) return undefined
+    return { ...l.st, passes: Math.round(l.inv.pass), passesCompleted: Math.round(l.inv.passC), rating: this.rate(l, false), energy: Math.round(l.energy) }
+  }
+  captain(side: 0 | 1) { return this.sides[side].input.sheet.captain }
   sideModel(side: 0 | 1) { return this.sides[side].model }
   sideTactics(side: 0 | 1) { return this.sides[side].tactics }
   sideFormation(side: 0 | 1) { return this.sides[side].formation }
