@@ -147,8 +147,9 @@ export function ConversationScreen({ params }: { params: { id: string; msgId?: s
   const w = useWorld()
   const mutate = useGame((s) => s.mutate)
   const back = useGame((s) => s.back)
-  const [reply, setReply] = useState<string>()
   const c = w.conversations.find((x) => x.id === params.id)
+  const chat = useTypingChat(c ? [{ by: 'them', text: c.prompt }, ...(c.resolved && c.choice ? [{ by: 'me' as const, text: c.options.find((o) => o.id === c.choice)?.text || '' }] : [])] : [])
+  const [answered, setAnswered] = useState(!!c?.resolved)
   if (!c) return <Screen title="Conversation" back><Empty icon="chat" title="Conversation not found" /></Screen>
   const p = w.players[c.playerId]
   const club = w.clubs[p?.clubId]
@@ -156,16 +157,12 @@ export function ConversationScreen({ params }: { params: { id: string; msgId?: s
     <Screen title="Player Conversation" sub={c.kind} back>
       <div className="pad stack fade-up">
         <div className="row" style={{ gap: 12 }}>
-          {p && <Face p={p} size={64} radius={16} club={club} />}
+          {p && <Face p={p} size={60} radius={30} club={club} />}
           <div className="grow"><div className="h3">{p?.name}</div><div className="tiny dim">{p?.contract.role} · Morale {Math.round(p?.morale || 0)}</div></div>
         </div>
-        <div className="bubble them">{c.prompt}</div>
-        {c.resolved ? (
-          <>
-            <div className="bubble me">{c.options.find((o) => o.id === c.choice)?.text}</div>
-            {reply && <div className="bubble them">{reply}</div>}
-            <button className="btn block" onClick={back}>Done</button>
-          </>
+        <ChatLog lines={chat.lines} typing={chat.typing} avatar={() => p ? <Face p={p} size={30} radius={15} club={club} /> : null} />
+        {answered ? (
+          !chat.busy && <button className="btn block" onClick={back}>Done</button>
         ) : (
           <div className="stack" style={{ gap: 8 }}>
             <div className="label">Your response</div>
@@ -178,11 +175,14 @@ export function ConversationScreen({ params }: { params: { id: string; msgId?: s
                   const m = w.inbox.find((x) => x.id === params.msgId || x.actions.some((a) => a.payload === c.id))
                   if (m) { m.resolved = true; m.read = true }
                 })
-                setReply(r)
-                if (w.flags.openRenewal === c.playerId) {
-                  mutate((w) => { w.flags.openRenewal = undefined })
-                  useGame.getState().open({ name: 'renewal', params: { id: c.playerId } })
-                }
+                setAnswered(true)
+                const renew = useGame.getState().world?.flags.openRenewal === c.playerId
+                chat.send({ by: 'me', text: o.text }, r ? [{ by: 'them', text: r.replace(/^"|"$/g, '') }] : [], () => {
+                  if (renew) {
+                    mutate((w) => { w.flags.openRenewal = undefined })
+                    useGame.getState().open({ name: 'renewal', params: { id: c.playerId } })
+                  }
+                })
               }}>{o.text}</button>
             ))}
           </div>
