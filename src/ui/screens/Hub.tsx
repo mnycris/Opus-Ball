@@ -225,7 +225,7 @@ function NextMatchCard({ w, f, today }: { w: World; f: Fixture; today: boolean }
         </div>
         <div className="row" style={{ marginTop: 14 }}>
           <button className="btn sm grow" style={{ background: 'rgba(0,0,0,.28)' }} onClick={() => go({ name: 'tactics' })}><Icon name="tactics" size={16} /> Team Sheet</button>
-          <button className="btn sm grow" style={{ background: 'rgba(0,0,0,.28)' }} onClick={() => go({ name: 'club', params: { id: opponent(f, w.userClubId) } })}><Icon name="eye" size={16} /> Opponent</button>
+          <button className="btn sm grow" style={{ background: 'rgba(0,0,0,.28)' }} onClick={() => open({ name: 'prematch', params: { id: f.id } })}><Icon name="eye" size={16} /> Preview</button>
           {today && <button className="btn sm primary grow" onClick={() => open({ name: 'prematch' })}><Icon name="play" size={16} /> Play</button>}
         </div>
       </div>

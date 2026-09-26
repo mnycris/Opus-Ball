@@ -43,7 +43,7 @@ function seasonLine(p: Player) {
   return { ...s, avg: s.n ? s.r / s.n : 0 }
 }
 
-export function PreMatch() {
+export function PreMatch({ params }: { params?: { id?: string } }) {
   const w = useWorld()
   const close = useGame((s) => s.close)
   const closeAll = useGame((s) => s.closeAll)
@@ -56,7 +56,9 @@ export function PreMatch() {
   const [tab, setTab] = useState<'preview' | 'lineups' | 'table' | 'h2h'>('preview')
   const [pick, setPick] = useState<LineupTap>()
   const [formOpen, setFormOpen] = useState(false)
-  const f = userFixtureOn(w, w.date)
+  const todayFx = userFixtureOn(w, w.date)
+  const f = params?.id ? w.fixtures[params.id] : todayFx
+  const isToday = !!f && !!todayFx && f.id === todayFx.id
   const lines = useMemo(() => (f ? storyLines(w, f) : []), [f?.id, w.date])
   if (!f) return <Screen title="Match Day" back onBack={close} noNav><div className="pad muted">No match today.</div></Screen>
 
@@ -103,13 +105,15 @@ export function PreMatch() {
 
   const colors = kitColors(home, away)
   return (
-    <Screen title="Match Day" sub={`${comp?.name} · ${f.roundName}`} back onBack={close} noNav style={{ ['--home-c' as any]: colors[0], ['--away-c' as any]: colors[1] }}
-      footer={
+    <Screen title={isToday ? 'Match Day' : 'Match Preview'} sub={`${comp?.name} · ${f.roundName}`} back onBack={close} noNav style={{ ['--home-c' as any]: colors[0], ['--away-c' as any]: colors[1] }}
+      footer={isToday ? (
         <div className="md-footer">
           <button className="btn" onClick={() => start('sim')}><Icon name="skip" size={18} /> Quick sim</button>
           <button className="btn primary grow" onClick={() => start('live')}><Icon name="play" size={20} /> Play match</button>
         </div>
-      }>
+      ) : (
+        <div className="md-footer"><div className="md-countdown"><Icon name="clock" size={18} /> Kick-off {fmtDate(f.date, 'long')} · {f.time}</div></div>
+      )}>
       <div className="md-head">
         <div className="row tight" style={{ justifyContent: 'center', gap: 8 }}>{comp && <CompLogo k={compLogoKey(comp)} size={20} name={comp.name} />}<span className="tiny b upper" style={{ opacity: 0.8 }}>{comp?.short} · {f.roundName}</span></div>
         <div className="md-teams">
@@ -129,7 +133,7 @@ export function PreMatch() {
       <div className="md-actions">
         <button className="md-act" onClick={() => setTab('lineups')}><Icon name="pitch" size={20} /><span>Line-up</span></button>
         <button className="md-act" onClick={() => go({ name: 'tactics' })}><Icon name="tactics" size={20} /><span>Tactics</span></button>
-        <button className="md-act" onClick={() => open({ name: 'press', params: { kind: 'pre', fixtureId: f.id } })} disabled={pressDone}><Icon name="chat" size={20} /><span>{pressDone ? 'Press done' : 'Press'}</span></button>
+        <button className="md-act" onClick={() => open({ name: 'press', params: { kind: 'pre', fixtureId: f.id } })} disabled={pressDone || !isToday}><Icon name="chat" size={20} /><span>{pressDone ? 'Press done' : isToday ? 'Press' : 'Match day'}</span></button>
         <button className="md-act" onClick={() => go({ name: 'club', params: { id: oppId } })}><Icon name="scout" size={20} /><span>Opponent</span></button>
       </div>
 

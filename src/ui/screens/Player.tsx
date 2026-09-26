@@ -337,12 +337,57 @@ function StatsTab({ w, p }: { w: World; p: Player }) {
           </table>
         </div>
       )}
+      <MatchLog w={w} p={p} />
       {p.formRatings.length > 0 && (
         <div className="card pad-card">
           <div className="label" style={{ marginBottom: 8 }}>Last {p.formRatings.length} ratings</div>
           <div className="row" style={{ gap: 6 }}>{p.formRatings.map((r, i) => <RatingBadge key={i} v={r} />)}<span className="grow" /><span className="tiny dim">Form {formValue(p).toFixed(2)}</span></div>
         </div>
       )}
+    </div>
+  )
+}
+
+/** FotMob-style match log: every recorded appearance with the result, minutes, goal involvement and rating. */
+function MatchLog({ w, p }: { w: World; p: Player }) {
+  const go = useGame((s) => s.go)
+  const rows = Object.values(w.fixtures)
+    .filter((f) => f.played && f.result?.players.length && (f.home === p.clubId || f.away === p.clubId || f.result.players.some((x) => x.id === p.id)))
+    .map((f) => ({ f, st: f.result!.players.find((x) => x.id === p.id) }))
+    .filter((x) => x.st && x.st.mins > 0)
+    .sort((a, b) => b.f.date.localeCompare(a.f.date))
+    .slice(0, 10)
+  if (!rows.length) return null
+  return (
+    <div className="card">
+      <div className="card-h"><span className="label">Match log</span></div>
+      <div className="list">
+        {rows.map(({ f, st }) => {
+          const side = st!.side
+          const oppId = side === 0 ? f.away : f.home
+          const comp = w.competitions[f.compId]
+          const s = f.result!.score
+          const gf = s[side], ga = s[1 - side]
+          const res = gf > ga ? 'W' : gf < ga ? 'L' : 'D'
+          return (
+            <button key={f.id} className="li tap mlog" style={{ width: '100%', textAlign: 'left' }} onClick={() => go({ name: 'fixture', params: { id: f.id } })}>
+              <div className="col" style={{ width: 40, alignItems: 'center', gap: 2 }}>{comp && <CompLogo k={compLogoKey(comp)} size={16} name={comp.name} />}<span className="tiny dim">{fmtDate(f.date, 'dm')}</span></div>
+              <Badge club={w.clubs[oppId]} size={24} />
+              <div className="meta">
+                <div className="t small ellipsis">{side === 0 ? 'vs' : '@'} {w.clubs[oppId]?.short}</div>
+                <div className="s row tight" style={{ gap: 6 }}>
+                  <span>{st!.mins}'</span>
+                  {st!.goals > 0 && <span className="row tight" style={{ gap: 2 }}><Icon name="ball" size={12} />{st!.goals > 1 ? st!.goals : ''}</span>}
+                  {st!.assists > 0 && <span className="row tight" style={{ gap: 2 }}><Icon name="assist" size={12} />{st!.assists > 1 ? st!.assists : ''}</span>}
+                  {st!.yellow && <span className="card-y" style={{ marginLeft: 0 }} />}{st!.red && <span className="card-r" style={{ marginLeft: 0 }} />}
+                </div>
+              </div>
+              <span className={`fc-score ${res}`}>{s[0]}-{s[1]}</span>
+              <RatingBadge v={st!.rating} motm={f.result!.motm === p.id} />
+            </button>
+          )
+        })}
+      </div>
     </div>
   )
 }
