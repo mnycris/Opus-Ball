@@ -1,4 +1,4 @@
-# Opus Ball — Manager Career
+# Touchline — Manager Career
 
 A mobile-first football manager career in the style of EA SPORTS FC Career Mode, built as an offline-capable web app (PWA). Matches are played as a live minute-by-minute simulation: one real second is one match minute at 1×, with 2×/4×, pause, next event, skip to half-time and sim to end, while you make substitutions and change mentality, tactics and formation live.
 
@@ -57,4 +57,4 @@ Deploy to GitHub Pages with the **Deploy to GitHub Pages** workflow. Run it manu
 - `scripts/qa/calibrate.ts` checks match-engine realism.
 - `scripts/qa/e2e*.mjs` are Playwright end-to-end runs against `npm run preview`: career creation and match flow, transfers, calendar, conversations and saves, and a full season.
 
-Opus Ball is an unofficial fan project and is not affiliated with EA SPORTS, UEFA or any league or club.
+Touchline is an unofficial fan project and is not affiliated with EA SPORTS, UEFA or any league or club.

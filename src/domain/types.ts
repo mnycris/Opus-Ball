@@ -1,5 +1,5 @@
 // ============================================================================
-// Opus Ball — authoritative world model. Everything in `World` is serialisable
+// Touchline — authoritative world model. Everything in `World` is serialisable
 // and persisted in a save slot. No UI state lives here.
 // ============================================================================
 

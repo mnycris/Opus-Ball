@@ -170,8 +170,8 @@ function About({ onBack }: { onBack: () => void }) {
           <div className="muted">Player ratings, attributes, PlayStyles, positions, contracts and values come from the EA SPORTS FC 27 database (SoFIFA roster 27.0002), enriched with FC 26 DataHub fields. Player headshots and team crests load from the SoFIFA image CDN.</div>
           <div className="muted">League memberships, 2026/27 fixture lists (Premier League, EFL, LaLiga, Bundesliga, Serie A, Ligue 1, Eredivisie and more), UEFA 2026/27 pots and 2025/26 honours reflect the real season. Clubs not licensed in EA FC are replaced by the strongest eligible licensed club.</div>
           <div className="h3" style={{ marginTop: 6 }}>Assets</div>
-          <div className="muted">Competition logos from public logo sets; flags from flag-icons (MIT). Interface, icons and competition emblems designed for Opus Ball.</div>
-          <div className="dim tiny" style={{ marginTop: 6 }}>Opus Ball is an unofficial fan project and is not affiliated with EA SPORTS, UEFA or any league or club.</div>
+          <div className="muted">Competition logos from public logo sets; flags from flag-icons (MIT). Interface, icons and competition emblems designed for Touchline.</div>
+          <div className="dim tiny" style={{ marginTop: 6 }}>Touchline is an unofficial fan project and is not affiliated with EA SPORTS, UEFA or any league or club.</div>
         </div>
       </div>
     </Screen>

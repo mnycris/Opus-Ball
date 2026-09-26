@@ -4,15 +4,16 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: process.env.BASE_PATH || '/',
+  // relative paths: the build works at any URL (root, /Touchline/, a renamed repo, a fork)
+  base: './',
   plugins: [
     react(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'icons/*.png'],
       manifest: {
-        name: 'Opus Ball — Manager Career',
-        short_name: 'Opus Ball',
+        name: 'Touchline — Manager Career',
+        short_name: 'Touchline',
         description: 'Mobile football manager career with real EA SPORTS FC 27 ratings and the real 2026/27 season.',
         theme_color: '#05070c',
         background_color: '#05070c',

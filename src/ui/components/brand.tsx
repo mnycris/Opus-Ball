@@ -20,7 +20,7 @@ export function Wordmark({ size = 1 }: { size?: number }) {
     <div className="row" style={{ gap: 12 * size }}>
       <Emblem size={58 * size} />
       <div>
-        <div className="wordmark" style={{ fontSize: 46 * size }}>OPUS<span>BALL</span></div>
+        <div className="wordmark" style={{ fontSize: 46 * size }}>TOUCH<span>LINE</span></div>
       </div>
     </div>
   )

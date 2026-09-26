@@ -1,4 +1,4 @@
-// Opus Ball icon system — one visual language: 24px grid, 1.8px rounded strokes,
+// Touchline icon system — one visual language: 24px grid, 1.8px rounded strokes,
 // duotone accents via currentColor at 22% opacity. Hand-drawn for this product.
 import type { CSSProperties } from 'react'
 
