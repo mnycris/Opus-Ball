@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react'
 import type { Club, Player, Position, World } from '../../domain/types'
 import { GROUP_COLOR, POS_GROUP } from '../../domain/constants'
+import darkLogos from '../../data/darkLogos.json'
 import { badgeUrls, compLogoUrls, faceUrls, flagUrl, isFailed, managerWikiQuery, markFailed, markLoaded, playerWikiQuery, wikiPhoto, type WikiQuery } from '../../services/assets'
 import { Silhouette } from './Silhouette'
 import { Icon } from '../icons/Icon'
@@ -96,10 +97,13 @@ export function Crest({ club, size = 36 }: { club: { name: string; abbr: string;
   )
 }
 
+const DARK_CLUBS = new Set((darkLogos as { clubs: number[] }).clubs)
+const DARK_COMPS = new Set((darkLogos as { comps: string[] }).comps)
+
 export function Badge({ club, size = 32, style }: { club?: Club; size?: number; style?: CSSProperties }) {
   if (!club) return <div style={{ width: size, height: size }} />
   return (
-    <div style={{ width: size, height: size, flex: 'none', display: 'grid', placeItems: 'center', ...style }}>
+    <div className={DARK_CLUBS.has(club.id) ? 'logo-lift' : undefined} style={{ width: size, height: size, flex: 'none', display: 'grid', placeItems: 'center', ...style }}>
       <ImgChain srcs={badgeUrls(club)} alt={club.name} className="badge-img" style={{ width: size, height: size }} fallback={<Crest club={club} size={size} />} />
     </div>
   )
@@ -115,7 +119,7 @@ export function Flag({ w, nation, code, size = 18 }: { w?: World; nation?: strin
 export function CompLogo({ k, size = 32, name, color }: { k: string; size?: number; name?: string; color?: string; mono?: boolean }) {
   const srcs = compLogoUrls(k)
   if (srcs.length) {
-    return <ImgChain srcs={srcs} alt={name || k} className="comp-logo" style={{ height: size, maxWidth: size * 1.6, objectFit: 'contain', display: 'block' }} fallback={<CompEmblem k={k} size={size} name={name} color={color} />} />
+    return <ImgChain srcs={srcs} alt={name || k} className={`comp-logo ${DARK_COMPS.has(k.replace(/-\d+$/, '')) ? 'lift' : ''}`} style={{ height: size, maxWidth: size * 1.6, objectFit: 'contain', display: 'block' }} fallback={<CompEmblem k={k} size={size} name={name} color={color} />} />
   }
   return <CompEmblem k={k} size={size} name={name} color={color} />
 }

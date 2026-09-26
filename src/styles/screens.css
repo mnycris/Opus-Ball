@@ -547,3 +547,5 @@ select.input option { background: #151b27; }
 .asst-note.bad svg:first-child { color: var(--warn); }
 .asst-note.good svg:first-child { color: var(--pos); }
 .asst-note svg:last-child { flex: none; color: var(--t3); }
+/* dark crests/logos stay legible on the dark UI: a hairline light outline, colours untouched */
+.logo-lift img, img.comp-logo.lift { filter: drop-shadow(0 0 0.7px rgba(255, 255, 255, 0.85)) drop-shadow(0 0 2.5px rgba(255, 255, 255, 0.28)); }
