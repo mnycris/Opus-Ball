@@ -8,8 +8,18 @@ import { askingPrice, contractDemand, evaluateContract, evaluateOffer, executeTr
 import { rosterOf, setPlayerClub } from './roster'
 import { postNews, sendInbox, staffNames } from './messages'
 import { currentWindow, isWindowOpen } from '../competitions/calendar'
+import { blockedText, openContractTalks, respondToContract, talksBlock, type TalkLine, type Talks } from './negotiation'
 
-export interface Outcome { ok: boolean; text: string; status?: string; counter?: number; demand?: ContractOffer }
+export interface Outcome { ok: boolean; text: string; status?: string; counter?: number; demand?: ContractOffer; replies?: TalkLine[] }
+
+/** Open (or resume) personal-terms talks with a player's agent. */
+export function startContractTalks(w: World, p: Player, kind: Talks['kind'], offerId?: string): { talks?: Talks; blocked?: string } {
+  return withRng(w, (rng) => {
+    const b = blockedText(w, p, rng)
+    if (b) return { blocked: b }
+    return { talks: openContractTalks(w, p, kind, rng, offerId) }
+  })
+}
 
 function withRng<T>(w: World, fn: (rng: Rng) => T): T {
   const rng = new Rng(w.rng)
@@ -104,24 +114,34 @@ export function counterIncomingBid(w: World, offerId: string, fee: number): Outc
   if (!o || !p) return { ok: false, text: 'Offer not found.' }
   const buyer = w.clubs[o.fromClubId]
   return withRng(w, (rng) => {
-    const max = Math.min(buyer.finance.transferBudget * 1.05, askingPrice(w, p, buyer.id) * (1.05 + rng.next() * 0.2))
+    // the buyer's hidden ceiling is fixed on the first counter so repeated asks can't ratchet it
+    const max = o.sellerFloor ||= roundValue(Math.min(buyer.finance.transferBudget * 1.05, askingPrice(w, p, buyer.id) * (1.02 + rng.next() * 0.2)))
+    const used = (o.used ||= [])
+    const line = (opts: string[]) => { const fresh = opts.filter((x) => !used.includes(x)); const t = (fresh.length ? fresh : opts)[Math.floor(rng.next() * (fresh.length || opts.length))]; used.push(t); return t }
     o.history.push({ date: w.date, by: 'seller', text: `You ask for ${fmtMoney(fee)}.`, fee })
     if (fee <= max) {
       o.fee = fee
       o.history.push({ date: w.date, by: 'buyer', text: `${buyer.short} agree to pay ${fmtMoney(fee)}.`, fee })
       const r = acceptIncomingBid(w, offerId)
-      return { ...r, text: `${buyer.short} meet your valuation. ${r.text}` }
+      return { ...r, text: `${line([`Agreed. ${fmtMoney(fee)} it is.`, `You drive a hard bargain. ${fmtMoney(fee)}, done.`, `Our board has approved ${fmtMoney(fee)}. We have a deal.`])} ${r.text}` }
     }
-    o.patience -= 35
-    if (o.patience <= 0 || fee > max * 1.35) {
+    const gap = fee / max
+    o.patience -= gap > 1.6 ? 45 : gap > 1.3 ? 30 : gap > 1.12 ? 18 : 10
+    if (o.patience <= 0) {
       o.status = 'Negotiations Failed'
       resolveMessages(w, offerId)
-      return { ok: false, text: `${buyer.short} walk away from the negotiation.`, status: o.status }
+      return { ok: false, text: line([`We're walking away. ${fmtMoney(fee)} is not realistic for ${p.name}.`, `That's too much for us. ${buyer.short} are ending talks and moving on to other targets.`, `We've made our position clear. Good luck selling him elsewhere.`]), status: o.status }
     }
-    const counter = roundValue(Math.min(max, (o.fee + fee) / 2))
+    const counter = roundValue(Math.min(max, o.fee + (fee - o.fee) * (gap > 1.3 ? 0.25 : 0.5)))
+    const moved = counter > o.fee
     o.fee = counter
     o.history.push({ date: w.date, by: 'buyer', text: `${buyer.short} improve their offer to ${fmtMoney(counter)}.`, fee: counter })
-    return { ok: false, text: `${buyer.short} improve their offer to ${fmtMoney(counter)}.`, counter }
+    const text = !moved
+      ? line([`${fmtMoney(counter)} is our limit. We can't go any higher.`, `We won't go beyond ${fmtMoney(counter)}. Take it or leave it.`, `That is our final offer: ${fmtMoney(counter)}.`])
+      : gap > 1.3
+        ? line([`That valuation is well beyond us. We can stretch to ${fmtMoney(counter)}.`, `Way too high. We'll improve to ${fmtMoney(counter)}, but be realistic.`, `We think you're overvaluing him. ${fmtMoney(counter)} is a strong offer.`])
+        : line([`We're getting closer. We can offer ${fmtMoney(counter)}.`, `Let's find a middle ground: ${fmtMoney(counter)}.`, `We'll go to ${fmtMoney(counter)}. We really want him.`, `Revised offer: ${fmtMoney(counter)}. We hope that settles it.`])
+    return { ok: false, text: o.patience < 30 ? `${text} Our patience is running out.` : text, counter }
   })
 }
 
@@ -181,11 +201,10 @@ export function proposeContract(w: World, offerId: string | undefined, p: Player
   const isLoan = offerId ? w.transfers.offers[offerId]?.type.startsWith('loan') : false
   if (!isLoan && c.wage > wageRoom(w) + (p.clubId === club.id ? p.contract.wage : 0)) return { ok: false, text: `The wage exceeds your remaining weekly wage budget (${fmtMoney(Math.max(0, wageRoom(w)))}).` }
   if (c.signingBonus > club.finance.balance) return { ok: false, text: 'The club cannot afford that signing bonus.' }
-  const r = withRng(w, (rng) => evaluateContract(w, p, club.id, c, attempt, rng))
-  if (r.result !== 'accept') {
-    if (r.result === 'reject' && offerId) { const o = w.transfers.offers[offerId]; if (o) o.status = 'Negotiations Failed'; const t = w.transfers.targets[p.id]; if (t) t.status = 'Negotiations Failed' }
-    return { ok: false, text: r.text, status: r.result, demand: r.demand }
-  }
+  if (talksBlock(w, p.id)) return { ok: false, text: withRng(w, (rng) => blockedText(w, p, rng)) || 'Talks are frozen.', status: 'reject' }
+  void attempt
+  const r = withRng(w, (rng) => respondToContract(w, openContractTalks(w, p, 'sign', rng, offerId), c, rng))
+  if (r.result !== 'accept') return { ok: false, text: r.replies.map((x) => x.text).join(' '), status: r.result === 'walk' ? 'reject' : 'counter', demand: r.talks.ask, replies: r.replies }
   // agreement
   let o = offerId ? w.transfers.offers[offerId] : undefined
   if (!o) {
@@ -211,8 +230,10 @@ export function proposeContract(w: World, offerId: string | undefined, p: Player
 
 export function renewContract(w: World, p: Player, c: ContractOffer, attempt: number): Outcome {
   if (c.wage - p.contract.wage > wageRoom(w)) return { ok: false, text: `The raise exceeds your wage budget (room ${fmtMoney(Math.max(0, wageRoom(w)))}/wk).` }
-  const r = withRng(w, (rng) => evaluateContract(w, p, w.userClubId, c, attempt, rng))
-  if (r.result !== 'accept') return { ok: false, text: r.text, status: r.result, demand: r.demand }
+  if (talksBlock(w, p.id)) return { ok: false, text: withRng(w, (rng) => blockedText(w, p, rng)) || 'Talks are frozen.', status: 'reject' }
+  void attempt
+  const r = withRng(w, (rng) => respondToContract(w, openContractTalks(w, p, 'renew', rng), c, rng))
+  if (r.result !== 'accept') return { ok: false, text: r.replies.map((x) => x.text).join(' '), status: r.result === 'walk' ? 'reject' : 'counter', demand: r.talks.ask, replies: r.replies }
   const club = w.clubs[w.userClubId]
   p.contract = { until: w.season + c.years, wage: c.wage, role: c.role, releaseClause: c.releaseClause, signedOn: w.date, signingBonus: c.signingBonus, bonuses: { goal: c.bonusGoal, cleanSheet: c.bonusCleanSheet, appearance: c.bonusApp } }
   p.wage = c.wage

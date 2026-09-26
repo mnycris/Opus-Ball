@@ -94,6 +94,7 @@ export interface Player {
   playstyles: string[]
   playstylesPlus: string[]
   value: number
+  valueCalib?: number // real market value ÷ formula value at career start, kept so values stay anchored to reality
   wage: number
   contract: Contract
   jersey: number
@@ -384,6 +385,9 @@ export interface TransferOffer {
   contractTerms?: ContractOffer
   counterFee?: number
   delegated?: boolean
+  sellerFloor?: number // hidden minimum fee the selling club will accept
+  round?: number
+  used?: string[] // dialogue lines already used in this negotiation
 }
 
 export interface ContractOffer {

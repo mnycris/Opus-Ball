@@ -80,7 +80,7 @@ export function applyGrowth(w: World, p: Player, rng: Rng): number {
   if (p.ovr !== before) {
     p.growthHistory.push({ date: w.date, ovr: p.ovr })
     if (p.growthHistory.length > 40) p.growthHistory.shift()
-    p.value = dynamicValue(p, w.date)
+    p.value = dynamicValue(p, w.date, p.valueCalib ?? 1)
   }
   return p.ovr - before
 }

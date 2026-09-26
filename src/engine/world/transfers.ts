@@ -7,8 +7,11 @@ import { allPlayers, rosterOf, setPlayerClub, touchRoster } from './roster'
 import { postNews, sendInbox, staffNames } from './messages'
 import { isWindowOpen } from '../competitions/calendar'
 import { emptyLine } from './matchRunner'
+import { bidBlock, clubLine, clubRelation, adjustRelation, sellerFloor, snubPenalty } from './negotiation'
+import { callName } from '../match/commentary'
 
-const ROLE_MULT: Record<SquadRole, number> = { Crucial: 1.85, Important: 1.45, Rotation: 1.18, Sparingly: 1.0, Prospect: 1.35 }
+// how much above market value a club asks for a player, by his importance to them
+const ROLE_MULT: Record<SquadRole, number> = { Crucial: 1.35, Important: 1.2, Rotation: 1.05, Sparingly: 0.9, Prospect: 1.15 }
 
 export function yearsLeft(w: World, p: Player): number {
   const seasonEndYear = w.season + 1
@@ -18,16 +21,17 @@ export function yearsLeft(w: World, p: Player): number {
 export function askingPrice(w: World, p: Player, buyerId?: number): number {
   const club = w.clubs[p.clubId]
   if (!club) return 0
-  let v = Math.max(p.value, dynamicValue(p, w.date))
+  // current market value (anchored to the real valuation, with contract length, form and injuries applied)
+  let v = dynamicValue(p, w.date, p.valueCalib ?? 1)
   v *= ROLE_MULT[p.contract.role] || 1.2
   const yl = yearsLeft(w, p)
-  if (yl <= 1) v *= 0.72
-  else if (yl === 2) v *= 0.9
-  else if (yl >= 4) v *= 1.08
+  if (yl === 2) v *= 0.92
+  else if (yl >= 4) v *= 1.05
   if (p.transferListed) v *= 0.82
-  if (buyerId && club.rivals.some((r) => r[0] === buyerId)) v *= 1.3
-  v *= 0.9 + club.prestige.intl * 0.025
-  if (p.joinedDate && diffDays(w.date, p.joinedDate) < 180) v *= 1.25
+  if (buyerId && club.rivals.some((r) => r[0] === buyerId)) v *= 1.15
+  v *= 0.95 + club.prestige.intl * 0.012
+  if (p.joinedDate && diffDays(w.date, p.joinedDate) < 180) v *= 1.12
+  if (buyerId) v *= 1 - clubRelation(w, club.id) / 500
   if (w.settings.transferDifficulty === 'Hard') v *= 1.12
   if (w.settings.transferDifficulty === 'Easy') v *= 0.9
   if (p.contract.releaseClause && v > p.contract.releaseClause) v = p.contract.releaseClause
@@ -39,6 +43,8 @@ export function sellerStance(w: World, p: Player, buyerId: number): { willing: b
   const club = w.clubs[p.clubId]
   if (!club) return { willing: true }
   if (p.untouchable) return { willing: false, reason: `${club.short} consider ${p.name} untouchable.` }
+  const blocked = buyerId === w.userClubId ? bidBlock(w, p.id) : undefined
+  if (blocked) return { willing: false, reason: `${club.short} refuse to discuss ${p.name} again until ${fmtDate(blocked.until, 'dm')} after the last talks collapsed.` }
   if (p.joinedDate && diffDays(w.date, p.joinedDate) < 60) return { willing: false, reason: `${p.name} only recently joined ${club.short}.` }
   const buyer = w.clubs[buyerId]
   const squad = rosterOf(w, club.id)
@@ -62,7 +68,7 @@ export function playerInterest(w: World, p: Player, clubId: number): number {
   s -= (p.hidden.loyalty - 50) * 0.2
   const age = ageOn(p.dob, w.date)
   if (age >= 32 && (w.leagues[to.leagueId]?.wealth || 3) >= 8) s += 8
-  if (to.id === w.userClubId) s += (w.user.reputation - 50) * 0.25
+  if (to.id === w.userClubId) s += (w.user.reputation - 50) * 0.25 - snubPenalty(w, p.id)
   return clamp(Math.round(s), 0, 100)
 }
 
@@ -79,11 +85,11 @@ export function roleForBuyer(w: World, p: Player, clubId: number): SquadRole {
 
 export function contractDemand(w: World, p: Player, clubId: number, role: SquadRole): ContractOffer {
   const club = w.clubs[clubId]
-  const wage = wageDemand(p, club, w.leagues[club.leagueId], role)
+  const wage = wageDemand(p, club, w.leagues[club.leagueId], role, w.date)
   const age = ageOn(p.dob, w.date)
   const years = age <= 23 ? 5 : age <= 27 ? 4 : age <= 30 ? 3 : age <= 32 ? 2 : 1
   return {
-    wage, years, role, signingBonus: roundValue(wage * (6 + p.intlRep * 2)), releaseClause: 0,
+    wage, years, role, signingBonus: roundValue(wage * (3 + p.intlRep * 1.5)), releaseClause: 0,
     bonusGoal: POS_GROUP[p.positions[0]] === 'ATT' ? roundValue(wage * 0.08) : 0,
     bonusCleanSheet: POS_GROUP[p.positions[0]] === 'GK' || POS_GROUP[p.positions[0]] === 'DEF' ? roundValue(wage * 0.06) : 0,
     bonusApp: roundValue(wage * 0.04),
@@ -135,39 +141,57 @@ export function evaluateOffer(w: World, o: TransferOffer, rng: Rng): 'accept' | 
     return 'reject'
   }
   const ask = askingPrice(w, p, o.fromClubId)
+  const floor = sellerFloor(w, o, ask, rng)
   let offered = o.fee + (o.sellOn ? ask * o.sellOn / 100 * 0.35 : 0)
   if (o.swapPlayerId) {
     const sp = w.players[o.swapPlayerId]
     if (sp) offered += sp.value * (seller.squadAvg <= sp.ovr + 2 ? 0.9 : 0.5)
   }
-  const ratio = offered / ask
   if (p.contract.releaseClause && o.fee >= p.contract.releaseClause) {
     o.status = 'Offer Accepted'
-    o.history.push({ date: w.date, by: 'seller', text: `Release clause of ${fmtMoney(p.contract.releaseClause)} met.` })
+    o.history.push({ date: w.date, by: 'seller', text: `Release clause of ${fmtMoney(p.contract.releaseClause)} met. ${seller.short} have no choice but to let him talk to you.` })
     return 'accept'
   }
-  const tolerance = 0.96 - rng.next() * 0.06
-  if (ratio >= tolerance) {
+  o.round = (o.round || 0) + 1
+  const used = (o.used ||= [])
+  const v = { seller: seller.short, p: callName(p.name) }
+  const say = (key: Parameters<typeof clubLine>[1], fee?: number) => o.history.push({ date: w.date, by: 'seller', text: clubLine(rng, key, used, { ...v, fee: fee ? fmtMoney(fee) : '' }), fee })
+  // their current position: first the asking price, then converging towards the hidden floor
+  const position = o.counterFee || roundValue(Math.max(floor, ask * (1 + rng.next() * 0.05)))
+  if (offered >= floor && (offered >= position * 0.975 || rng.next() < 0.25 + o.round * 0.2)) {
     o.status = 'Offer Accepted'
-    o.history.push({ date: w.date, by: 'seller', text: `${seller.short} accept the offer.` })
+    say('accept')
+    if (o.userIsBuyer) adjustRelation(w, seller.id, 2)
     return 'accept'
   }
-  o.patience -= ratio < 0.6 ? 45 : ratio < 0.8 ? 28 : 15
+  const ratio = offered / Math.max(1, floor)
+  const repeat = o.history.filter((h) => h.by === 'buyer' && h.fee === o.fee).length > 1
+  o.patience -= ratio < 0.6 ? 42 : ratio < 0.8 ? 24 : ratio < 0.95 ? 12 : 6
+  if (repeat) o.patience -= 12
   if (o.patience <= 0) {
     o.status = 'Negotiations Failed'
-    o.history.push({ date: w.date, by: 'seller', text: `${seller.short} have ended negotiations.` })
+    say('walk')
+    if (o.userIsBuyer) {
+      ;((w.flags.bidBlocked ||= {}) as Record<number, { until: string; reason: string; clubId: number }>)[p.id] = { until: addDays(w.date, 28 + Math.round(rng.next() * 20)), reason: 'Talks collapsed', clubId: seller.id }
+      adjustRelation(w, seller.id, -12)
+    }
     return 'walk'
   }
-  if (ratio >= 0.55) {
-    const counter = roundValue(Math.max(ask * (0.98 + rng.next() * 0.08), o.fee * 1.05))
-    o.counterFee = counter
-    o.status = 'Counter Offer'
-    o.history.push({ date: w.date, by: 'seller', text: `${seller.short} counter with ${fmtMoney(counter)}.`, fee: counter })
-    return 'counter'
+  if (ratio < 0.55) {
+    o.status = 'Offer Rejected'
+    say('insult')
+    if (o.userIsBuyer) adjustRelation(w, seller.id, -4)
+    return 'reject'
   }
-  o.status = 'Offer Rejected'
-  o.history.push({ date: w.date, by: 'seller', text: `${seller.short} reject the offer outright.` })
-  return 'reject'
+  // concede part of the way towards the bid, never below the floor
+  const concession = seller.finance.balance < 0 ? 0.42 : p.transferListed ? 0.5 : 0.3
+  const next = o.counterFee ? roundValue(Math.max(floor, position - (position - offered) * concession)) : position
+  const moved = !!o.counterFee && next < o.counterFee
+  o.counterFee = Math.max(next, roundValue(o.fee * 1.02))
+  o.status = 'Counter Offer'
+  say(ratio < 0.8 ? 'low' : moved ? 'counterMove' : 'counter', o.counterFee)
+  if (o.patience < 30) say('warn')
+  return 'counter'
 }
 
 /** Player evaluates contract terms from the buying/renewing club. */

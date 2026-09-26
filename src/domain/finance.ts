@@ -38,16 +38,32 @@ export function dynamicValue(p: Player, today: string, calib = 1): number {
   return roundValue(v)
 }
 
-export function wageDemand(p: Player, club: Club, league: LeagueDef | undefined, role: string): number {
+/**
+ * Market wage for a player at a club, calibrated to real 2025/26 levels: an 80-rated regular at a Premier League giant
+ * ≈ €105K/wk, 85 ≈ €185K, 90 ≈ €325K; ~€20K for a 75 in the Eredivisie, ~€12K for a 70 in the Championship.
+ */
+export function marketWage(p: Player, club: Club, league: LeagueDef | undefined, role: string, age: number): number {
   const wealth = league ? league.wealth : 3
-  const lf = 0.35 + wealth * 0.13 // PL (10) ≈ 1.65x
-  let w = 48_000 * Math.pow(1.175, p.ovr - 80) * lf
-  const roleF: Record<string, number> = { Crucial: 1.25, Important: 1.05, Rotation: 0.85, Sparingly: 0.7, Prospect: 0.55 }
-  w *= roleF[role] || 1
-  w *= 0.8 + club.prestige.intl * 0.04
-  w = Math.max(w, p.wage * 1.05)
-  if (w < 500) w = 500
-  return roundWage(w)
+  const lf = 0.1 + 0.9 * Math.pow(Math.min(10, wealth) / 10, 1.6)
+  const cf = 0.62 + club.prestige.intl * 0.038
+  const roleF: Record<string, number> = { Crucial: 1.15, Important: 1, Rotation: 0.85, Sparingly: 0.72, Prospect: 0.6 }
+  let w = 105_000 * Math.pow(1.12, p.ovr - 80) * lf * cf * (roleF[role] || 1)
+  if (age <= 21) w *= 0.82 + Math.max(0, p.pot - p.ovr) * 0.008
+  if (age >= 32) w *= 0.9
+  return Math.max(500, w)
+}
+
+/** What the player's camp asks for: the market rate, a raise on his current deal, but no absurd jumps either way. */
+export function wageDemand(p: Player, club: Club, league: LeagueDef | undefined, role: string, today?: string): number {
+  const age = today ? ageOn(p.dob, today) : 26
+  const market = marketWage(p, club, league, role, age)
+  const cur = p.clubId === club.id ? p.contract.wage : p.wage
+  let w = market
+  if (cur > 0) {
+    const raise = p.clubId === club.id ? 1.06 : 1.12
+    w = Math.max(market, Math.min(cur * raise, Math.max(market * 1.5, cur * 0.75)))
+  }
+  return roundWage(Math.max(500, w))
 }
 
 export function roundWage(w: number) {

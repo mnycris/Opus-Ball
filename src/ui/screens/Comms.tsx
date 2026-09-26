@@ -14,6 +14,7 @@ import { counterIncomingBid } from '../../engine/world/userActions'
 import { staffNames } from '../../engine/world/messages'
 import { hashString } from '../../domain/rng'
 import { askingPrice } from '../../engine/world/transfers'
+import { ChatLog, MoodMeter, useTypingChat } from '../components/Chat'
 
 const CAT_ICON: Record<string, string> = {
   Board: 'board', Transfers: 'transfers', Squad: 'squad', Scouting: 'scout', Youth: 'youth', Medical: 'injury', Competitions: 'trophy',
@@ -250,36 +251,42 @@ export function SellNegotiation({ params }: { params: { offerId: string; msgId?:
   const o = w.transfers.offers[params.offerId]
   const p = o ? w.players[o.playerId] : undefined
   const [fee, setFee] = useState(() => o ? roundValue(Math.max(o.fee * 1.25, p ? askingPrice(w, p) : 0)) : 0)
-  const [log, setLog] = useState<string[]>([])
-  if (!o || !p) return <Screen title="Negotiation" back onBack={close} noNav><Empty icon="handshake" title="Offer no longer available" /></Screen>
-  const buyer = w.clubs[o.fromClubId]
+  const buyer = o ? w.clubs[o.fromClubId] : undefined
+  const chat = useTypingChat(o && buyer ? [{ by: 'them', who: buyer.short, text: `We'd like to sign ${p?.name}. Our offer is ${fmtMoney(o.fee)}.` }] : [])
+  if (!o || !p || !buyer) return <Screen title="Negotiation" back onBack={close} noNav><Empty icon="handshake" title="Offer no longer available" /></Screen>
   const done = !['Offer Submitted', 'Counter Offer'].includes(o.status)
   const step = fee >= 50e6 ? 1e6 : fee >= 10e6 ? 5e5 : fee >= 2e6 ? 1e5 : 25e3
+  const counter = () => {
+    haptic('medium')
+    let r = { ok: false, text: '' } as { ok: boolean; text: string; status?: string }
+    mutate((w) => { r = counterIncomingBid(w, o.id, fee) }, { roster: true })
+    chat.send({ by: 'me', text: `We want ${fmtMoney(fee)} for ${p.name}.` }, [{ by: 'them', who: buyer.short, text: r.text, tone: r.ok ? 'good' : r.status === 'Negotiations Failed' ? 'bad' : 'neutral' }], () => { if (r.ok) useGame.getState().notify(r.text, 'ok') })
+  }
   return (
     <Screen title="Negotiation" sub={`${buyer.name} for ${p.name}`} back onBack={close} noNav>
       <div className="pad stack fade-up">
         <div className="card pad-card row" style={{ gap: 12 }}>
-          <Face p={p} size={56} radius={14} club={w.clubs[p.clubId]} />
+          <Face p={p} size={56} radius={28} club={w.clubs[p.clubId]} />
           <div className="grow"><div className="b">{p.name}</div><div className="tiny dim">Value {fmtMoney(p.value)} · Contract to {p.contract.until + 1}</div></div>
           <Badge club={buyer} size={42} />
         </div>
-        <div className="card pad-card">
-          <div className="label">Their offer</div>
-          <div className="display" style={{ fontSize: 34, marginTop: 4 }}>{fmtMoney(o.fee)}</div>
+        <div className="card pad-card row between">
+          <div><div className="label">Their offer</div><div className="display" style={{ fontSize: 30, marginTop: 4 }}>{fmtMoney(o.fee)}</div></div>
+          <div style={{ width: 130 }}><MoodMeter v={o.patience} label="Their patience" /></div>
         </div>
-        {log.map((l, i) => <div key={i} className="bubble them">{l}</div>)}
+        <ChatLog lines={chat.lines} typing={chat.typing} avatar={() => <Badge club={buyer} size={28} />} />
         {!done && (
-          <>
+          <div className="card pad-card stack" style={{ gap: 12, opacity: chat.busy ? 0.55 : 1, pointerEvents: chat.busy ? 'none' : undefined }}>
             <div className="label">Your asking price</div>
             <Stepper value={fee} min={Math.max(0, o.fee)} max={o.fee * 4 + 1e6} step={step} onChange={setFee} fmt={(v) => fmtMoney(v)} />
-            <button className="btn club block" onClick={() => { let r = { ok: false, text: '' }; mutate((w) => { r = counterIncomingBid(w, o.id, fee) }, { roster: true }); setLog([...log, r.text]); if (r.ok) useGame.getState().notify(r.text, 'ok') }}>Counter-offer</button>
+            <button className="btn primary block" onClick={counter} disabled={chat.busy}>Counter-offer</button>
             <div className="row">
               <button className="btn grow" onClick={() => { runAction({ label: '', action: 'acceptBid', payload: o.id }, params.msgId); close() }}>Accept {fmtMoney(o.fee, { short: true })}</button>
               <button className="btn danger grow" onClick={() => { runAction({ label: '', action: 'rejectBid', payload: o.id }, params.msgId); close() }}>Reject</button>
             </div>
-          </>
+          </div>
         )}
-        {done && <button className="btn primary block" onClick={close}>Done</button>}
+        {done && !chat.busy && <button className="btn primary block" onClick={close}>Done</button>}
       </div>
     </Screen>
   )

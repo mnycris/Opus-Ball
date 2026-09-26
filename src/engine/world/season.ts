@@ -196,7 +196,7 @@ export function seasonRollover(w: World, rng: Rng): SeasonArchive {
     p.sharpness = clamp(45 + rng.int(0, 20), 0, 100)
     p.intlDuty = false
     seasonAging(w, p, rng)
-    p.value = dynamicValue(p, w.date)
+    p.value = dynamicValue(p, w.date, p.valueCalib ?? 1)
   }
   for (const p of retirees) {
     w.transfers.history.unshift({ date: w.date, playerId: p.id, playerName: p.name, from: p.clubId, to: 0, fee: 0, type: 'retire', season })

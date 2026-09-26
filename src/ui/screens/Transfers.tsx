@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Fx } from '../components/Fx'
 import { useGame, useWorld, haptic } from '../../store/game'
 import type { ContractOffer, Player, Position, SquadRole, TransferOffer, World } from '../../domain/types'
@@ -11,7 +11,9 @@ import { POS_GROUP, SQUAD_ROLES } from '../../domain/constants'
 import { allPlayers, rosterOf } from '../../engine/world/roster'
 import { knowledge, matchesPosition, potRange, scoutNetwork } from '../../engine/world/scouting'
 import { askingPrice, contractDemand, playerInterest, roleForBuyer, sellerStance, yearsLeft } from '../../engine/world/transfers'
-import { acceptCounter, delegateTransfer, proposeContract, renewalDemand, renewContract, submitBid, wageRoom, windowLabel } from '../../engine/world/userActions'
+import { acceptCounter, delegateTransfer, proposeContract, renewalDemand, renewContract, startContractTalks, submitBid, wageRoom, windowLabel } from '../../engine/world/userActions'
+import { agentStyleLabel, getTalks } from '../../engine/world/negotiation'
+import { ChatLog, MoodMeter, useTypingChat, type ChatLine } from '../components/Chat'
 import { currentWindow } from '../../engine/competitions/calendar'
 import { ageOf, userClub } from '../selectors'
 
@@ -349,82 +351,121 @@ export function Negotiation({ params }: { params: { playerId: number; offerId?: 
   const [stage, setStage] = useState<'offer' | 'contract' | 'done'>(params.stage === 'contract' || free || offer?.status === 'Offer Accepted' ? 'contract' : 'offer')
   const ask = p && p.clubId ? askingPrice(w, p, club.id) : 0
   const [type, setType] = useState<TransferOffer['type']>(offer?.type || (p?.loanListed ? 'loan' : 'transfer'))
-  const [fee, setFee] = useState(() => offer?.counterFee || offer?.fee || Math.min(club.finance.transferBudget, roundValue(ask * 0.9)))
+  const [fee, setFee] = useState(() => offer?.counterFee || offer?.fee || Math.min(club.finance.transferBudget, roundValue(ask * 0.85)))
   const [sellOn, setSellOn] = useState(0)
   const [swap, setSwap] = useState<number>()
   const [split, setSplit] = useState(60)
   const [option, setOption] = useState(() => roundValue((p?.value || 0) * 1.1))
-  const [log, setLog] = useState<{ by: 'me' | 'them' | 'agent'; text: string }[]>(() => offer ? offer.history.map((h) => ({ by: h.by === 'buyer' ? 'me' as const : 'them' as const, text: h.text })) : [])
+  // freeze the selling club: after a completed deal the player's club changes
+  const [sellerId] = useState(p?.clubId || 0)
+  const seller = sellerId ? w.clubs[sellerId] : undefined
+  const initial = useMemo<ChatLine[]>(() => {
+    const out: ChatLine[] = []
+    if (offer) for (const h of offer.history) out.push({ by: h.by === 'buyer' ? 'me' : 'them', text: h.text, who: h.by === 'player' ? 'Agent' : seller?.short })
+    const t = p ? getTalks(w, 'sign', p.id) : undefined
+    if (t && t.status === 'open') for (const l of t.log) out.push({ by: l.by === 'me' ? 'me' : 'them', text: l.text, who: 'Agent', tone: l.tone })
+    return out
+  }, [])
+  const chat = useTypingChat(initial)
   const [delOpen, setDelOpen] = useState(false)
-  const [maxFee, setMaxFee] = useState(() => roundValue(Math.min(club.finance.transferBudget, ask * 1.1)))
-  // contract
-  const role0: SquadRole = p ? roleForBuyer(w, p, club.id) : 'Rotation'
-  const demand0 = p ? contractDemand(w, p, club.id, role0) : undefined
-  const [c, setC] = useState<ContractOffer | undefined>(() => demand0 ? { ...demand0, wage: roundValue(demand0.wage * 0.9) } : undefined)
-  const [attempt, setAttempt] = useState(1)
+  const [maxFee, setMaxFee] = useState(() => roundValue(Math.min(club.finance.transferBudget, ask * 1.05)))
+  const talks = p ? getTalks(w, 'sign', p.id) : undefined
+  const [c, setC] = useState<ContractOffer | undefined>(() => {
+    if (!p) return undefined
+    const t = getTalks(w, 'sign', p.id)
+    const d = t && t.status === 'open' ? t.ask : contractDemand(w, p, club.id, roleForBuyer(w, p, club.id))
+    return { ...d, wage: roundWageUI(d.wage * 0.85), signingBonus: roundValue(d.signingBonus * 0.5) }
+  })
+  // open personal-terms talks (agent's opening position arrives with a typing delay)
+  const openTalks = () => {
+    if (!p) return
+    let r: ReturnType<typeof startContractTalks> = {}
+    mutate((w) => { r = startContractTalks(w, w.players[p.id], 'sign', offerId) })
+    if (r.blocked) { chat.send(null, [{ by: 'them', who: 'Agent', text: r.blocked, tone: 'bad' }]); setStage('done'); return }
+    const t = r.talks!
+    if (t.round === 0 && !chat.lines.some((l) => l.who === 'Agent')) chat.send(null, t.log.map((l) => ({ by: 'them' as const, who: 'Agent', text: l.text })))
+    setC((cur) => cur && { ...cur, role: t.expectedRole, years: t.ask.years })
+  }
+  useEffect(() => { if (stage === 'contract') openTalks() }, [stage])
   if (!p || !c) return <Screen title="Negotiation" back onBack={close} noNav><Empty icon="handshake" title="Player unavailable" /></Screen>
-  const seller = w.clubs[p.clubId]
   const stance = p.clubId ? sellerStance(w, p, club.id) : { willing: true }
   const interest = playerInterest(w, p, club.id)
   const step = (v: number) => v >= 50e6 ? 1e6 : v >= 10e6 ? 5e5 : v >= 2e6 ? 1e5 : 25e3
   const isLoan = type.startsWith('loan')
   const swaps = rosterOf(w, club.id).filter((q) => !q.untouchable).sort((a, b) => b.ovr - a.ovr)
+  const avatar = (who?: string) => who === 'Agent' ? <AgentAvatar /> : seller ? <Badge club={seller} size={28} /> : null
 
   const bid = () => {
     haptic('medium')
     let r: any
+    const before = offerId ? w.transfers.offers[offerId]?.history.length || 0 : 0
     mutate((w) => { r = submitBid(w, w.players[p.id], { type, fee: isLoan ? 0 : fee, sellOn, swapPlayerId: swap, loanWageSplit: isLoan ? split : undefined, optionFee: type !== 'loan' && isLoan ? option : undefined }, offerId) })
     setOfferId(r.offerId)
-    setLog((l) => [...l, { by: 'me', text: isLoan ? `Loan proposal · we pay ${split}% of wages${type !== 'loan' ? ` · ${type === 'loan-obligation' ? 'obligation' : 'option'} to buy ${fmtMoney(option)}` : ''}` : `Offer: ${fmtMoney(fee)}${sellOn ? ` + ${sellOn}% sell-on` : ''}${swap ? ` + ${w.players[swap].name}` : ''}` }, { by: 'them', text: r.text }])
-    if (r.status === 'Offer Accepted') { haptic('heavy'); setTimeout(() => setStage('contract'), 700) }
+    const o = useGame.getState().world!.transfers.offers[r.offerId]
+    const mine: ChatLine = { by: 'me', text: isLoan ? `Loan proposal · we pay ${split}% of wages${type !== 'loan' ? ` · ${type === 'loan-obligation' ? 'obligation' : 'option'} to buy ${fmtMoney(option)}` : ''}` : `We offer ${fmtMoney(fee)}${sellOn ? ` + ${sellOn}% sell-on` : ''}${swap ? ` + ${w.players[swap].name}` : ''}` }
+    const newLines = o ? o.history.slice(before).filter((h) => h.by !== 'buyer') : []
+    const replies: ChatLine[] = (newLines.length ? newLines.map((h) => h.text) : [r.text]).map((text) => ({ by: 'them', who: seller?.short, text, tone: r.status === 'Offer Accepted' ? 'good' : r.status === 'Counter Offer' ? 'neutral' : 'bad' }))
+    chat.send(mine, replies, () => {
+      if (r.status === 'Offer Accepted') { haptic('heavy'); setStage('contract') }
+      if (r.status === 'Negotiations Failed') setStage('done')
+    })
     if (r.counter) setFee(r.counter)
   }
   const acceptC = () => {
     let r: any
+    const cf = offer!.counterFee!
     mutate((w) => { r = acceptCounter(w, offerId!) })
-    setLog((l) => [...l, { by: 'me', text: `We accept ${fmtMoney(offer!.counterFee!)}.` }, { by: 'them', text: r.text }])
-    if (r.ok) setStage('contract')
-    else notify(r.text, 'err')
+    chat.send({ by: 'me', text: `We accept ${fmtMoney(cf)}.` }, [{ by: 'them', who: seller?.short, text: r.ok ? `Excellent. ${fmtMoney(cf)} it is. You may now speak to ${p.name}'s representatives.` : r.text, tone: r.ok ? 'good' : 'bad' }], () => { if (r.ok) setStage('contract') })
+    if (!r.ok) notify(r.text, 'err')
   }
   const propose = () => {
     haptic('medium')
     let r: any
-    mutate((w) => { r = proposeContract(w, offerId, w.players[p.id], c, attempt) }, { roster: true })
-    setLog((l) => [...l, { by: 'me', text: `${fmtMoney(c.wage)}/wk · ${c.years} yrs · ${c.role}${c.signingBonus ? ` · ${fmtMoney(c.signingBonus, { short: true })} bonus` : ''}${c.releaseClause ? ` · RC ${fmtMoney(c.releaseClause, { short: true })}` : ''}` }, { by: 'agent', text: r.text }])
-    setAttempt(attempt + 1)
-    if (r.ok) { setStage('done'); haptic('heavy') }
-    else if (r.status === 'reject') setStage('done')
-    else if (r.demand && !r.text.startsWith('The ')) setC({ ...c, role: r.demand.role })
+    mutate((w) => { r = proposeContract(w, offerId, w.players[p.id], c, (talks?.round || 0) + 1) }, { roster: true })
+    const mine: ChatLine = { by: 'me', text: `${fmtMoney(c.wage)}/wk · ${c.years} yrs · ${c.role}${c.signingBonus ? ` · ${fmtMoney(c.signingBonus, { short: true })} signing-on` : ''}${c.releaseClause ? ` · clause ${fmtMoney(c.releaseClause, { short: true })}` : ''}` }
+    if (!r.replies) {
+      // budget checks or a signing that went through
+      chat.send(mine, [{ by: r.ok ? 'them' : 'system', who: 'Agent', text: r.ok ? `We have a deal. ${r.text}` : r.text, tone: r.ok ? 'good' : 'bad' }], () => { if (r.ok) { setStage('done'); haptic('heavy') } })
+      return
+    }
+    chat.send(mine, r.replies.map((x: any) => ({ by: 'them', who: 'Agent', text: x.text, tone: x.tone })), () => {
+      if (r.ok) { setStage('done'); haptic('heavy') }
+      else if (r.status === 'reject') setStage('done')
+    })
   }
+  const agentAsk = talks?.status === 'open' ? talks.ask : undefined
+  const mood = stage === 'contract' ? talks?.patience ?? 100 : offer?.patience ?? 100
   return (
     <Screen title="Negotiation Room" sub={seller ? `${seller.name}` : 'Free agent'} back onBack={close} noNav>
       <div className="pad stack fade-up">
-        <div className="negotiation-top">
-          <Fx kind="mesh" />
-          <div className="col center" style={{ gap: 6 }}><Badge club={club} size={46} /><span className="tiny b">{club.short}</span></div>
+        <div className="nego-head">
+          <div className="col center" style={{ gap: 6 }}><Badge club={club} size={40} /><span className="tiny b">{club.short}</span></div>
           <div className="col center grow" style={{ gap: 6 }}>
-            <Face p={p} size={80} radius={18} club={seller} />
+            <Face p={p} size={72} radius={36} club={seller} />
             <div className="b">{p.name}</div>
             <div className="row tight"><PosChip pos={p.positions[0]} /><Ovr v={p.ovr} size="sm" /><span className="tiny dim">{ageOf(w, p)} yrs</span></div>
           </div>
-          <div className="col center" style={{ gap: 6 }}>{seller ? <Badge club={seller} size={46} /> : <Icon name="contract" size={34} />}<span className="tiny b">{seller?.short || 'Free'}</span></div>
+          <div className="col center" style={{ gap: 6 }}>{seller ? <Badge club={seller} size={40} /> : <Icon name="contract" size={32} />}<span className="tiny b">{seller?.short || 'Free'}</span></div>
         </div>
         <div className="grid3">
           <div className="card pad-card" style={{ padding: 10 }}><div className="tiny dim">Value</div><div className="b small">{fmtMoney(p.value, { short: true })}</div></div>
-          <div className="card pad-card" style={{ padding: 10 }}><div className="tiny dim">Contract</div><div className="b small">{p.clubId ? `to ${p.contract.until + 1}` : 'None'}</div></div>
+          <div className="card pad-card" style={{ padding: 10 }}><div className="tiny dim">{p.clubId ? 'Wage now' : 'Contract'}</div><div className="b small">{p.clubId ? `${fmtMoney(p.wage, { short: true })}/wk` : 'None'}</div></div>
           <div className="card pad-card" style={{ padding: 10 }}><div className="tiny dim">Interest</div><div className="b small" style={{ color: interest >= 60 ? 'var(--pos)' : interest >= 35 ? 'var(--warn)' : 'var(--neg)' }}>{interest >= 70 ? 'Keen' : interest >= 50 ? 'Open' : interest >= 30 ? 'Unsure' : 'Reluctant'}</div></div>
         </div>
-        {!stance.willing && !p.contract.releaseClause && <div className="card pad-card small row tight" style={{ borderColor: 'rgba(255,77,94,.4)' }}><Icon name="lock" size={16} color="var(--neg)" />{stance.reason}</div>}
-        {log.length > 0 && <div className="stack" style={{ gap: 8 }}>{log.map((l, i) => <div key={i} className={`bubble ${l.by === 'me' ? 'me' : 'them'}`}>{l.by === 'agent' && <div className="tiny dim b" style={{ marginBottom: 3 }}>Agent</div>}{l.by === 'them' && seller && <div className="tiny dim b" style={{ marginBottom: 3 }}>{seller.short}</div>}{l.text}</div>)}</div>}
+        <div className="card pad-card" style={{ padding: 12 }}>
+          <MoodMeter v={mood} label={stage === 'contract' ? `Agent${talks ? ` · ${agentStyleLabel(talks.style)}` : ''}` : `${seller?.short || 'Club'} patience`} />
+        </div>
+        {!stance.willing && !p.contract.releaseClause && stage === 'offer' && <div className="card pad-card small row tight" style={{ background: 'rgba(255,77,94,.08)' }}><Icon name="lock" size={16} color="var(--neg)" />{stance.reason}</div>}
+        <ChatLog lines={chat.lines} typing={chat.typing} avatar={avatar} />
 
         {stage === 'offer' && (
-          <div className="card pad-card stack" style={{ gap: 12 }}>
+          <div className="card pad-card stack" style={{ gap: 12, opacity: chat.busy ? 0.55 : 1, pointerEvents: chat.busy ? 'none' : undefined }}>
             <Seg small items={[{ id: 'transfer', label: 'Transfer' }, { id: 'loan', label: 'Loan' }, { id: 'loan-option', label: 'Loan + option' }, { id: 'loan-obligation', label: 'Loan + oblig.' }]} value={type} onChange={(v) => setType(v as TransferOffer['type'])} />
             {!isLoan ? (
               <>
-                <div className="row between"><span className="label">Transfer fee</span><span className="tiny dim">Asking ~{fmtMoney(ask, { short: true })}{p.contract.releaseClause ? ` · RC ${fmtMoney(p.contract.releaseClause, { short: true })}` : ''}</span></div>
+                <div className="row between"><span className="label">Transfer fee</span><span className="tiny dim">{offer?.counterFee ? `They want ${fmtMoney(offer.counterFee, { short: true })}` : `Valuation ~${fmtMoney(ask, { short: true })}`}{p.contract.releaseClause ? ` · RC ${fmtMoney(p.contract.releaseClause, { short: true })}` : ''}</span></div>
                 <Stepper value={fee} min={0} max={Math.max(club.finance.transferBudget, fee)} step={step(fee)} onChange={setFee} fmt={(v) => fmtMoney(v)} />
-                <div className="row wrap" style={{ gap: 6 }}>{[0.8, 0.9, 1, 1.1].map((m) => <button key={m} className="chip" onClick={() => setFee(Math.min(club.finance.transferBudget, roundValue(ask * m)))}>{Math.round(m * 100)}%</button>)}{p.contract.releaseClause > 0 && <button className="chip" onClick={() => setFee(p.contract.releaseClause)}>Release clause</button>}</div>
+                <div className="row wrap" style={{ gap: 6 }}>{[0.75, 0.85, 0.95, 1].map((m) => <button key={m} className="chip" onClick={() => setFee(Math.min(club.finance.transferBudget, roundValue(ask * m)))}>{Math.round(m * 100)}%</button>)}{p.contract.releaseClause > 0 && <button className="chip" onClick={() => setFee(p.contract.releaseClause)}>Release clause</button>}</div>
                 <div><div className="label" style={{ marginBottom: 6 }}>Sell-on clause</div><Seg small items={[0, 10, 15, 20, 25].map((x) => ({ id: x, label: x ? `${x}%` : 'None' }))} value={sellOn} onChange={setSellOn} /></div>
                 <div className="field"><label className="label">Player exchange</label><select className="input" value={swap || ''} onChange={(e) => setSwap(e.target.value ? Number(e.target.value) : undefined)}><option value="">None</option>{swaps.map((q) => <option key={q.id} value={q.id}>{q.name} ({q.ovr}, {fmtMoney(q.value, { short: true })})</option>)}</select></div>
               </>
@@ -437,31 +478,37 @@ export function Negotiation({ params }: { params: { playerId: number; offerId?: 
             )}
             <div className="row">
               <button className="btn grow" onClick={() => setDelOpen(true)}><Icon name="manager" size={16} /> Delegate</button>
-              <button className="btn club grow" onClick={bid} disabled={(!stance.willing && !p.contract.releaseClause) || (!isLoan && fee > club.finance.transferBudget)}>Submit Offer</button>
+              <button className="btn primary grow" onClick={bid} disabled={chat.busy || (!stance.willing && !p.contract.releaseClause) || (!isLoan && fee > club.finance.transferBudget)}>Submit offer</button>
             </div>
-            {offer?.status === 'Counter Offer' && offer.counterFee && <button className="btn primary block" onClick={acceptC}>Accept counter · {fmtMoney(offer.counterFee)}</button>}
+            {offer?.status === 'Counter Offer' && offer.counterFee && <button className="btn block" onClick={acceptC} disabled={chat.busy}>Accept their price · {fmtMoney(offer.counterFee)}</button>}
           </div>
         )}
 
         {stage === 'contract' && (
-          <div className="card pad-card stack" style={{ gap: 12 }}>
+          <div className="card pad-card stack" style={{ gap: 12, opacity: chat.busy ? 0.55 : 1, pointerEvents: chat.busy ? 'none' : undefined }}>
             <div className="row between"><span className="h3">Personal terms</span><span className="tiny dim">Wage room {fmtMoney(Math.max(0, wageRoom(w)))}/wk</span></div>
-            <div className="row between"><span className="label">Weekly wage</span><span className="tiny dim">Agent expects ~{fmtMoney(demand0!.wage)}</span></div>
-            <Stepper value={c.wage} min={500} max={Math.max(c.wage, demand0!.wage * 3)} step={c.wage >= 100000 ? 5000 : c.wage >= 20000 ? 1000 : 250} onChange={(v) => setC({ ...c, wage: v })} fmt={(v) => `${fmtMoney(v)}/wk`} />
+            {agentAsk && (
+              <div className="nego-ask">
+                <div className="grow"><div className="tiny dim">Agent's position</div><div className="b small">{fmtMoney(agentAsk.wage)}/wk · {agentAsk.years} yrs · {talks!.expectedRole}</div></div>
+                <button className="btn xs" onClick={() => { haptic(); setC({ ...c, wage: agentAsk.wage, years: agentAsk.years, role: talks!.expectedRole }) }}>Match</button>
+              </div>
+            )}
+            <div className="row between"><span className="label">Weekly wage</span><span className="tiny dim">Now earns {fmtMoney(p.wage)}/wk</span></div>
+            <Stepper value={c.wage} min={500} max={Math.max(c.wage, (agentAsk?.wage || p.wage) * 2.5)} step={c.wage >= 100000 ? 5000 : c.wage >= 20000 ? 1000 : 250} onChange={(v) => setC({ ...c, wage: v })} fmt={(v) => `${fmtMoney(v)}/wk`} />
             {!offer?.type.startsWith('loan') && <>
               <div><div className="label" style={{ marginBottom: 6 }}>Contract length</div><Seg small items={[1, 2, 3, 4, 5].map((y) => ({ id: y, label: `${y} yr` }))} value={c.years} onChange={(v) => setC({ ...c, years: v })} /></div>
               <div><div className="label" style={{ marginBottom: 6 }}>Squad role</div><Seg small items={SQUAD_ROLES.map((r) => ({ id: r, label: r === 'Sparingly' ? 'Spare' : r }))} value={c.role} onChange={(v) => setC({ ...c, role: v as SquadRole })} /></div>
-              <div className="label">Signing bonus</div>
-              <Stepper value={c.signingBonus} min={0} max={Math.max(c.signingBonus, demand0!.signingBonus * 4)} step={step(c.signingBonus || 1e5)} onChange={(v) => setC({ ...c, signingBonus: v })} fmt={(v) => fmtMoney(v)} />
+              <div className="label">Signing-on fee</div>
+              <Stepper value={c.signingBonus} min={0} max={Math.max(c.signingBonus, (agentAsk?.signingBonus || 1e6) * 4)} step={step(c.signingBonus || 1e5)} onChange={(v) => setC({ ...c, signingBonus: v })} fmt={(v) => fmtMoney(v)} />
               <div className="label">Release clause</div>
               <div className="row wrap" style={{ gap: 6 }}>{[0, 1.5, 2, 3, 5].map((m) => <button key={m} className={`chip ${c.releaseClause === (m ? roundValue(p.value * m) : 0) ? 'on' : ''}`} onClick={() => setC({ ...c, releaseClause: m ? roundValue(p.value * m) : 0 })}>{m ? `${fmtMoney(roundValue(p.value * m), { short: true })}` : 'None'}</button>)}</div>
               <div className="row tight tiny dim">Performance bonuses: goal {fmtMoney(c.bonusGoal)}, clean sheet {fmtMoney(c.bonusCleanSheet)}, appearance {fmtMoney(c.bonusApp)}</div>
             </>}
-            <button className="btn club block" onClick={propose}>Offer contract</button>
+            <button className="btn primary block" onClick={propose} disabled={chat.busy}>Offer contract</button>
           </div>
         )}
 
-        {stage === 'done' && <button className="btn primary block" onClick={close}>Done</button>}
+        {stage === 'done' && !chat.busy && <button className="btn primary block" onClick={close}>Done</button>}
       </div>
       <Sheet open={delOpen} onClose={() => setDelOpen(false)} title="Delegate to Sporting Director">
         <div className="stack" style={{ gap: 12 }}>
@@ -474,49 +521,76 @@ export function Negotiation({ params }: { params: { playerId: number; offerId?: 
   )
 }
 
+function AgentAvatar() {
+  return <span className="agent-av"><Icon name="handshake" size={16} /></span>
+}
+
+const roundWageUI = (v: number) => (v >= 100_000 ? Math.round(v / 5_000) * 5_000 : v >= 10_000 ? Math.round(v / 500) * 500 : Math.round(v / 50) * 50)
+
 // ============================================================================ renewal
 export function Renewal({ params }: { params: { id: number } }) {
   const w = useWorld()
   const mutate = useGame((s) => s.mutate)
   const close = useGame((s) => s.close)
   const p = w.players[params.id]
-  const demand = p ? renewalDemand(w, p) : undefined
-  const [c, setC] = useState<ContractOffer | undefined>(() => demand ? { ...demand, wage: Math.max(p!.contract.wage, roundValue(demand.wage * 0.92)) } : undefined)
-  const [attempt, setAttempt] = useState(1)
-  const [log, setLog] = useState<{ me: boolean; text: string }[]>([])
+  const [c, setC] = useState<ContractOffer | undefined>(() => {
+    if (!p) return undefined
+    const t = getTalks(w, 'renew', p.id)
+    const d = t && t.status === 'open' ? t.ask : renewalDemand(w, p)
+    return { ...d, wage: Math.max(p.contract.wage, roundWageUI(d.wage * 0.9)), signingBonus: 0 }
+  })
+  const initial = useMemo<ChatLine[]>(() => { const t = p ? getTalks(w, 'renew', p.id) : undefined; return t && t.status === 'open' ? t.log.map((l) => ({ by: l.by === 'me' ? 'me' as const : 'them' as const, who: 'Agent', text: l.text, tone: l.tone })) : [] }, [])
+  const chat = useTypingChat(initial)
   const [done, setDone] = useState(false)
-  if (!p || !c || !demand) return <Screen title="Contract" back onBack={close} noNav><Empty icon="contract" title="Player unavailable" /></Screen>
+  useEffect(() => {
+    if (!p) return
+    let r: ReturnType<typeof startContractTalks> = {}
+    mutate((w) => { r = startContractTalks(w, w.players[p.id], 'renew') })
+    if (r.blocked) { chat.send(null, [{ by: 'them', who: 'Agent', text: r.blocked, tone: 'bad' }]); setDone(true); return }
+    if (r.talks && r.talks.round === 0 && !initial.length) chat.send(null, r.talks.log.map((l) => ({ by: 'them' as const, who: 'Agent', text: l.text })))
+  }, [])
+  if (!p || !c) return <Screen title="Contract" back onBack={close} noNav><Empty icon="contract" title="Player unavailable" /></Screen>
   const club = w.clubs[p.clubId]
+  const talks = getTalks(w, 'renew', p.id)
+  const agentAsk = talks?.status === 'open' ? talks.ask : undefined
   return (
     <Screen title="Contract Renewal" sub={p.name} back onBack={close} noNav>
       <div className="pad stack fade-up">
         <div className="card pad-card row" style={{ gap: 12 }}>
-          <Face p={p} size={60} radius={14} club={club} />
-          <div className="grow"><div className="b">{p.name}</div><div className="tiny dim">Current: {fmtMoney(p.contract.wage)}/wk · until {p.contract.until + 1} · {p.contract.role}</div><div className="tiny dim">Morale: {Math.round(p.morale)} · {yearsLeft(w, p) <= 1 ? 'Final year' : `${yearsLeft(w, p)} years left`}</div></div>
+          <Face p={p} size={56} radius={28} club={club} />
+          <div className="grow"><div className="b">{p.name}</div><div className="tiny dim">Current: {fmtMoney(p.contract.wage)}/wk · until {p.contract.until + 1} · {p.contract.role}</div><div className="tiny dim">Morale {Math.round(p.morale)} · {yearsLeft(w, p) <= 1 ? 'Final year' : `${yearsLeft(w, p)} years left`}</div></div>
           <Ovr v={p.ovr} />
         </div>
-        {log.map((l, i) => <div key={i} className={`bubble ${l.me ? 'me' : 'them'}`}>{l.text}</div>)}
+        <div className="card pad-card" style={{ padding: 12 }}><MoodMeter v={talks?.patience ?? 100} label={`Agent${talks ? ` · ${agentStyleLabel(talks.style)}` : ''}`} /></div>
+        <ChatLog lines={chat.lines} typing={chat.typing} avatar={() => <AgentAvatar />} />
         {!done && (
-          <div className="card pad-card stack" style={{ gap: 12 }}>
-            <div className="row between"><span className="label">Weekly wage</span><span className="tiny dim">Expects ~{fmtMoney(demand.wage)}</span></div>
-            <Stepper value={c.wage} min={Math.round(p.contract.wage * 0.8)} max={Math.max(c.wage, demand.wage * 3)} step={c.wage >= 100000 ? 5000 : c.wage >= 20000 ? 1000 : 250} onChange={(v) => setC({ ...c, wage: v })} fmt={(v) => `${fmtMoney(v)}/wk`} />
+          <div className="card pad-card stack" style={{ gap: 12, opacity: chat.busy ? 0.55 : 1, pointerEvents: chat.busy ? 'none' : undefined }}>
+            {agentAsk && (
+              <div className="nego-ask">
+                <div className="grow"><div className="tiny dim">Agent's position</div><div className="b small">{fmtMoney(agentAsk.wage)}/wk · {agentAsk.years} yrs · {talks!.expectedRole}</div></div>
+                <button className="btn xs" onClick={() => { haptic(); setC({ ...c, wage: agentAsk.wage, years: agentAsk.years, role: talks!.expectedRole }) }}>Match</button>
+              </div>
+            )}
+            <div className="row between"><span className="label">Weekly wage</span><span className="tiny dim">Wage room {fmtMoney(Math.max(0, wageRoom(w)))}/wk</span></div>
+            <Stepper value={c.wage} min={Math.round(p.contract.wage * 0.8)} max={Math.max(c.wage, (agentAsk?.wage || p.contract.wage) * 2.5)} step={c.wage >= 100000 ? 5000 : c.wage >= 20000 ? 1000 : 250} onChange={(v) => setC({ ...c, wage: v })} fmt={(v) => `${fmtMoney(v)}/wk`} />
             <div><div className="label" style={{ marginBottom: 6 }}>Length</div><Seg small items={[1, 2, 3, 4, 5].map((y) => ({ id: y, label: `${y} yr` }))} value={c.years} onChange={(v) => setC({ ...c, years: v })} /></div>
             <div><div className="label" style={{ marginBottom: 6 }}>Squad role</div><Seg small items={SQUAD_ROLES.map((r) => ({ id: r, label: r === 'Sparingly' ? 'Spare' : r }))} value={c.role} onChange={(v) => setC({ ...c, role: v as SquadRole })} /></div>
             <div className="label">Loyalty bonus</div>
-            <Stepper value={c.signingBonus} min={0} max={Math.max(c.signingBonus, demand.signingBonus * 4)} step={c.signingBonus >= 5e6 ? 5e5 : 1e5} onChange={(v) => setC({ ...c, signingBonus: v })} fmt={(v) => fmtMoney(v)} />
+            <Stepper value={c.signingBonus} min={0} max={Math.max(c.signingBonus, (agentAsk?.signingBonus || 1e6) * 4)} step={c.signingBonus >= 5e6 ? 5e5 : 1e5} onChange={(v) => setC({ ...c, signingBonus: v })} fmt={(v) => fmtMoney(v)} />
             <div className="label">Release clause</div>
             <div className="row wrap" style={{ gap: 6 }}>{[0, 1.5, 2, 3, 5].map((m) => <button key={m} className={`chip ${c.releaseClause === (m ? roundValue(p.value * m) : 0) ? 'on' : ''}`} onClick={() => setC({ ...c, releaseClause: m ? roundValue(p.value * m) : 0 })}>{m ? fmtMoney(roundValue(p.value * m), { short: true }) : 'None'}</button>)}</div>
-            <button className="btn club block" onClick={() => {
+            <button className="btn primary block" disabled={chat.busy} onClick={() => {
               haptic('medium')
               let r: any
-              mutate((w) => { r = renewContract(w, w.players[p.id], c, attempt) })
-              setAttempt(attempt + 1)
-              setLog((l) => [...l, { me: true, text: `${fmtMoney(c.wage)}/wk · ${c.years} years · ${c.role}` }, { me: false, text: r.text }])
-              if (r.ok || r.status === 'reject') setDone(true)
+              mutate((w) => { r = renewContract(w, w.players[p.id], c, (talks?.round || 0) + 1) })
+              const mine: ChatLine = { by: 'me', text: `${fmtMoney(c.wage)}/wk · ${c.years} years · ${c.role}${c.signingBonus ? ` · ${fmtMoney(c.signingBonus, { short: true })} bonus` : ''}` }
+              const replies: ChatLine[] = r.replies ? r.replies.map((x: any) => ({ by: 'them', who: 'Agent', text: x.text, tone: x.tone })) : [{ by: r.ok ? 'them' : 'system', who: 'Agent', text: r.text, tone: r.ok ? 'good' : 'bad' }]
+              if (r.ok && r.replies === undefined) replies.push({ by: 'system', text: r.text })
+              chat.send(mine, replies, () => { if (r.ok || r.status === 'reject') setDone(true) })
             }}>Offer new contract</button>
           </div>
         )}
-        {done && <button className="btn primary block" onClick={close}>Done</button>}
+        {done && !chat.busy && <button className="btn primary block" onClick={close}>Done</button>}
       </div>
     </Screen>
   )

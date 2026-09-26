@@ -192,7 +192,9 @@ export function createWorld(raw: RawDb, opts: NewCareerOptions): World {
     club.activeSheet = sheet.id
   }
   for (const p of Object.values(w.players)) {
-    if (!p.value) p.value = dynamicValue(p, start)
+    const raw = dynamicValue(p, start)
+    if (!p.value) p.value = raw
+    else if (!p.regen) p.valueCalib = Math.max(0.35, Math.min(2.5, p.value / Math.max(1, raw)))
   }
   // ---- user replaces the incumbent manager
   const userClub = w.clubs[opts.clubId]
