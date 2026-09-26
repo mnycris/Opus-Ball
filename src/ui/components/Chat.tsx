@@ -8,17 +8,19 @@ export interface ChatLine { by: 'me' | 'them' | 'system'; text: string; who?: st
 export function useTypingChat(initial: ChatLine[]) {
   const [lines, setLines] = useState<ChatLine[]>(initial)
   const [typing, setTyping] = useState<string | null>(null)
+  const [pending, setPending] = useState(0)
   const timers = useRef<number[]>([])
   useEffect(() => () => timers.current.forEach((t) => window.clearTimeout(t)), [])
-  const busy = typing !== null
+  const busy = typing !== null || pending > 0
   const send = (mine: ChatLine | null, replies: ChatLine[], done?: () => void) => {
     if (mine) setLines((l) => [...l, mine])
+    if (replies.length) setPending((n) => n + replies.length)
     let at = 350
     replies.forEach((r) => {
       const think = 650 + Math.min(2300, r.text.length * 17) + Math.random() * 450
       timers.current.push(window.setTimeout(() => setTyping(r.who || 'them'), at))
       at += think
-      timers.current.push(window.setTimeout(() => { setTyping(null); setLines((l) => [...l, r]); haptic(r.tone === 'good' ? 'medium' : 'light') }, at))
+      timers.current.push(window.setTimeout(() => { setTyping(null); setPending((n) => Math.max(0, n - 1)); setLines((l) => [...l, r]); haptic(r.tone === 'good' ? 'medium' : 'light') }, at))
       at += 380
     })
     if (!replies.length) setTyping(null)

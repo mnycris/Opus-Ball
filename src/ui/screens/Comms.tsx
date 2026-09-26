@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Fx } from '../components/Fx'
 import { useGame, useWorld, haptic } from '../../store/game'
 import type { InboxMessage, NewsItem, World } from '../../domain/types'
@@ -9,7 +9,7 @@ import { fmtDate } from '../../domain/dates'
 import { fmtMoney, roundValue } from '../../domain/finance'
 import { runAction } from '../actions'
 import { respondConversation } from '../../engine/world/morale'
-import { applyPress, pressQuestions } from '../../engine/world/press'
+import { applyPress, pressQuestions, type PressOption, type PressQuestion } from '../../engine/world/press'
 import { counterIncomingBid } from '../../engine/world/userActions'
 import { staffNames } from '../../engine/world/messages'
 import { hashString } from '../../domain/rng'
@@ -197,38 +197,50 @@ export function PressConference({ params }: { params: { kind: 'pre' | 'post'; fi
   const w = useWorld()
   const mutate = useGame((s) => s.mutate)
   const close = useGame((s) => s.close)
-  const qs = useMemo(() => pressQuestions(w, params.kind, params.fixtureId), [params.fixtureId, params.kind])
+  const base = useMemo(() => pressQuestions(w, params.kind, params.fixtureId), [params.fixtureId, params.kind])
+  const [qs, setQs] = useState<PressQuestion[]>(base)
   const [i, setI] = useState(0)
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [summary, setSummary] = useState<string[]>()
+  const chat = useTypingChat([])
+  const [asked, setAsked] = useState(-1)
   const q = qs[i]
+  const f = w.fixtures[params.fixtureId]
+  const opp = f ? w.clubs[f.home === w.userClubId ? f.away : f.home] : undefined
+  // each question is "typed" by the reporter before it can be answered
+  useEffect(() => {
+    if (!q || summary || asked === i) return
+    setAsked(i)
+    chat.send(null, [{ by: 'them', who: `${q.reporter} · ${q.outlet}`, text: q.text }])
+  }, [i, q?.id, summary])
+  const answer = (o: PressOption) => {
+    haptic()
+    const next = { ...answers, [q.id]: o.id }
+    setAnswers(next)
+    chat.setLines((l) => [...l, { by: 'me', text: o.text }])
+    let list = qs
+    if (o.followUp) { list = [...qs.slice(0, i + 1), o.followUp, ...qs.slice(i + 1)]; setQs(list) }
+    if (i + 1 < list.length) setI(i + 1)
+    else { let out: string[] = []; mutate((w) => { out = applyPress(w, params.kind, params.fixtureId, list, next) }); setSummary(out) }
+  }
   return (
-    <Screen title="Press Conference" sub={params.kind === 'pre' ? 'Pre-match' : 'Post-match'} back onBack={close} noNav>
+    <Screen title="Press Conference" sub={`${params.kind === 'pre' ? 'Pre-match' : 'Post-match'}${opp ? ` · ${opp.short}` : ''}`} back onBack={close} noNav>
       <div className="pad stack fade-up">
         <div className="press-stage">
           <Fx kind="spotlight" />
-          <UserAvatar w={w} size={86} radius={43} />
+          <UserAvatar w={w} size={78} radius={39} />
           <div className="press-mics"><Icon name="chat" size={20} /></div>
         </div>
-        {!summary && q && (
-          <>
-            <div className="row between"><span className="label">Question {i + 1} of {qs.length}</span><span className="tiny dim">{q.reporter} · {q.outlet}</span></div>
-            {q.playerId && w.players[q.playerId] && <div className="row tight"><Face p={w.players[q.playerId]} size={28} radius={8} club={w.clubs[w.userClubId]} /><span className="small b">{w.players[q.playerId].name}</span></div>}
-            <div className="bubble them" style={{ fontSize: 16 }}>{q.text}</div>
-            <div className="stack" style={{ gap: 8 }}>
-              {q.options.map((o) => (
-                <button key={o.id} className="btn block answer" onClick={() => {
-                  haptic()
-                  const next = { ...answers, [q.id]: o.id }
-                  setAnswers(next)
-                  if (i + 1 < qs.length) setI(i + 1)
-                  else { let out: string[] = []; mutate((w) => { out = applyPress(w, params.kind, params.fixtureId, qs, next) }); setSummary(out) }
-                }}>
-                  <span className="tone">{o.tone}</span>{o.text}
-                </button>
-              ))}
-            </div>
-          </>
+        {!summary && q && <div className="row between"><span className="label">Question {i + 1} of {qs.length}</span>{q.playerId && w.players[q.playerId] ? <span className="row tight tiny b"><Face p={w.players[q.playerId]} size={22} radius={11} club={w.clubs[w.players[q.playerId].clubId]} />{w.players[q.playerId].name}</span> : <span className="tiny dim">{q.outlet}</span>}</div>}
+        <ChatLog lines={chat.lines} typing={chat.typing} avatar={(who) => <Avatar name={(who || 'Press').split(' · ')[0]} size={30} />} />
+        {!summary && q && !chat.busy && asked === i && (
+          <div className="stack" style={{ gap: 8 }}>
+            {q.options.map((o) => (
+              <button key={o.id} className="btn block answer" onClick={() => answer(o)}>
+                <span className="tone">{o.tone}</span>{o.text}
+              </button>
+            ))}
+          </div>
         )}
         {!q && !summary && <Empty icon="chat" title="No questions today" />}
         {summary && (
