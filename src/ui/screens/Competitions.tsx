@@ -10,11 +10,15 @@ import { sortTable, ZONE_COLOR, ZONE_LABEL, zoneFor, type Zone } from '../../eng
 import { compLogoKey, fixturesOf, leagueOf, opponent, outcomeFor, seasonComps } from '../selectors'
 import { FixtureRow } from './Match'
 import { rosterOf, allPlayers } from '../../engine/world/roster'
-import { POS_ORDER } from '../../domain/constants'
+import { POS_ORDER, formationOf } from '../../domain/constants'
 import { ordinal } from './Menu'
 import { tieWinner } from '../../engine/competitions/cups'
 import { fixturesByDate } from '../../engine/competitions/fixtures'
 import { starRating } from '../rawHelpers'
+import { tableAround } from '../selectors'
+import { FormStrip } from './MatchDay'
+import { TeamLineup, sideFromSheet, RatingPill } from '../components/Lineup'
+import { sideInput } from '../../engine/world/matchRunner'
 
 // ============================================================================ season hub
 export function SeasonHub() {
@@ -253,7 +257,7 @@ function Tie({ w, fx }: { w: World; fx: Fixture[] }) {
 
 function CompStats({ w, c }: { w: World; c: Competition }) {
   const go = useGame((s) => s.go)
-  const [k, setK] = useState<'goals' | 'assists' | 'cleanSheets' | 'rating'>('goals')
+  const [k, setK] = useState<'totw' | 'goals' | 'assists' | 'cleanSheets' | 'rating'>(c.format === 'league' ? 'totw' : 'goals')
   const list = useMemo(() => {
     const out: { p: Player; v: number; apps: number }[] = []
     for (const p of allPlayers(w)) {
@@ -266,9 +270,10 @@ function CompStats({ w, c }: { w: World; c: Competition }) {
   }, [c.id, k, w.date])
   return (
     <div className="pad" style={{ marginTop: 12 }}>
-      <Seg small items={[{ id: 'goals', label: 'Goals' }, { id: 'assists', label: 'Assists' }, { id: 'cleanSheets', label: 'Clean sheets' }, { id: 'rating', label: 'Rating' }]} value={k} onChange={setK} />
-      {!list.length && <Empty icon="stats" title="No stats yet" />}
-      <div className="card list" style={{ marginTop: 10 }}>
+      <Seg small items={[...(c.format === 'league' ? [{ id: 'totw' as const, label: 'TOTW' }] : []), { id: 'goals', label: 'Goals' }, { id: 'assists', label: 'Assists' }, { id: 'cleanSheets', label: 'Clean sh.' }, { id: 'rating', label: 'Rating' }]} value={k} onChange={setK} />
+      {k === 'totw' && <TeamOfTheWeek w={w} c={c} />}
+      {k !== 'totw' && !list.length && <Empty icon="stats" title="No stats yet" />}
+      {k !== 'totw' && <div className="card list" style={{ marginTop: 10 }}>
         {list.map(({ p, v, apps }, i) => (
           <button key={p.id} className={`li tap ${p.clubId === w.userClubId ? 'me-row' : ''}`} style={{ width: '100%', textAlign: 'left' }} onClick={() => go({ name: 'player', params: { id: p.id } })}>
             <span className="display" style={{ width: 22, fontSize: 18, color: i < 3 ? 'var(--gold)' : 'var(--t3)' }}>{i + 1}</span>
@@ -277,6 +282,57 @@ function CompStats({ w, c }: { w: World; c: Competition }) {
             <span className="display" style={{ fontSize: 24 }}>{k === 'rating' ? v.toFixed(2) : v}</span>
           </button>
         ))}
+      </div>}
+    </div>
+  )
+}
+
+/** FotMob-style Team of the Week: best-rated performers of the latest completed round in a 4-3-3. */
+function TeamOfTheWeek({ w, c }: { w: World; c: Competition }) {
+  const go = useGame((s) => s.go)
+  const data = useMemo(() => {
+    const played = c.fixtures.map((id) => w.fixtures[id]).filter((f) => f?.played && f.result?.players.length)
+    if (!played.length) return undefined
+    const byRound = new Map<string, Fixture[]>()
+    for (const f of played) { const k = f.roundName; byRound.set(k, [...(byRound.get(k) || []), f]) }
+    // latest round that is (nearly) complete
+    const rounds = [...byRound.entries()].sort((a, b) => b[1][0].date.localeCompare(a[1][0].date))
+    const [round, fx] = rounds.find(([, list]) => list.length >= Math.floor(c.clubs.length / 2) - 1) || rounds[0]
+    const pool = fx.flatMap((f) => f.result!.players.filter((x) => x.mins >= 45).map((x) => ({ x, f, clubId: x.side === 0 ? f.home : f.away })))
+    const group = (pos: string) => (pos === 'GK' ? 'GK' : ['CB', 'LB', 'RB', 'LWB', 'RWB'].includes(pos) ? 'DEF' : ['CDM', 'CM', 'CAM', 'LM', 'RM'].includes(pos) ? 'MID' : 'ATT')
+    const take = (g: string, n: number) => pool.filter((e) => group(e.x.pos) === g).sort((a, b) => b.x.rating - a.x.rating).slice(0, n)
+    const gk = take('GK', 1), def = take('DEF', 4), mid = take('MID', 3), att = take('ATT', 3)
+    // order defenders/attackers by side so the shape reads right
+    const sideOrder = (pos: string) => (/^R/.test(pos) ? 0 : /^L/.test(pos) ? 2 : 1)
+    def.sort((a, b) => sideOrder(a.x.pos) - sideOrder(b.x.pos)); att.sort((a, b) => sideOrder(a.x.pos) - sideOrder(b.x.pos))
+    const xi = [...gk, ...def, ...mid, ...att]
+    return { round, xi }
+  }, [c.id, w.date])
+  if (!data || data.xi.length < 11) return <Empty icon="stats" title="Team of the Week" text="Available once a full round has been played." />
+  const f = formationOf('4-3-3 Flat')
+  const best = [...data.xi].sort((a, b) => b.x.rating - a.x.rating)[0]
+  const side = {
+    club: w.clubs[w.userClubId], formation: f,
+    xi: data.xi.map((e) => ({ id: e.x.id, rating: e.x.rating, goals: e.x.goals, assists: e.x.assists, motm: e === best, pos: e.x.pos })),
+    bench: [], note: data.round,
+  }
+  return (
+    <div style={{ marginTop: 10 }}>
+      <TeamLineup w={w} side={{ ...side, title: 'Team of the Week', logo: <CompLogo k={compLogoKey(c)} size={22} name={c.name} /> }} mode="live" onTap={(t) => t.id && go({ name: 'player', params: { id: t.id } })} />
+      <div className="card list" style={{ marginTop: 10 }}>
+        {data.xi.map((e) => {
+          const p = w.players[e.x.id]
+          if (!p) return null
+          const opp = w.clubs[e.clubId === e.f.home ? e.f.away : e.f.home]
+          return (
+            <button key={e.x.id} className="li tap" style={{ width: '100%', textAlign: 'left' }} onClick={() => go({ name: 'player', params: { id: p.id } })}>
+              <Face p={p} size={34} radius={17} club={w.clubs[e.clubId]} />
+              <div className="meta"><div className="t small ellipsis">{p.name}</div><div className="s row tight"><Badge club={w.clubs[e.clubId]} size={13} />{w.clubs[e.clubId]?.short} v {opp?.short} · {e.f.result!.score[0]}-{e.f.result!.score[1]}</div></div>
+              <PosChip pos={e.x.pos} />
+              <RatingPill v={e.x.rating} motm={e === best} size="sm" />
+            </button>
+          )
+        })}
       </div>
     </div>
   )
@@ -286,7 +342,7 @@ function CompStats({ w, c }: { w: World; c: Competition }) {
 export function ClubProfile({ params }: { params: { id: number } }) {
   const w = useWorld()
   const go = useGame((s) => s.go)
-  const [tab, setTab] = useState<'squad' | 'fixtures' | 'info'>('squad')
+  const [tab, setTab] = useState<'overview' | 'squad' | 'fixtures' | 'info'>('overview')
   const c = w.clubs[params.id]
   if (!c) return <Screen title="Club" back><Empty icon="stadium" title="Club not found" /></Screen>
   const squad = [...rosterOf(w, c.id)].sort((a, b) => POS_ORDER[a.positions[0]] - POS_ORDER[b.positions[0]] || b.ovr - a.ovr)
@@ -316,7 +372,8 @@ export function ClubProfile({ params }: { params: { id: number } }) {
         <div className="card pad-card" style={{ padding: 10 }}><div className="tiny dim">Stadium</div><div className="b small ellipsis" style={{ marginTop: 3 }}>{c.stadium || '—'}</div></div>
         <div className="card pad-card" style={{ padding: 10 }}><div className="tiny dim">Budget</div><div className="b small" style={{ marginTop: 3 }}>{fmtMoney(c.finance.transferBudget, { short: true })}</div></div>
       </div>
-      <div style={{ marginTop: 12 }}><Tabs items={[{ id: 'squad', label: 'Squad' }, { id: 'fixtures', label: 'Fixtures' }, { id: 'info', label: 'Club' }]} value={tab} onChange={setTab} /></div>
+      <div style={{ marginTop: 12 }}><Tabs items={[{ id: 'overview', label: 'Overview' }, { id: 'squad', label: 'Squad' }, { id: 'fixtures', label: 'Fixtures' }, { id: 'info', label: 'Club' }]} value={tab} onChange={setTab} /></div>
+      {tab === 'overview' && <ClubOverview w={w} clubId={c.id} />}
       {tab === 'squad' && (
         <div className="pad" style={{ marginTop: 10 }}>
           <div className="card list">
@@ -347,6 +404,49 @@ export function ClubProfile({ params }: { params: { id: number } }) {
         </div>
       )}
     </Screen>
+  )
+}
+
+/** FotMob-style club overview: next match, form, table, key players and the expected XI. */
+function ClubOverview({ w, clubId }: { w: World; clubId: number }) {
+  const go = useGame((s) => s.go)
+  const c = w.clubs[clubId]
+  const next = fixturesOf(w, clubId).find((f) => !f.played)
+  const lg = leagueOf(w, clubId)
+  const around = lg?.table?.some((r) => r.p) ? tableAround(w, lg, clubId, 2) : []
+  const players = rosterOf(w, clubId)
+  const line = (p: Player) => Object.values(p.season).reduce((a, s) => ({ g: a.g + s.goals, as: a.as + s.assists, r: a.r + s.ratingSum, n: a.n + s.rated }), { g: 0, as: 0, r: 0, n: 0 })
+  const rated = players.map((p) => ({ p, l: line(p) })).filter((x) => x.l.n >= 2).sort((a, b) => b.l.r / b.l.n - a.l.r / a.l.n)
+  const scorer = players.map((p) => ({ p, l: line(p) })).filter((x) => x.l.g > 0).sort((a, b) => b.l.g - a.l.g)[0]
+  const key = (rated.length ? rated.slice(0, 3) : players.map((p) => ({ p, l: line(p) })).sort((a, b) => b.p.ovr - a.p.ovr).slice(0, 3))
+  const xiSheet = clubId === w.userClubId ? (c.sheets.find((s) => s.id === c.activeSheet) || c.sheets[0]) : sideInput(w, clubId, lg, false).sheet
+  return (
+    <div className="pad stack" style={{ marginTop: 10 }}>
+      {next && <div className="card"><div className="card-h"><span className="label">Next match</span></div><div className="list"><FixtureRow w={w} f={next} clubId={clubId} /></div></div>}
+      <div className="card pad-card"><div className="label" style={{ marginBottom: 10 }}>Form</div><FormStrip w={w} clubId={clubId} /></div>
+      {around.length > 0 && lg && (
+        <div className="card">
+          <div className="card-h"><div className="row tight"><CompLogo k={compLogoKey(lg)} size={18} name={lg.name} /><span className="label">{lg.short}</span></div></div>
+          <table className="tbl">
+            <thead><tr><th style={{ width: 28 }}>#</th><th className="l">Club</th><th>P</th><th>GD</th><th>Pts</th></tr></thead>
+            <tbody>{around.map((r) => <tr key={r.clubId} className={r.clubId === clubId ? 'me' : ''} onClick={() => r.clubId !== clubId && go({ name: 'club', params: { id: r.clubId } })}><td>{r.pos}</td><td className="l"><div className="row tight"><Badge club={w.clubs[r.clubId]} size={18} /><span className="ellipsis b">{w.clubs[r.clubId]?.short}</span></div></td><td>{r.p}</td><td>{r.gf - r.ga > 0 ? '+' : ''}{r.gf - r.ga}</td><td className="b">{r.pts - (r.ded || 0)}</td></tr>)}</tbody>
+          </table>
+        </div>
+      )}
+      <div className="card">
+        <div className="card-h"><span className="label">{rated.length ? 'Top rated' : 'Key players'}</span>{scorer && <span className="tiny dim">Top scorer: {scorer.p.name} ({scorer.l.g})</span>}</div>
+        <div className="list">
+          {key.map(({ p, l }) => (
+            <button key={p.id} className="li tap" style={{ width: '100%', textAlign: 'left' }} onClick={() => go({ name: 'player', params: { id: p.id } })}>
+              <Face p={p} size={40} radius={20} club={c} />
+              <div className="meta"><div className="t small ellipsis">{p.name}</div><div className="s">{p.positions[0]} · {l.n ? `${l.g} G · ${l.as} A` : `${p.ovr} OVR`}</div></div>
+              {l.n ? <RatingPill v={Math.round((l.r / l.n) * 100) / 100} size="sm" /> : <Ovr v={p.ovr} size="sm" />}
+            </button>
+          ))}
+        </div>
+      </div>
+      {xiSheet?.lineup?.length ? <TeamLineup w={w} side={sideFromSheet(w, clubId, xiSheet, lg, clubId === w.userClubId ? 'Your XI' : 'Expected XI')} mode="live" onTap={(t) => t.id && go({ name: 'player', params: { id: t.id } })} /> : null}
+    </div>
   )
 }
 

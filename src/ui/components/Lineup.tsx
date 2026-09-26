@@ -73,6 +73,8 @@ export interface LSide {
   note?: string
   unavailable?: { id: number; reason: string; icon: string; color: string }[]
   avg?: number
+  title?: string // replaces the club name in the header (e.g. Team of the Week)
+  logo?: ReactNode // replaces the club badge in the header
 }
 
 export function managerOf(w: World, clubId: number): LSide['manager'] {
@@ -217,8 +219,8 @@ function PitchMarkings({ half }: { half?: boolean }) {
 function TeamBar({ s, right, onClick }: { s: LSide; right?: ReactNode; onClick?: () => void }) {
   return (
     <div className="fl-bar" onClick={onClick}>
-      <Badge club={s.club} size={22} />
-      <b className="ellipsis">{s.club.short}</b>
+      {s.logo ?? <Badge club={s.club} size={22} />}
+      <b className="ellipsis">{s.title ?? s.club.short}</b>
       {s.note && <span className="fl-note">{s.note}</span>}
       <span className="grow" />
       {right}

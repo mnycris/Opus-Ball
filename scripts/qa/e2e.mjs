@@ -51,15 +51,15 @@ for (let i = 0; i < 12; i++) {
   await page.waitForFunction(() => !document.querySelector('.continue-btn.busy'), null, { timeout: 120000 })
   await page.waitForTimeout(300)
   // close any prematch overlay that opened automatically
-  if (await page.getByText('Play Match').count()) break
+  if (await page.getByText('Play match').count()) break
 }
 await shot('after-advance')
-if (!(await page.getByText('Play Match').count())) await page.locator('.continue-btn').click()
-await page.waitForSelector('text=Play Match', { timeout: 20000 })
+if (!(await page.getByText('Play match').count())) await page.locator('.continue-btn').click()
+await page.waitForSelector('text=Play match', { timeout: 20000 })
 await shot('prematch')
 await click('Line-ups')
 await shot('prematch-lineups')
-await click('Play Match')
+await click('Play match')
 await page.waitForTimeout(6000)
 await shot('live-6s')
 await page.getByRole('button', { name: '4×' }).click()

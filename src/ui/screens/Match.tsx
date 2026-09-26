@@ -260,6 +260,7 @@ export function LiveMatch() {
             <div className="kicker">{sim.phase === 'HT' ? 'Half-time' : 'Extra-time break'}</div>
             <div className="muted small" style={{ marginTop: 6 }}>Make changes now. Substitutions at the break don't use a window.</div>
             <HalfTimeFacts sim={sim} home={home.short} away={away.short} />
+            <AssistantNotes sim={sim} w={w} side={us} onManage={(id) => { haptic(); setManageOut(id); setManage(true) }} />
           </div>
         )}
         {tab === 'feed' && (
@@ -316,6 +317,41 @@ function HalfTimeFacts({ sim, home, away }: { sim: MatchSim; home: string; away:
     <div style={{ marginTop: 10 }}>
       <div className="row between tiny dim"><span>{home}</span><span>{away}</span></div>
       {rows.map(([l, a, b]) => <div key={l} className="row between small" style={{ marginTop: 4 }}><b className="num">{a}</b><span className="muted">{l}</span><b className="num">{b}</b></div>)}
+    </div>
+  )
+}
+
+/** Assistant manager's read of the game at a break: what the numbers and the players' legs are saying. */
+function AssistantNotes({ sim, w, side, onManage }: { sim: MatchSim; w: World; side: 0 | 1; onManage: (playerId?: number) => void }) {
+  const st = sim.liveStats()
+  const me = st[side], them = st[1 - side]
+  const gf = sim.score[side], ga = sim.score[1 - side]
+  const agg = sim.ctx.aggregate
+  const aggDiff = agg ? (side === 0 ? agg[0] - agg[1] : agg[1] - agg[0]) : 0
+  const lead = gf - ga + aggDiff
+  const t = sim.sideTactics(side)
+  const rs = sim.liveRatings(side).filter((r) => r.on)
+  const notes: { icon: string; text: string; id?: number; tone: 'good' | 'bad' | 'neutral' }[] = []
+  const tired = rs.filter((r) => r.pos !== 'GK' && r.energy < 66).sort((a, b) => a.energy - b.energy)[0]
+  if (tired) notes.push({ icon: 'fitness', tone: 'bad', id: tired.id, text: `${callName(w.players[tired.id].name)} is running on empty (${Math.round(tired.energy)}%). Fresh legs would help.` })
+  const booked = rs.find((r) => r.yellow && ['CB', 'LB', 'RB', 'CDM', 'LWB', 'RWB'].includes(r.pos))
+  if (booked) notes.push({ icon: 'yellow', tone: 'bad', id: booked.id, text: `${callName(w.players[booked.id].name)} is on a yellow. One more rash challenge and we're down to ten.` })
+  const poor = rs.filter((r) => r.rating < 6.0).sort((a, b) => a.rating - b.rating)[0]
+  if (poor && poor.id !== tired?.id) notes.push({ icon: 'formDown', tone: 'bad', id: poor.id, text: `${callName(w.players[poor.id].name)} is struggling (${poor.rating.toFixed(1)}). Think about a change or a role tweak.` })
+  if (them.xg > me.xg + 0.5) notes.push({ icon: 'warning', tone: 'bad', text: `They're creating the better chances (xG ${them.xg.toFixed(2)} v ${me.xg.toFixed(2)}). A deeper line or a holding midfielder would tighten us up.` })
+  else if (me.xg > them.xg + 0.5 && lead <= 0) notes.push({ icon: 'target', tone: 'good', text: `We're the better side on chances (xG ${me.xg.toFixed(2)}). Keep going, the goal will come.` })
+  if (me.possession < 40 && t.buildUp !== 'Counter') notes.push({ icon: 'pitch', tone: 'neutral', text: `Only ${me.possession}% of the ball. Either press higher or commit to a counter-attacking plan.` })
+  if (lead < 0) notes.push({ icon: 'ffwd', tone: 'neutral', text: `We need ${-lead === 1 ? 'a goal' : `${-lead} goals`}. More attacking mentality or an extra forward could turn it.` })
+  if (lead >= 2 && t.mentality !== 'Defensive') notes.push({ icon: 'shield', tone: 'good', text: 'Comfortable lead. We can manage the game and protect legs for the next fixture.' })
+  if (!notes.length) notes.push({ icon: 'check', tone: 'good', text: 'The plan is working. No need to change much.' })
+  return (
+    <div className="asst">
+      <div className="label" style={{ margin: '12px 0 6px', textAlign: 'left' }}>Assistant's notes</div>
+      {notes.slice(0, 3).map((n, i) => (
+        <button key={i} className={`asst-note ${n.tone}`} onClick={() => onManage(n.id)}>
+          <Icon name={n.icon} size={16} /><span className="grow small" style={{ textAlign: 'left' }}>{n.text}</span><Icon name="forward" size={14} />
+        </button>
+      ))}
     </div>
   )
 }
@@ -440,11 +476,7 @@ function ManageSheet({ open, onClose, sim, side, w, initialOut }: { open: boolea
     if (!out) { setOut(tp.id); return }
     if (out === tp.id) { if (!waiting.includes(out)) setOut(undefined); return }
     // two players on the pitch: swap their positions
-    const order = [...onIds]
-    const i = order.indexOf(out), j = order.indexOf(tp.id)
-    if (i >= 0 && j >= 0) {
-      ;[order[i], order[j]] = [order[j], order[i]]
-      sim.setFormation(side, sim.sideFormation(side), order)
+    if (sim.swapPositions(side, out, tp.id)) {
       useGame.getState().notify(`${callName(w.players[out].name)} ⇄ ${callName(w.players[tp.id].name)}`, 'ok')
       setOut(undefined)
       force()

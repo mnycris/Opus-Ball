@@ -232,7 +232,7 @@ export function PreMatch({ params }: { params?: { id?: string } }) {
   )
 }
 
-function FormStrip({ w, clubId }: { w: World; clubId: number }) {
+export function FormStrip({ w, clubId }: { w: World; clubId: number }) {
   const go = useGame((s) => s.go)
   const games = fixturesOf(w, clubId).filter((x) => x.played && x.result).slice(-5)
   const club = w.clubs[clubId]

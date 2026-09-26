@@ -29,8 +29,8 @@ const t0 = Date.now()
 let matches = 0, advances = 0, advMs = 0, maxAdv = 0
 for (let i = 0; i < 400; i++) {
   if (await page.getByText('Season Review').count()) break
-  if (await page.getByText('Play Match').count()) {
-    await page.getByText('Quick Sim').click()
+  if (await page.getByText('Play match').count()) {
+    await page.getByText('Quick sim').click()
     await page.waitForSelector('text=Full-time', { timeout: 20000 })
     matches++
     if (matches % 10 === 1) await shot(`result-${matches}`)

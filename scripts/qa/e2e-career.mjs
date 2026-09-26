@@ -95,7 +95,7 @@ const dateTxt = await page.locator('.topbar .tiny').first().innerText()
 console.log('advance took', Date.now() - t1, 'ms →', dateTxt)
 await shot('after-advance')
 // close overlay if prematch opened
-if (await page.getByText('Play Match').count()) { await click('Quick Sim'); await page.waitForTimeout(800); await shot('quicksim-result'); await page.locator('.btn.primary', { hasText: 'Continue' }).click() }
+if (await page.getByText('Play match').count()) { await click('Quick sim'); await page.waitForTimeout(800); await shot('quicksim-result'); await page.locator('.btn.primary', { hasText: 'Continue' }).click() }
 // inbox conversation if any
 await page.locator('.iconbtn[aria-label="Inbox"]').click()
 await page.waitForTimeout(300)

@@ -124,7 +124,7 @@ export function createWorld(raw: RawDb, opts: NewCareerOptions): World {
     scouts: [], scoutPool: [], youthScouts: [], youthScoutPool: [], prospects: [], inbox: [], news: [],
     board: { objectives: [], confidence: { 'Domestic Success': 70, 'Continental Success': 70, Financial: 70, 'Brand Exposure': 70, 'Youth Development': 70 }, overall: 70, warnings: 0 },
     promises: [], conversations: [], awards: [], archive: [], records: {}, namePools: raw.namePools,
-    nextIds: { player: 9_000_000, manager: 1, msg: 1, news: 1, offer: 1, misc: 1 }, flags: {},
+    nextIds: { player: 9_000_000, manager: 1, msg: 1, news: 1, offer: 1, misc: 1 }, flags: { valueCalibV1: true },
   }
   for (const lg of raw.leagues) w.leagues[lg.id] = { ...lg } as LeagueDef
   for (const row of raw.players) {

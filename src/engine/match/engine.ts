@@ -331,6 +331,21 @@ export class MatchSim {
     if (this.phase !== 'pre' && this.ctx.commentary) this.push({ min: this.displayMinute(), type: 'tactic', side, text: line(this.rng, 'tactic', { t: s.name, x: f.name }) })
   }
 
+  /** Swap the positions of two players on the pitch (keeps every other slot untouched). */
+  swapPositions(side: 0 | 1, a: number, b: number): boolean {
+    const s = this.sides[side]
+    const A = s.lps.find((l) => l.on && l.p.id === a), B = s.lps.find((l) => l.on && l.p.id === b)
+    if (!A || !B) return false
+    ;[A.slot, B.slot] = [B.slot, A.slot]
+    ;[A.pos, B.pos] = [B.pos, A.pos]
+    ;[A.role, B.role] = [B.role, A.role]
+    ;[A.focus, B.focus] = [B.focus, A.focus]
+    A.st.pos = A.pos; B.st.pos = B.pos
+    this.computeQ(A); this.computeQ(B)
+    this.rebuild(s)
+    return true
+  }
+
   // ----------------------------------------------------------- flow
   displayMinute(): number {
     return this.minute

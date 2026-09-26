@@ -8,9 +8,23 @@ import { loadCareer as loadSave, saveCareer, listSaves, deleteSave, getKV, setKV
 import { positionOf } from '../engine/competitions/tables'
 import type { MatchSim } from '../engine/match/engine'
 import { touchRoster } from '../engine/world/roster'
+import { dynamicValue } from '../domain/finance'
 
 export type Tab = 'central' | 'squad' | 'transfers' | 'academy' | 'season'
 export interface Route { name: string; params?: any }
+
+/** Bring saves from earlier versions up to date. */
+function migrateWorld(w: World) {
+  if (!w.flags.valueCalibV1) {
+    // anchor player values to the valuation they had before formula updates took over
+    for (const p of Object.values(w.players)) {
+      if (p.regen || p.valueCalib) continue
+      const raw = dynamicValue(p, w.date, 1)
+      if (raw > 0 && p.value > 0) p.valueCalib = Math.max(0.35, Math.min(2.5, p.value / raw))
+    }
+    w.flags.valueCalibV1 = true
+  }
+}
 
 export interface LiveMatch {
   sim: MatchSim
@@ -124,6 +138,7 @@ export const useGame = create<GameState>((set, get) => ({
   async loadCareer(id) {
     const w = await loadSave(id)
     if (!w) return false
+    migrateWorld(w)
     touchRoster(w)
     set({ world: w, saveId: id, v: get().v + 1, tab: 'central', stacks: emptyStacks(), overlay: [], live: undefined })
     await setKV('lastSave', id)

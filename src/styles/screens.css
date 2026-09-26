@@ -542,3 +542,8 @@ select.input option { background: #151b27; }
   .match-controls .seg button { height: 34px !important; }
   .match-controls .btn.sm { height: 34px; }
 }
+.asst-note { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 12px; border-radius: 12px; background: var(--s2); margin-top: 6px; color: var(--t1); }
+.asst-note svg:first-child { flex: none; color: var(--t2); }
+.asst-note.bad svg:first-child { color: var(--warn); }
+.asst-note.good svg:first-child { color: var(--pos); }
+.asst-note svg:last-child { flex: none; color: var(--t3); }
