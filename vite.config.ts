@@ -33,11 +33,12 @@ export default defineConfig({
         runtimeCaching: [
           {
             // official EA headshots, PlayStyle icons and crests; SoFIFA mirror; football-logos.cc crests; Wikipedia photos
-            urlPattern: /^https:\/\/(ratings-images-prod\.pulse\.ea\.com|drop-assets\.ea\.com|cdn\.sofifa\.net|assets\.football-logos\.cc|upload\.wikimedia\.org)\/.*/i,
+            urlPattern: /^https:\/\/(ratings-images-prod\.pulse\.ea\.com|drop-assets\.ea\.com|cdn\.sofifa\.net|cdn\.futwiz\.com|cdn\.futbin\.com|assets\.football-logos\.cc|upload\.wikimedia\.org)\/.*/i,
             handler: 'CacheFirst',
             options: {
               cacheName: 'football-images',
-              expiration: { maxEntries: 9000, maxAgeSeconds: 60 * 60 * 24 * 180 },
+              // opaque cross-origin images count heavily against quota: cap entries and purge instead of failing
+              expiration: { maxEntries: 2500, maxAgeSeconds: 60 * 60 * 24 * 120, purgeOnQuotaError: true },
               cacheableResponse: { statuses: [0, 200] },
             },
           },

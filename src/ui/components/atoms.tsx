@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react'
 import type { Club, Player, Position, World } from '../../domain/types'
 import { GROUP_COLOR, POS_GROUP } from '../../domain/constants'
-import { badgeUrls, compLogoUrls, faceUrls, flagUrl, isFailed, managerWikiQuery, markFailed, playerWikiQuery, wikiPhoto, type WikiQuery } from '../../services/assets'
+import { badgeUrls, compLogoUrls, faceUrls, flagUrl, isFailed, managerWikiQuery, markFailed, markLoaded, playerWikiQuery, wikiPhoto, type WikiQuery } from '../../services/assets'
 import { Silhouette } from './Silhouette'
 import { Icon } from '../icons/Icon'
 import { ovrColor } from '../../domain/ratings'
@@ -52,7 +52,7 @@ export function Face({ p, size = 48, radius = 12, club, ring }: { p: FaceLike; s
         <img key={src} src={src} alt={pl.name || ''} loading="lazy" decoding="async" draggable={false} referrerPolicy="no-referrer"
           className={src === wiki ? 'wiki' : undefined}
           style={{ position: loaded ? 'static' : 'absolute', inset: 0, opacity: loaded ? 1 : 0, transition: 'opacity .3s' }}
-          onLoad={() => setLoaded(true)} onError={() => { markFailed(src); setLoaded(false); if (i < srcs.length) setI(i + 1) }} />
+          onLoad={() => { setLoaded(true); markLoaded(src) }} onError={() => { markFailed(src); setLoaded(false); if (i < srcs.length) setI(i + 1) }} />
       )}
     </div>
   )

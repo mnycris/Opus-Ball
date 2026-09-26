@@ -4,7 +4,10 @@ import { managerWikiQuery, wikiPhoto } from '../../services/assets'
 
 const PROBES: { label: string; url?: string; wiki?: boolean }[] = [
   { label: 'EA SPORTS FC headshots', url: 'https://ratings-images-prod.pulse.ea.com/FC25/full/player-portraits/p239085.png?width=64' },
+  { label: 'EA SPORTS FC 26 headshots', url: 'https://ratings-images-prod.pulse.ea.com/FC26/full/player-portraits/p239085.png?width=64' },
   { label: 'SoFIFA headshots', url: 'https://cdn.sofifa.net/players/239/085/26_120.png' },
+  { label: 'FUTWIZ headshots', url: 'https://cdn.futwiz.com/assets/img/fc25/faces/239085.png' },
+  { label: 'FUTBIN headshots', url: 'https://cdn.futbin.com/content/fifa25/img/players/239085.png' },
   { label: 'Club crests (football-logos.cc)', url: 'https://assets.football-logos.cc/logos/england/512x512/arsenal.02d595b0.png' },
   { label: 'EA PlayStyle icons', url: 'https://drop-assets.ea.com/images/3ohVoKWSsvT44qgjabWqfV/e536ef26ad854c3c4cbf63ed7954b9cd/Power_Shot.png' },
   { label: 'Manager photos (Wikipedia)', wiki: true },

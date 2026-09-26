@@ -21,12 +21,17 @@ export function faceUrls(p: Pick<Player, 'id' | 'regen'>): string[] {
   if (p.regen || p.id >= 9_000_000) return []
   const s = String(p.id).padStart(6, '0')
   const a = s.slice(0, s.length - 3), b = s.slice(-3)
-  return [
-    `${EA}/FC25/full/player-portraits/p${p.id}.png?width=256`,
-    `https://cdn.sofifa.net/players/${a}/${b}/27_120.png`,
-    `https://cdn.sofifa.net/players/${a}/${b}/26_120.png`,
+  // several independent mirrors of the same EA SPORTS FC face scans: whichever this device/network can reach wins,
+  // ordered by what has worked on this device before (sources that never load get dropped)
+  return rankSources([
     `${EA}/FC26/full/player-portraits/p${p.id}.png?width=256`,
-  ]
+    `${EA}/FC25/full/player-portraits/p${p.id}.png?width=256`,
+    `https://cdn.sofifa.net/players/${a}/${b}/26_120.png`,
+    `https://cdn.sofifa.net/players/${a}/${b}/25_120.png`,
+    `https://cdn.futwiz.com/assets/img/fc25/faces/${p.id}.png`,
+    `https://cdn.futbin.com/content/fifa25/img/players/${p.id}.png`,
+    `https://cdn.sofifa.net/players/${a}/${b}/27_120.png`,
+  ])
 }
 
 export function badgeUrls(c: Pick<Club, 'id' | 'badge' | 'sofifaTeamId'>): string[] {
@@ -72,8 +77,36 @@ export function playStyleIcon(name: string, plus: boolean): string | undefined {
 
 /** Remember which remote images failed so we don't retry them every render. */
 const failed = new Set<string>()
-export function markFailed(url: string) { failed.add(url) }
+export function markFailed(url: string) { failed.add(url); bump(sourceOf(url), 'fail') }
+export function markLoaded(url: string) { bump(sourceOf(url), 'ok') }
 export function isFailed(url: string) { return failed.has(url) }
+
+// per-device reliability of each image source
+const SRC_KEY = 'opus:imgsrc:v1'
+let srcStats: Record<string, { ok: number; fail: number }> = {}
+try { srcStats = JSON.parse(localStorage.getItem(SRC_KEY) || '{}') } catch { srcStats = {} }
+let srcTimer: number | undefined
+function sourceOf(url: string) {
+  const m = url.match(/pulse\.ea\.com\/(FC\d+)/)
+  if (m) return `ea-${m[1]}`
+  const s = url.match(/sofifa\.net\/players\/\d+\/\d+\/(\d+)_/)
+  if (s) return `sofifa-${s[1]}`
+  try { return new URL(url, location.href).host } catch { return url }
+}
+function bump(key: string, k: 'ok' | 'fail') {
+  const e = (srcStats[key] ||= { ok: 0, fail: 0 })
+  e[k] = Math.min(10_000, e[k] + 1)
+  window.clearTimeout(srcTimer)
+  srcTimer = window.setTimeout(() => { try { localStorage.setItem(SRC_KEY, JSON.stringify(srcStats)) } catch { /* quota */ } }, 1500)
+}
+function rankSources(urls: string[]): string[] {
+  const score = (u: string) => { const e = srcStats[sourceOf(u)]; return e ? (e.ok + 0.5) / (e.ok + e.fail + 1) : 0.5 }
+  return urls
+    .filter((u) => { const e = srcStats[sourceOf(u)]; return !e || e.ok > 0 || e.fail < 12 })
+    .map((u, i) => ({ u, i, s: score(u) }))
+    .sort((a, b) => b.s - a.s || a.i - b.i)
+    .map((x) => x.u)
+}
 
 // ---------------------------------------------------------------- Wikipedia photos (managers, fallback players)
 const WIKI_KEY = 'opus:wiki:v1'
