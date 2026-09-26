@@ -526,3 +526,19 @@ select.input option { background: #151b27; }
 .slot-btn.sel .slot-name { background: var(--acc); color: #04170c; padding: 1px 6px; text-shadow: none; }
 .slot-sub { text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7); }
 .md-countdown { flex: 1; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--s2); color: var(--t2); font-weight: 700; font-size: 14px; }
+/* short phones: compact match chrome so commentary keeps room */
+@media (max-height: 720px) {
+  .match-top { padding-top: calc(var(--sat) + 6px); padding-bottom: 2px; }
+  .scoreboard { margin-top: 2px; }
+  .scoreboard .sb-team > div:first-child { transform: scale(0.8); margin: -4px 0; }
+  .sb-score { font-size: 40px; }
+  .sb-name { font-size: 13px; }
+  .lp-wrap { padding: 4px 10px 0; }
+  .mom-wrap { padding: 3px 10px; }
+  .mom-graph { height: 30px; }
+  .match-controls { padding-top: 8px; padding-bottom: calc(var(--sab) + 8px); }
+  .match-controls .ctl-btn { height: 42px; }
+  .match-controls .seg { height: 42px !important; }
+  .match-controls .seg button { height: 34px !important; }
+  .match-controls .btn.sm { height: 34px; }
+}
